@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Joyas Dari · Catálogo</title>
 
-  <!-- Favicon (nuevo logo) -->
+  <!-- Favicon (logo) -->
   <link rel="icon" href="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w32" type="image/png">
   <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w180">
 
@@ -841,6 +841,7 @@
       display: flex;
       justify-content: center;
       gap: 20px;
+      flex-wrap: wrap;
     }
 
     .social-btn {
@@ -855,6 +856,7 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.25s ease;
+      text-decoration: none;
     }
 
     .social-btn:hover {
@@ -862,6 +864,26 @@
       color: var(--dark);
       border-color: var(--teal-light);
       transform: scale(1.08);
+    }
+
+    .footer-email {
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      width: 100%;
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .footer-email a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-email a:hover {
+      color: var(--teal-light);
     }
 
     /* Animations */
@@ -922,7 +944,6 @@
   <header class="header">
     <div class="header-top">
       <div class="logo-left">
-        <!-- NUEVO LOGO -->
         <img src="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w120" 
              class="logo-img" alt="Joyas Dari">
       </div>
@@ -974,16 +995,32 @@
     <div id="grid" class="product-grid"></div>
   </main>
 
+  <!-- FOOTER ACTUALIZADO -->
   <footer class="footer">
+    <!-- Facebook (próximamente) -->
     <div class="social-btn" onclick="showToast('Pronto tendremos Facebook')" aria-label="Facebook">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/>
       </svg>
     </div>
-    <div class="social-btn" onclick="showToast('Pronto tendremos Instagram')" aria-label="Instagram">
+
+    <!-- Instagram (real) -->
+    <a href="https://www.instagram.com/joyas.dari/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram de Joyas Dari">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2C5.8 4 4 5.8 4 7.6v8.8C4 18.2 5.8 20 7.6 20h8.8c1.8 0 3.6-1.8 3.6-3.6V7.6C20 5.8 18.2 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/>
       </svg>
+    </a>
+
+    <!-- Correo electrónico -->
+    <a href="mailto:dari.joyas@gmail.com" class="social-btn" aria-label="Correo electrónico de Joyas Dari">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+      </svg>
+    </a>
+
+    <div class="footer-email">
+      <a href="mailto:dari.joyas@gmail.com">dari.joyas@gmail.com</a>
     </div>
   </footer>
 
@@ -1020,7 +1057,6 @@
     const CONFIG = {
       apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
       ws: '56935781897',
-      // NUEVO LOGO como imagen por defecto
       defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w500',
       STORAGE_CART: 'dari_cart',
       STORAGE_FAVS: 'dari_favs'
