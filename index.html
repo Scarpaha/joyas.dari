@@ -5,21 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Joyas Dari · Catálogo</title>
 
-  <!-- Favicon (logo) con &amp; escapado -->
+  <!-- Favicon (logo) -->
   <link rel="icon" href="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&amp;sz=w32" type="image/png">
   <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&amp;sz=w180">
 
-  <!-- Open Graph con &amp; escapado -->
   <meta property="og:title" content="Joyas Dari · Joyas con estilo">
   <meta property="og:description" content="Catálogo de joyas únicas. Piezas hechas a mano con materiales de calidad.">
   <meta property="og:image" content="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&amp;sz=w1200">
   <meta property="og:type" content="website">
 
-  <!-- Tailwind y estilos -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ===== ESTILOS COMPLETOS (sin cambios relevantes) ===== */
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;family=Inter:wght@300;400;500;600&amp;display=swap');
 
     :root {
       --dark: #282828;
@@ -47,7 +44,7 @@
       line-height: 1.5;
     }
 
-    /* HEADER */
+    /* ========== HEADER ========== */
     .header {
       position: sticky;
       top: 0;
@@ -97,7 +94,7 @@
       flex-shrink: 0;
     }
 
-    /* BÚSQUEDA EXPANDIBLE */
+    /* ===== BOTÓN LUPA (expandible) ===== */
     .search-toggle-btn {
       width: 44px;
       height: 44px;
@@ -118,6 +115,7 @@
       border-color: var(--teal-light);
     }
 
+    /* ===== CAMPO DE BÚSQUEDA EXPANDIBLE ===== */
     .search-expandable {
       position: relative;
       display: flex;
@@ -126,7 +124,9 @@
       overflow: hidden;
       width: 0;
       opacity: 0;
-      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease, margin 0.3s ease;
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.25s ease,
+                  margin 0.3s ease;
       margin-left: 0;
     }
 
@@ -188,7 +188,7 @@
       background: rgba(255,255,255,0.1);
     }
 
-    /* CATEGORÍAS */
+    /* Categories */
     .categories {
       display: flex;
       gap: 8px;
@@ -228,7 +228,7 @@
       font-weight: 600;
     }
 
-    /* CARRITO RESUMEN */
+    /* Cart bar */
     .cart-summary {
       display: none;
       align-items: center;
@@ -251,7 +251,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* GRID DE PRODUCTOS */
+    /* ========== GRID ========== */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -275,7 +275,7 @@
       }
     }
 
-    /* TARJETA DE PRODUCTO */
+    /* ========== PRODUCT CARD ========== */
     .card {
       background: white;
       border-radius: 18px;
@@ -411,7 +411,7 @@
       color: var(--muted);
     }
 
-    /* SELECTOR DE CANTIDAD */
+    /* Quantity */
     .qty-row {
       display: flex;
       align-items: center;
@@ -497,7 +497,7 @@
       cursor: not-allowed;
     }
 
-    /* ESTADOS VACÍOS Y SKELETON */
+    /* ========== EMPTY & SKELETON ========== */
     .empty-state {
       grid-column: 1 / -1;
       text-align: center;
@@ -542,7 +542,7 @@
       margin: 10px 14px;
     }
 
-    /* MODAL DEL CARRITO */
+    /* ========== CART MODAL ========== */
     .cart-modal {
       display: none;
       position: fixed;
@@ -759,7 +759,7 @@
       box-shadow: 0 6px 16px rgba(21, 105, 111, 0.3);
     }
 
-    /* LIGHTBOX */
+    /* ========== LIGHTBOX ========== */
     .lightbox {
       display: none;
       position: fixed;
@@ -799,7 +799,7 @@
       justify-content: center;
     }
 
-    /* TOAST */
+    /* ========== TOAST ========== */
     .toast-container {
       position: fixed;
       bottom: 28px;
@@ -834,7 +834,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* FOOTER */
+    /* ========== FOOTER ========== */
     .footer {
       background: var(--dark);
       padding: 32px 20px;
@@ -866,27 +866,7 @@
       transform: scale(1.08);
     }
 
-    .footer-email {
-      color: rgba(255,255,255,0.5);
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      text-align: center;
-      width: 100%;
-      margin-top: 4px;
-      letter-spacing: 0.02em;
-    }
-
-    .footer-email a {
-      color: rgba(255,255,255,0.6);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-email a:hover {
-      color: var(--teal-light);
-    }
-
-    /* ANIMACIONES */
+    /* Animations */
     .card-enter {
       animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
@@ -905,7 +885,7 @@
       40% { transform: scale(1.2); }
     }
 
-    /* RESPONSIVE */
+    /* Responsive */
     @media (max-width: 480px) {
       .header-top {
         padding: 12px 12px 8px;
@@ -944,7 +924,6 @@
   <header class="header">
     <div class="header-top">
       <div class="logo-left">
-        <!-- URL con &amp; escapado -->
         <img src="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&amp;sz=w120" 
              class="logo-img" alt="Joyas Dari">
       </div>
@@ -952,12 +931,14 @@
       <h1 class="brand-title">Joyas Dari</h1>
       
       <div class="header-right">
+        <!-- Botón lupa que expande la búsqueda -->
         <button id="searchToggleBtn" class="search-toggle-btn" aria-label="Abrir buscador">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
           </svg>
         </button>
 
+        <!-- Contenedor del campo de búsqueda expandible -->
         <div id="searchExpandable" class="search-expandable">
           <span class="search-icon-inner">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -994,30 +975,29 @@
     <div id="grid" class="product-grid"></div>
   </main>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (sin texto de correo) -->
   <footer class="footer">
+    <!-- Facebook (próximamente) -->
     <div class="social-btn" onclick="showToast('Pronto tendremos Facebook')" aria-label="Facebook">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/>
       </svg>
     </div>
 
+    <!-- Instagram (real) -->
     <a href="https://www.instagram.com/joyas.dari/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram de Joyas Dari">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2C5.8 4 4 5.8 4 7.6v8.8C4 18.2 5.8 20 7.6 20h8.8c1.8 0 3.6-1.8 3.6-3.6V7.6C20 5.8 18.2 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/>
       </svg>
     </a>
 
+    <!-- Correo electrónico (solo ícono) -->
     <a href="mailto:dari.joyas@gmail.com" class="social-btn" aria-label="Correo electrónico de Joyas Dari">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="2" y="4" width="20" height="16" rx="2"/>
         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
       </svg>
     </a>
-
-    <div class="footer-email">
-      <a href="mailto:dari.joyas@gmail.com">dari.joyas@gmail.com</a>
-    </div>
   </footer>
 
   <!-- CART MODAL -->
@@ -1050,20 +1030,17 @@
   (function(){
     "use strict";
 
-    // =============================================
-    // CONFIGURACIÓN
-    // =============================================
+    // ========== CONFIGURACIÓN ==========
+    // ⚠️ ACTUALIZA ESTA URL CON LA NUEVA QUE OBTENGAS AL DESPLEGAR
     const CONFIG = {
-      // ⚠️ REEMPLAZA ESTA URL CON LA NUEVA DESPUÉS DE DESPLEGAR EN APPS SCRIPT
       apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
       ws: '56935781897',
-      // Logo como imagen por defecto (con &amp; escapado en el código HTML, no aquí)
-      defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w500',
+      defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&amp;sz=w500',
       STORAGE_CART: 'dari_cart',
       STORAGE_FAVS: 'dari_favs'
     };
 
-    console.log('%c🔍 Joyas Dari - Modo depuración activado', 'font-size:16px;font-weight:bold;color:#15696F;');
+    console.log('🔍 Joyas Dari - Modo depuración activado');
     console.log('📡 URL de la API:', CONFIG.apiUrl);
 
     let inventory = [], cart = [], favorites = [];
@@ -1071,7 +1048,7 @@
     let searchQuery = '';
     let searchDebounce = null;
 
-    // ELEMENTOS DEL BUSCADOR
+    // ===== ELEMENTOS DEL BUSCADOR EXPANDIBLE =====
     const searchToggleBtn = document.getElementById('searchToggleBtn');
     const searchExpandable = document.getElementById('searchExpandable');
     const searchInput = document.getElementById('searchInput');
@@ -1110,21 +1087,18 @@
       }
     });
 
-    // UTILIDADES
+    // ===== FUNCIONES BASE =====
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
-
     function sanitize(str) {
       return str ? escapeHtml(String(str)).trim() : '';
     }
-
     function formatPrice(n) {
       return '$' + n.toLocaleString('es-CL');
     }
-
     function showToast(msg, type = '') {
       const c = document.getElementById('toastContainer');
       const t = document.createElement('div');
@@ -1141,7 +1115,6 @@
         localStorage.setItem(CONFIG.STORAGE_FAVS, JSON.stringify(favorites));
       } catch(e){}
     }
-
     function loadState() {
       try {
         const c = localStorage.getItem(CONFIG.STORAGE_CART);
@@ -1150,13 +1123,11 @@
         if (f) favorites = JSON.parse(f);
       } catch(e){}
     }
-
     function fixDriveUrl(url) {
       if (!url || url.length < 10) return CONFIG.defImg;
       const m = url.match(/(?:id=|d\/|file\/d\/)([\w-]{25,})/);
-      return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w800` : CONFIG.defImg;
+      return m ? `https://drive.google.com/thumbnail?id=${m[1]}&amp;sz=w800` : CONFIG.defImg;
     }
-
     function debounce(fn, delay) {
       return function(...args) {
         clearTimeout(searchDebounce);
@@ -1164,17 +1135,15 @@
       };
     }
 
-    // BÚSQUEDA EN TIEMPO REAL
+    // Búsqueda en tiempo real
     const handleSearch = debounce(function() {
       searchQuery = searchInput.value.toLowerCase().trim();
       renderProducts();
     }, 250);
-
     searchInput.addEventListener('input', handleSearch);
 
-    // FAVORITOS
+    // ===== FAVORITOS =====
     function isFavorite(id) { return favorites.includes(id); }
-
     window.toggleFavorite = function(pid) {
       const i = favorites.indexOf(pid);
       if (i >= 0) {
@@ -1198,7 +1167,6 @@
       document.getElementById('lightbox').classList.add('show');
       document.body.style.overflow = 'hidden';
     };
-
     window.closeLightbox = function() {
       document.getElementById('lightbox').classList.remove('show');
       if (!document.getElementById('cartModal').classList.contains('show')) {
@@ -1206,7 +1174,7 @@
       }
     };
 
-    // CATEGORÍAS
+    // ===== CATEGORÍAS =====
     function renderCategories() {
       const types = ["TODOS", ...new Set(inventory.map(p => p.type).filter(Boolean))];
       document.getElementById('catContainer').innerHTML = types.map(t =>
@@ -1214,14 +1182,13 @@
                  onclick="setCategory('${sanitize(t).replace(/'/g,"\\'")}')">${sanitize(t)}</button>`
       ).join('');
     }
-
     window.setCategory = function(cat) {
       currentCategory = cat;
       renderCategories();
       renderProducts();
     };
 
-    // CANTIDAD
+    // ===== CANTIDAD Y AÑADIR =====
     window.changeQty = function(pid, delta) {
       const input = document.getElementById('qty-' + pid);
       const p = inventory.find(x => x.id === pid);
@@ -1231,7 +1198,6 @@
       input.value = v;
       updateAddBtn(pid, v, p.stock);
     };
-
     window.handleQtyInput = function(pid) {
       const input = document.getElementById('qty-' + pid);
       const p = inventory.find(x => x.id === pid);
@@ -1242,13 +1208,12 @@
       input.value = v;
       updateAddBtn(pid, v, p.stock);
     };
-
     function updateAddBtn(pid, qty, stock) {
       const btn = document.getElementById('add-btn-' + pid);
       if (btn) btn.disabled = qty > stock || stock <= 0;
     }
 
-    // RENDER PRODUCTOS
+    // ===== RENDER PRODUCTOS =====
     function renderProducts() {
       const grid = document.getElementById('grid');
       let list = currentCategory === "TODOS" ? [...inventory] : inventory.filter(p => p.type === currentCategory);
@@ -1308,7 +1273,7 @@
       }).join('');
     }
 
-    // CARRITO
+    // ===== CARRITO =====
     window.addToCart = function(pid) {
       const p = inventory.find(x => x.id === pid);
       if (!p || p.stock <= 0) return;
@@ -1411,13 +1376,11 @@
       renderCartModal();
       document.body.style.overflow = 'hidden';
     };
-
     window.closeCartModal = function() {
       document.getElementById('cartModal').classList.remove('show');
       document.body.style.overflow = '';
     };
 
-    // ENVIAR POR WHATSAPP (URL con &amp; escapado en el HTML, pero en JS se usa encodeURIComponent)
     window.sendCartOrder = function() {
       if (!cart.length) return;
       let total = 0;
@@ -1430,7 +1393,7 @@
       )}`, '_blank');
     };
 
-    // CARGA INICIAL CON DEPURACIÓN
+    // ===== CARGA DE DATOS =====
     function renderSkeletons() {
       document.getElementById('grid').innerHTML = Array(8).fill('').map(() => `
         <div class="skeleton-card">
@@ -1501,10 +1464,6 @@
         renderCategories();
         renderProducts();
         if (cart.length) updateCartBar();
-
-        if (inventory.length > 0) {
-          console.log(`🎉 ¡${inventory.length} productos cargados!`);
-        }
 
       } catch (e) {
         console.error('❌ Error cargando datos:', e);
