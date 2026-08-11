@@ -2,1750 +2,597 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Joyas Dari · Catálogo</title>
-
-  <!-- Favicon (logo) -->
   <link rel="icon" href="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w32" type="image/png">
   <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w180">
-
   <meta property="og:title" content="Joyas Dari · Joyas con estilo">
   <meta property="og:description" content="Catálogo de joyas únicas. Piezas hechas a mano con materiales de calidad.">
   <meta property="og:image" content="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w1200">
   <meta property="og:type" content="website">
-
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap');
-
-    :root {
-      --dark: #282828;
-      --teal: #15696F;
-      --teal-light: #63BDB5;
-      --muted: #858585;
-      --bg: #EEF2F0;
-      --white: #FFFFFF;
-      --bordeaux: #880D1E;
-      --silver: #E5E9EC;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--dark);
-      font-family: 'Inter', system-ui, sans-serif;
-      font-weight: 400;
-      line-height: 1.5;
-    }
-
-    /* ========== HEADER ========== */
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(40, 40, 40, 0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: white;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px 10px;
-      gap: 12px;
-    }
-
-    .logo-left {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .logo-img {
-      height: 44px;
-      width: auto;
-      display: block;
-    }
-
-    .brand-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 28px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-align: center;
-      color: #F1F5F9;
-      white-space: nowrap;
-      flex: 1;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    /* ===== BOTÓN LUPA (expandible) ===== */
-    .search-toggle-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.04);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      font-size: 18px;
-    }
-
-    .search-toggle-btn:hover {
-      background: rgba(255,255,255,0.12);
-      border-color: var(--teal-light);
-    }
-
-    /* ===== CAMPO DE BÚSQUEDA EXPANDIBLE ===== */
-    .search-expandable {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow: hidden;
-      width: 0;
-      opacity: 0;
-      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                  opacity 0.25s ease,
-                  margin 0.3s ease;
-      margin-left: 0;
-    }
-
-    .search-expandable.open {
-      width: 240px;
-      opacity: 1;
-      margin-left: 8px;
-    }
-
-    .search-expandable input {
-      width: 100%;
-      padding: 9px 14px 9px 36px;
-      border-radius: 100px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.08);
-      color: white;
-      font-size: 14px;
-      outline: none;
-      transition: all 0.25s ease;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .search-expandable input::placeholder {
-      color: rgba(255,255,255,0.4);
-    }
-
-    .search-expandable input:focus {
-      background: rgba(255,255,255,0.12);
-      border-color: var(--teal-light);
-      box-shadow: 0 0 0 3px rgba(99, 189, 181, 0.25);
-    }
-
-    .search-expandable .search-icon-inner {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(255,255,255,0.45);
-      pointer-events: none;
-      font-size: 16px;
-    }
-
-    .search-expandable .search-close-btn {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.5);
-      font-size: 18px;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 50%;
-      transition: background 0.2s;
-    }
-
-    .search-expandable .search-close-btn:hover {
-      background: rgba(255,255,255,0.1);
-    }
-
-    /* Categories */
-    .categories {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 0 16px 14px;
-      scrollbar-width: none;
-    }
-
-    .categories::-webkit-scrollbar {
-      display: none;
-    }
-
-    .cat-btn {
-      flex-shrink: 0;
-      padding: 7px 16px;
-      border-radius: 100px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: transparent;
-      color: rgba(255,255,255,0.85);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .cat-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.25);
-    }
-
-    .cat-btn.active {
-      background: var(--teal-light);
-      color: var(--dark);
-      border-color: var(--teal-light);
-      font-weight: 600;
-    }
-
-    /* Cart bar */
-    .cart-summary {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--teal);
-      margin: 0 16px 12px;
-      padding: 10px 14px;
-      border-radius: 100px;
-      color: white;
-      animation: fadeUp 0.3s ease;
-      box-shadow: 0 4px 20px rgba(21, 105, 111, 0.3);
-    }
-
-    .cart-summary.show {
-      display: flex;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ========== GRID ========== */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px 14px;
-      padding: 24px 14px 50px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    @media (min-width: 640px) {
-      .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px 18px;
-        padding: 32px 24px 60px;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .product-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-
-    /* ========== PRODUCT CARD ========== */
-    .card {
-      background: white;
-      border-radius: 18px;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(40,40,40,0.06);
-      box-shadow: 0 2px 8px rgba(40,40,40,0.04);
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 40px rgba(40, 40, 40, 0.1);
-      border-color: rgba(40,40,40,0.1);
-    }
-
-    .card-image {
-      position: relative;
-      aspect-ratio: 1/1;
-      background: #E8ECE9;
-      overflow: hidden;
-    }
-
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-      cursor: zoom-in;
-    }
-
-    .card:hover .card-image img {
-      transform: scale(1.06);
-    }
-
-    .card-image .placeholder {
-      width: 100%;
-      height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      color: #A0A8A4;
-    }
-
-    .fav-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.92);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: all 0.2s ease;
-      z-index: 2;
-    }
-
-    .fav-btn:hover {
-      transform: scale(1.12);
-      background: white;
-    }
-
-    .stock-badge {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: var(--bordeaux);
-      color: white;
-      font-size: 9px;
-      font-weight: 600;
-      padding: 4px 9px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .stock-badge.low {
-      background: var(--dark);
-    }
-
-    .card-body {
-      padding: 14px 14px 16px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .card-type {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--teal);
-      margin-bottom: 4px;
-    }
-
-    .card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
-      font-weight: 500;
-      line-height: 1.3;
-      color: var(--dark);
-      margin-bottom: 8px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .card-price-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .card-price {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--dark);
-    }
-
-    .card-stock {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    /* Quantity */
-    .qty-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .qty-control {
-      display: flex;
-      align-items: center;
-      background: #E8ECE9;
-      border-radius: 100px;
-      padding: 3px;
-    }
-
-    .qty-btn {
-      width: 30px;
-      height: 30px;
-      border: none;
-      background: white;
-      border-radius: 50%;
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-      transition: all 0.15s;
-    }
-
-    .qty-btn:hover:not(:disabled) {
-      background: var(--silver);
-      transform: scale(1.05);
-    }
-
-    .qty-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .qty-value {
-      width: 36px;
-      text-align: center;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--dark);
-      outline: none;
-      -moz-appearance: textfield;
-    }
-
-    .qty-value::-webkit-outer-spin-button,
-    .qty-value::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-    }
-
-    .add-btn {
-      width: 100%;
-      padding: 11px;
-      border: none;
-      border-radius: 100px;
-      background: var(--dark);
-      color: white;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .add-btn:hover:not(:disabled) {
-      background: var(--teal);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(21, 105, 111, 0.25);
-    }
-
-    .add-btn:disabled {
-      background: #C5CBC8;
-      cursor: not-allowed;
-    }
-
-    /* ========== EMPTY & SKELETON ========== */
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 70px 20px;
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-
-    .empty-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      color: var(--muted);
-    }
-
-    .skeleton-card {
-      background: white;
-      border-radius: 18px;
-      overflow: hidden;
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, #E0E5E2 25%, #EEF2F0 50%, #E0E5E2 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.6s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .skeleton-img {
-      aspect-ratio: 1/1;
-    }
-
-    .skeleton-line {
-      height: 12px;
-      border-radius: 6px;
-      margin: 10px 14px;
-    }
-
-    /* ========== CART MODAL ========== */
-    .cart-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(40,40,40,0.5);
-      backdrop-filter: blur(6px);
-      z-index: 100;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .cart-modal.show {
-      display: flex;
-    }
-
-    .cart-panel {
-      background: white;
-      width: 100%;
-      max-width: 440px;
-      max-height: 85vh;
-      border-radius: 24px 24px 0 0;
-      display: flex;
-      flex-direction: column;
-      animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.12);
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
-    .cart-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 20px 16px;
-      border-bottom: 1px solid #E5E9EC;
-    }
-
-    .cart-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-weight: 500;
-      color: var(--dark);
-    }
-
-    .cart-close {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: none;
-      background: #EEF2F0;
-      font-size: 22px;
-      color: var(--dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-
-    .cart-close:hover {
-      background: #E0E5E2;
-    }
-
-    .cart-items {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px 20px;
-    }
-
-    .cart-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 0;
-      border-bottom: 1px solid #EEF2F0;
-      gap: 12px;
-    }
-
-    .cart-item:last-child {
-      border-bottom: none;
-    }
-
-    .cart-item-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .cart-item-name {
-      font-weight: 500;
-      font-size: 14px;
-      color: var(--dark);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 2px;
-    }
-
-    .cart-item-price {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .cart-item-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .cart-qty {
-      display: flex;
-      align-items: center;
-      background: #EEF2F0;
-      border-radius: 100px;
-      padding: 2px;
-    }
-
-    .cart-qty-btn {
-      width: 28px;
-      height: 28px;
-      border: none;
-      background: white;
-      border-radius: 50%;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      transition: all 0.15s;
-    }
-
-    .cart-qty-btn:hover {
-      background: var(--silver);
-    }
-
-    .cart-qty-input {
-      width: 32px;
-      text-align: center;
-      border: none;
-      background: transparent;
-      font-size: 14px;
-      font-weight: 600;
-      outline: none;
-      color: var(--dark);
-    }
-
-    .cart-delete {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: none;
-      background: #FDF2F2;
-      color: var(--bordeaux);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-
-    .cart-delete:hover {
-      background: #FEE2E2;
-      transform: scale(1.05);
-    }
-
-    .cart-footer {
-      padding: 16px 20px 28px;
-      border-top: 1px solid #E5E9EC;
-      background: #F8FAF9;
-    }
-
-    .cart-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .cart-total-label {
-      font-size: 15px;
-      color: var(--muted);
-    }
-
-    .cart-total-amount {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 600;
-      color: var(--dark);
-    }
-
-    .whatsapp-btn {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 100px;
-      background: var(--teal);
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-
-    .whatsapp-btn:hover {
-      background: #12575C;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(21, 105, 111, 0.3);
-    }
-
-    /* ========== LIGHTBOX MEJORADA (CON ZOOM) ========== */
-    .lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      cursor: zoom-out;
-      overflow: hidden;
-      user-select: none;
-    }
-
-    .lightbox.show {
-      display: flex;
-    }
-
-    .lightbox .lightbox-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .lightbox img {
-      max-width: 95vw;
-      max-height: 90vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-      transition: transform 0.1s ease;
-      touch-action: none;
-      cursor: zoom-in;
-    }
-
-    .lightbox img.zoomed {
-      cursor: zoom-out;
-    }
-
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 24px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(0,0,0,0.5);
-      color: white;
-      font-size: 28px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      backdrop-filter: blur(8px);
-      z-index: 10;
-    }
-
-    .lightbox-close:hover {
-      background: rgba(255,255,255,0.15);
-      transform: scale(1.1);
-    }
-
-    .lightbox .zoom-hint {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.4);
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: 0.02em;
-      pointer-events: none;
-      background: rgba(0,0,0,0.3);
-      padding: 6px 16px;
-      border-radius: 20px;
-      backdrop-filter: blur(4px);
-    }
-
-    /* ========== TOAST ========== */
-    .toast-container {
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 300;
-      pointer-events: none;
-    }
-
-    .toast {
-      background: var(--dark);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 100px;
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      animation: toastIn 0.35s ease;
-      white-space: nowrap;
-    }
-
-    .toast.success {
-      background: var(--teal);
-    }
-
-    .toast.error {
-      background: var(--bordeaux);
-    }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ========== FOOTER ========== */
-    .footer {
-      background: var(--dark);
-      padding: 32px 20px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .social-btn {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.04);
-      color: #E8EEF4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-decoration: none;
-    }
-
-    .social-btn:hover {
-      background: var(--teal-light);
-      color: var(--dark);
-      border-color: var(--teal-light);
-      transform: scale(1.08);
-    }
-
-    .footer-email {
-      color: rgba(255,255,255,0.5);
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      text-align: center;
-      width: 100%;
-      margin-top: 4px;
-      letter-spacing: 0.02em;
-    }
-
-    .footer-email a {
-      color: rgba(255,255,255,0.6);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .footer-email a:hover {
-      color: var(--teal-light);
-    }
-
-    /* Animations */
-    .card-enter {
-      animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .bounce {
-      animation: bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: scale(1); }
-      40% { transform: scale(1.2); }
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .header-top {
-        padding: 12px 12px 8px;
-      }
-      .logo-img {
-        height: 38px;
-      }
-      .brand-title {
-        font-size: 22px;
-        letter-spacing: 0.04em;
-      }
-      .search-expandable.open {
-        width: 160px;
-      }
-      .lightbox img {
-        max-width: 98vw;
-        max-height: 85vh;
-      }
-      .lightbox-close {
-        top: 12px;
-        right: 16px;
-        width: 40px;
-        height: 40px;
-        font-size: 22px;
-      }
-    }
-
-    @media (min-width: 768px) {
-      .header-top {
-        padding: 16px 24px 12px;
-      }
-      .brand-title {
-        font-size: 32px;
-      }
-      .logo-img {
-        height: 48px;
-      }
-      .search-expandable.open {
-        width: 280px;
-      }
-      .lightbox img {
-        max-width: 90vw;
-        max-height: 85vh;
-      }
-    }
+    /* ===== ESTILOS MINIMIZADOS Y OPTIMIZADOS ===== */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+    :root{--dark:#282828;--teal:#15696F;--teal-light:#63BDB5;--muted:#858585;--bg:#EEF2F0;--white:#FFFFFF;--bordeaux:#880D1E;--silver:#E5E9EC}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{background:var(--bg);color:var(--dark);font-family:'Inter',system-ui,sans-serif;font-weight:400;line-height:1.5}
+    .header{position:sticky;top:0;z-index:50;background:rgba(40,40,40,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .header-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;gap:10px}
+    .logo-img{height:40px;width:auto;display:block}
+    .brand-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:500;letter-spacing:0.04em;text-align:center;color:#F1F5F9;flex:1;white-space:nowrap}
+    .header-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .header-action-btn{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:16px}
+    .header-action-btn:hover{background:rgba(255,255,255,0.12);border-color:var(--teal-light)}
+    .search-expandable{position:relative;display:flex;align-items:center;gap:6px;overflow:hidden;width:0;opacity:0;transition:width 0.3s cubic-bezier(0.22,1,0.36,1),opacity 0.25s ease;margin-left:0}
+    .search-expandable.open{width:200px;opacity:1;margin-left:6px}
+    .search-expandable input{width:100%;padding:7px 30px 7px 32px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:#fff;font-size:13px;outline:none;transition:all 0.2s}
+    .search-expandable input::placeholder{color:rgba(255,255,255,0.4)}
+    .search-expandable input:focus{background:rgba(255,255,255,0.12);border-color:var(--teal-light);box-shadow:0 0 0 3px rgba(99,189,181,0.25)}
+    .search-expandable .search-icon-inner{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.45);pointer-events:none;font-size:14px}
+    .search-expandable .search-close-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:0;border:0;color:rgba(255,255,255,0.5);font-size:18px;cursor:pointer;padding:2px}
+    .categories{display:flex;gap:6px;overflow-x:auto;padding:0 12px 10px;scrollbar-width:none}
+    .categories::-webkit-scrollbar{display:none}
+    .cat-btn{flex-shrink:0;padding:6px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:0;color:rgba(255,255,255,0.85);font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+    .cat-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25)}
+    .cat-btn.active{background:var(--teal-light);color:var(--dark);border-color:var(--teal-light);font-weight:600}
+    .cart-summary{display:none;align-items:center;justify-content:space-between;background:var(--teal);margin:0 12px 10px;padding:8px 14px;border-radius:100px;color:#fff;animation:fadeUp 0.25s ease;box-shadow:0 4px 16px rgba(21,105,111,0.25)}
+    .cart-summary.show{display:flex}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:16px 12px 40px;max-width:1100px;margin:0 auto}
+    @media(min-width:640px){.product-grid{grid-template-columns:repeat(3,1fr);gap:18px;padding:24px 20px 50px}}
+    @media(min-width:1024px){.product-grid{grid-template-columns:repeat(4,1fr)}}
+    .card{background:#fff;border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;border:1px solid rgba(40,40,40,0.06);box-shadow:0 2px 6px rgba(40,40,40,0.04)}
+    .card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(40,40,40,0.08)}
+    .card-image{position:relative;aspect-ratio:1/1;background:#E8ECE9;overflow:hidden}
+    .card-image img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;cursor:zoom-in;display:block}
+    .card-image img:hover{transform:scale(1.04)}
+    .card-image .placeholder{display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:32px;color:#A0A8A4}
+    .fav-btn{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.9);border:0;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:all 0.15s;z-index:2}
+    .fav-btn:hover{transform:scale(1.1)}
+    .stock-badge{position:absolute;bottom:8px;left:8px;background:var(--bordeaux);color:#fff;font-size:8px;font-weight:600;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em}
+    .stock-badge.low{background:var(--dark)}
+    .card-body{padding:12px 12px 14px;display:flex;flex-direction:column;flex:1}
+    .card-type{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+    .card-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;line-height:1.3;color:var(--dark);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-price-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+    .card-price{font-size:16px;font-weight:600;color:var(--dark)}
+    .card-stock{font-size:10px;color:var(--muted)}
+    .qty-row{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+    .qty-control{display:flex;align-items:center;background:#E8ECE9;border-radius:100px;padding:2px}
+    .qty-btn{width:28px;height:28px;border:0;background:#fff;border-radius:50%;font-size:14px;font-weight:500;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:all 0.15s}
+    .qty-btn:hover:not(:disabled){background:var(--silver);transform:scale(1.04)}
+    .qty-btn:disabled{opacity:0.3;cursor:not-allowed}
+    .qty-value{width:32px;text-align:center;border:0;background:0;font-size:13px;font-weight:600;color:var(--dark);outline:0;-moz-appearance:textfield}
+    .qty-value::-webkit-outer-spin-button,.qty-value::-webkit-inner-spin-button{-webkit-appearance:none}
+    .add-btn{width:100%;padding:9px;border:0;border-radius:100px;background:var(--dark);color:#fff;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+    .add-btn:hover:not(:disabled){background:var(--teal);transform:translateY(-1px);box-shadow:0 4px 12px rgba(21,105,111,0.2)}
+    .add-btn:disabled{background:#C5CBC8;cursor:not-allowed}
+    .empty-state{grid-column:1/-1;text-align:center;padding:50px 16px}
+    .empty-icon{font-size:40px;margin-bottom:10px}
+    .empty-text{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--muted)}
+    .skeleton-card{background:#fff;border-radius:16px;overflow:hidden}
+    .skeleton{background:linear-gradient(90deg,#E0E5E2 25%,#EEF2F0 50%,#E0E5E2 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .skeleton-img{aspect-ratio:1/1}
+    .skeleton-line{height:10px;border-radius:6px;margin:8px 12px}
+    .cart-modal{display:none;position:fixed;inset:0;background:rgba(40,40,40,0.5);backdrop-filter:blur(4px);z-index:100;align-items:flex-end;justify-content:center}
+    .cart-modal.show{display:flex}
+    .cart-panel{background:#fff;width:100%;max-width:420px;max-height:80vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:slideUp 0.3s cubic-bezier(0.22,1,0.36,1);box-shadow:0 -8px 30px rgba(0,0,0,0.08)}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .cart-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid #E5E9EC}
+    .cart-header h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--dark)}
+    .cart-close{width:32px;height:32px;border-radius:50%;border:0;background:#EEF2F0;font-size:20px;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s}
+    .cart-close:hover{background:#E0E5E2}
+    .cart-items{flex:1;overflow-y:auto;padding:6px 16px}
+    .cart-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #EEF2F0;gap:10px}
+    .cart-item:last-child{border-bottom:0}
+    .cart-item-info{flex:1;min-width:0}
+    .cart-item-name{font-weight:500;font-size:13px;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+    .cart-item-price{font-size:11px;color:var(--muted)}
+    .cart-item-actions{display:flex;align-items:center;gap:6px}
+    .cart-qty{display:flex;align-items:center;background:#EEF2F0;border-radius:100px;padding:2px}
+    .cart-qty-btn{width:26px;height:26px;border:0;background:#fff;border-radius:50%;font-size:14px;font-weight:500;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:all 0.15s}
+    .cart-qty-btn:hover{background:var(--silver)}
+    .cart-qty-input{width:30px;text-align:center;border:0;background:0;font-size:13px;font-weight:600;outline:0;color:var(--dark)}
+    .cart-delete{width:30px;height:30px;border-radius:50%;border:0;background:#FDF2F2;color:var(--bordeaux);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+    .cart-delete:hover{background:#FEE2E2;transform:scale(1.04)}
+    .cart-footer{padding:14px 18px 24px;border-top:1px solid #E5E9EC;background:#F8FAF9}
+    .cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .cart-total-label{font-size:14px;color:var(--muted)}
+    .cart-total-amount{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--dark)}
+    .whatsapp-btn{width:100%;padding:12px;border:0;border-radius:100px;background:var(--teal);color:#fff;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+    .whatsapp-btn:hover{background:#12575C;transform:translateY(-1px);box-shadow:0 4px 12px rgba(21,105,111,0.2)}
+    .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:200;align-items:center;justify-content:center;cursor:zoom-out;overflow:hidden;user-select:none}
+    .lightbox.show{display:flex}
+    .lightbox .lightbox-inner{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .lightbox img{max-width:95vw;max-height:90vh;width:auto;height:auto;object-fit:contain;border-radius:6px;box-shadow:0 16px 48px rgba(0,0,0,0.4);transition:transform 0.1s;touch-action:none;cursor:zoom-in}
+    .lightbox img.zoomed{cursor:zoom-out}
+    .lightbox-close{position:absolute;top:16px;right:20px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(0,0,0,0.4);color:#fff;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;backdrop-filter:blur(6px);z-index:10}
+    .lightbox-close:hover{background:rgba(255,255,255,0.15);transform:scale(1.06)}
+    .lightbox .zoom-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.3);font-size:11px;font-family:'Inter',sans-serif;letter-spacing:0.02em;pointer-events:none;background:rgba(0,0,0,0.2);padding:4px 14px;border-radius:20px;backdrop-filter:blur(4px)}
+    .toast-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:300;pointer-events:none}
+    .toast{background:var(--dark);color:#fff;padding:10px 20px;border-radius:100px;font-size:12px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,0.15);animation:toastIn 0.3s ease;white-space:nowrap}
+    .toast.success{background:var(--teal)}
+    .toast.error{background:var(--bordeaux)}
+    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .footer{background:var(--dark);padding:24px 16px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+    .social-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#E8EEF4;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;text-decoration:none}
+    .social-btn:hover{background:var(--teal-light);color:var(--dark);border-color:var(--teal-light);transform:scale(1.06)}
+    .card-enter{animation:cardIn 0.35s cubic-bezier(0.22,1,0.36,1) both}
+    @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .bounce{animation:bounce 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+    @keyframes bounce{0%,100%{transform:scale(1)}40%{transform:scale(1.15)}}
+    @media(max-width:480px){.header-top{padding:10px 10px 6px}.logo-img{height:34px}.brand-title{font-size:20px;letter-spacing:0.02em}.search-expandable.open{width:140px}.lightbox img{max-width:98vw;max-height:85vh}.lightbox-close{top:10px;right:14px;width:36px;height:36px;font-size:20px}}
+    @media(min-width:768px){.header-top{padding:14px 24px 10px}.brand-title{font-size:28px}.logo-img{height:44px}.search-expandable.open{width:260px}.lightbox img{max-width:90vw;max-height:85vh}}
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-top">
-      <div class="logo-left">
-        <img src="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w120" 
-             class="logo-img" alt="Joyas Dari">
-      </div>
-      
-      <h1 class="brand-title">Joyas Dari</h1>
-      
-      <div class="header-right">
-        <!-- Botón lupa que expande la búsqueda -->
-        <button id="searchToggleBtn" class="search-toggle-btn" aria-label="Abrir buscador">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-          </svg>
-        </button>
-
-        <!-- Contenedor del campo de búsqueda expandible -->
-        <div id="searchExpandable" class="search-expandable">
-          <span class="search-icon-inner">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-            </svg>
-          </span>
-          <input type="search" id="searchInput" placeholder="Buscar joyas..." aria-label="Buscar">
-          <button id="searchCloseBtn" class="search-close-btn" aria-label="Cerrar buscador">&times;</button>
-        </div>
-      </div>
+<header class="header">
+  <div class="header-top">
+    <div class="logo-left">
+      <img src="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w120" class="logo-img" alt="Joyas Dari" loading="eager">
     </div>
-
-    <div id="cartSummary" class="cart-summary">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span>🛒</span>
-        <span id="cartCountDisplay" class="text-xs font-semibold tracking-wide bg-white/20 px-2.5 py-0.5 rounded-full">0</span>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="JoyasDari.openCartModal()" 
-                class="bg-white/20 hover:bg-white/30 text-white text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-full transition">
-          Ver
-        </button>
-        <button onclick="JoyasDari.sendCartOrder()" 
-                class="bg-white text-[#282828] text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-full transition hover:bg-[#EEF2F0]">
-          Enviar
-        </button>
-      </div>
-    </div>
-
-    <div id="catContainer" class="categories"></div>
-  </header>
-
-  <main>
-    <div id="grid" class="product-grid"></div>
-  </main>
-
-  <!-- FOOTER ACTUALIZADO -->
-  <footer class="footer">
-    <!-- Facebook (próximamente) -->
-    <div class="social-btn" onclick="JoyasDari.showToast('Pronto tendremos Facebook')" aria-label="Facebook">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/>
-      </svg>
-    </div>
-
-    <!-- Instagram (real) -->
-    <a href="https://www.instagram.com/joyas.dari/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram de Joyas Dari">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2C5.8 4 4 5.8 4 7.6v8.8C4 18.2 5.8 20 7.6 20h8.8c1.8 0 3.6-1.8 3.6-3.6V7.6C20 5.8 18.2 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/>
-      </svg>
-    </a>
-
-    <!-- Correo electrónico -->
-    <a href="mailto:dari.joyas@gmail.com" class="social-btn" aria-label="Correo electrónico de Joyas Dari">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="4" width="20" height="16" rx="2"/>
-        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-      </svg>
-    </a>
-
-    <div class="footer-email">
-      <a href="mailto:dari.joyas@gmail.com">dari.joyas@gmail.com</a>
-    </div>
-  </footer>
-
-  <!-- CART MODAL -->
-  <div id="cartModal" class="cart-modal" onclick="if(event.target===this) JoyasDari.closeCartModal()">
-    <div class="cart-panel">
-      <div class="cart-header">
-        <h3>Tu pedido</h3>
-        <button class="cart-close" onclick="JoyasDari.closeCartModal()">&times;</button>
-      </div>
-      <div id="cartModalItems" class="cart-items"></div>
-      <div class="cart-footer">
-        <div class="cart-total">
-          <span class="cart-total-label">Total</span>
-          <span id="modalTotalAmount" class="cart-total-amount">$0</span>
-        </div>
-        <button class="whatsapp-btn" onclick="JoyasDari.sendCartOrder()">Comprar por WhatsApp</button>
+    <h1 class="brand-title">Joyas Dari</h1>
+    <div class="header-right">
+      <button id="searchToggleBtn" class="header-action-btn" aria-label="Buscar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <div id="searchExpandable" class="search-expandable">
+        <span class="search-icon-inner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+        <input type="search" id="searchInput" placeholder="Buscar joyas..." aria-label="Buscar">
+        <button id="searchCloseBtn" class="search-close-btn" aria-label="Cerrar">&times;</button>
       </div>
     </div>
   </div>
 
-  <!-- LIGHTBOX MEJORADA -->
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Vista ampliada de la joya">
-    <button class="lightbox-close" aria-label="Cerrar imagen" id="lightboxCloseBtn">&times;</button>
-    <div class="lightbox-inner" id="lightboxInner">
-      <img id="lightboxImg" src="" alt="">
+  <div id="cartSummary" class="cart-summary">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span>🛒</span>
+      <span id="cartCountDisplay" class="text-xs font-semibold tracking-wide bg-white/20 px-2.5 py-0.5 rounded-full">0</span>
     </div>
-    <div class="zoom-hint">🔍 Rueda para zoom · Doble clic para restaurar</div>
+    <div style="display:flex;gap:6px;">
+      <button onclick="Dari.openCartModal()" class="bg-white/20 hover:bg-white/30 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full transition">Ver</button>
+      <button onclick="Dari.sendCartOrder()" class="bg-white text-[#282828] text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full transition hover:bg-[#EEF2F0]">Enviar</button>
+    </div>
   </div>
 
-  <div id="toastContainer" class="toast-container" role="status" aria-live="polite"></div>
+  <div id="catContainer" class="categories"></div>
+</header>
 
-  <script>
-  (function(){
-    "use strict";
+<main>
+  <div id="grid" class="product-grid"></div>
+</main>
 
-    const CONFIG = {
-      apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
-      ws: '56935781897',
-      defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w800',
-      STORAGE_CART: 'dari_cart',
-      STORAGE_FAVS: 'dari_favs'
-    };
+<footer class="footer">
+  <div class="social-btn" onclick="Dari.showToast('Pronto tendremos Facebook')" aria-label="Facebook">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+  </div>
+  <a href="https://www.instagram.com/joyas.dari/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2C5.8 4 4 5.8 4 7.6v8.8C4 18.2 5.8 20 7.6 20h8.8c1.8 0 3.6-1.8 3.6-3.6V7.6C20 5.8 18.2 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/></svg>
+  </a>
+  <a href="mailto:dari.joyas@gmail.com" class="social-btn" aria-label="Correo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+  </a>
+</footer>
 
-    console.log('🔍 Joyas Dari - Modo depuración activado');
+<!-- CART MODAL -->
+<div id="cartModal" class="cart-modal" onclick="if(event.target===this) Dari.closeCartModal()">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h3>Tu pedido</h3>
+      <button class="cart-close" onclick="Dari.closeCartModal()">&times;</button>
+    </div>
+    <div id="cartModalItems" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total"><span class="cart-total-label">Total</span><span id="modalTotalAmount" class="cart-total-amount">$0</span></div>
+      <button class="whatsapp-btn" onclick="Dari.sendCartOrder()">Comprar por WhatsApp</button>
+    </div>
+  </div>
+</div>
 
-    // ===== ESTADO =====
-    let inventory = [];
-    let cart = [];
-    let favorites = [];
-    let currentCategory = "TODOS";
-    let searchQuery = '';
-    let searchDebounce = null;
-    let isLoading = false;
-    let retryCount = 0;
-    const MAX_RETRIES = 3;
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox">
+  <button class="lightbox-close" id="lightboxCloseBtn">&times;</button>
+  <div class="lightbox-inner" id="lightboxInner">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+  <div class="zoom-hint">🔍 Rueda · Doble clic</div>
+</div>
 
-    // ===== ELEMENTOS DOM =====
-    const $ = (id) => document.getElementById(id);
-    const searchToggleBtn = $('searchToggleBtn');
-    const searchExpandable = $('searchExpandable');
-    const searchInput = $('searchInput');
-    const searchCloseBtn = $('searchCloseBtn');
+<div id="toastContainer" class="toast-container"></div>
 
-    // ===== LIGHTBOX =====
-    const lightbox = $('lightbox');
-    const lightboxImg = $('lightboxImg');
-    const lightboxClose = $('lightboxCloseBtn');
-    const lightboxInner = $('lightboxInner');
+<script>
+(function(){
+  "use strict";
 
-    let currentScale = 1;
-    let currentTranslateX = 0;
-    let currentTranslateY = 0;
-    let isZoomed = false;
-    let isDragging = false;
-    let startX, startY, startTranslateX, startTranslateY;
-    let touchStartX, touchStartY, touchDist = 0;
-    let touchStartScale = 1;
-    let touchStartTranslateX = 0;
-    let touchStartTranslateY = 0;
+  // ===== CONFIG =====
+  const CONFIG = {
+    apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
+    ws: '56935781897',
+    defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w400',
+    STORAGE_CART: 'dari_cart',
+    STORAGE_FAVS: 'dari_favs'
+  };
 
-    function openLightbox(src, alt) {
-      if (!src || src === CONFIG.defImg) return;
-      lightboxImg.src = src;
-      lightboxImg.alt = alt || 'Joya';
-      resetZoom();
-      lightbox.classList.add('show');
-      document.body.style.overflow = 'hidden';
-      lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
+  // ===== ESTADO =====
+  let inventory = [], cart = [], favorites = [];
+  let currentCategory = "TODOS";
+  let searchQuery = '';
+  let searchDebounce = null;
+  let isLoading = false;
+
+  // ===== DOM REFS =====
+  const $ = id => document.getElementById(id);
+  const grid = $('grid');
+  const catContainer = $('catContainer');
+  const cartSummary = $('cartSummary');
+  const cartCountDisplay = $('cartCountDisplay');
+  const cartModal = $('cartModal');
+  const cartModalItems = $('cartModalItems');
+  const modalTotal = $('modalTotalAmount');
+  const searchToggle = $('searchToggleBtn');
+  const searchExpand = $('searchExpandable');
+  const searchInput = $('searchInput');
+  const searchClose = $('searchCloseBtn');
+  const lightbox = $('lightbox');
+  const lightboxImg = $('lightboxImg');
+  const lightboxClose = $('lightboxCloseBtn');
+  const lightboxInner = $('lightboxInner');
+  const toastContainer = $('toastContainer');
+
+  // ===== LIGHTBOX (simplificada) =====
+  let currentScale = 1, translateX = 0, translateY = 0, isDragging = false;
+  let startX, startY, startTranslateX, startTranslateY;
+
+  function openLightbox(src, alt) {
+    if (!src || src === CONFIG.defImg) return;
+    // Usar mayor resolución en lightbox
+    const highRes = src.replace(/&sz=w\d+/, '&sz=w1200');
+    lightboxImg.src = highRes;
+    lightboxImg.alt = alt || 'Joya';
+    resetZoom();
+    lightbox.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('show');
+    document.body.style.overflow = '';
+    resetZoom();
+  }
+
+  function resetZoom() {
+    currentScale = 1; translateX = 0; translateY = 0;
+    lightboxImg.style.transform = 'scale(1) translate(0px,0px)';
+    lightboxImg.classList.remove('zoomed');
+    lightbox.style.cursor = 'zoom-out';
+  }
+
+  // Eventos lightbox
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox || e.target === lightboxInner || e.target === lightboxImg) closeLightbox();
+  });
+  lightboxClose.addEventListener('click', e => { e.stopPropagation(); closeLightbox(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeCartModal(); } });
+
+  // Zoom con rueda
+  lightboxImg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.08 : 0.08;
+    let newScale = Math.min(3, Math.max(0.5, currentScale + delta));
+    if (newScale !== currentScale) {
+      currentScale = newScale;
+      lightboxImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+      lightboxImg.classList.toggle('zoomed', currentScale > 1);
+      lightbox.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out';
     }
+  }, { passive: false });
 
-    function closeLightbox() {
-      lightbox.classList.remove('show');
-      document.body.style.overflow = '';
-      resetZoom();
+  // Doble clic
+  lightboxImg.addEventListener('dblclick', e => {
+    e.preventDefault();
+    if (currentScale > 1) resetZoom();
+    else { currentScale = 1.5; lightboxImg.style.transform = `scale(1.5) translate(0,0)`; lightboxImg.classList.add('zoomed'); lightbox.style.cursor = 'zoom-in'; }
+  });
+
+  // Arrastre
+  lightboxImg.addEventListener('mousedown', e => {
+    if (currentScale <= 1) return;
+    isDragging = true;
+    startX = e.clientX; startY = e.clientY;
+    startTranslateX = translateX; startTranslateY = translateY;
+    lightboxImg.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    translateX = startTranslateX + (e.clientX - startX);
+    translateY = startTranslateY + (e.clientY - startY);
+    lightboxImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+  });
+  document.addEventListener('mouseup', () => { isDragging = false; lightboxImg.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out'; });
+
+  // ===== FUNCIONES ÚTILES =====
+  function escapeHtml(str) { const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
+  function sanitize(str) { return str ? escapeHtml(String(str)).trim() : ''; }
+  function formatPrice(n) { return '$' + n.toLocaleString('es-CL'); }
+  function fixDriveUrl(url, size = 400) {
+    if (!url || url.length < 10) return CONFIG.defImg;
+    const m = url.match(/(?:id=|d\/|file\/d\/)([\w-]{25,})/);
+    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w${size}` : CONFIG.defImg;
+  }
+  function showToast(msg, type = '') {
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.textContent = msg;
+    toastContainer.appendChild(t);
+    setTimeout(() => t.remove(), 2400);
+  }
+  function saveState() {
+    try { localStorage.setItem(CONFIG.STORAGE_CART, JSON.stringify(cart));
+          localStorage.setItem(CONFIG.STORAGE_FAVS, JSON.stringify(favorites)); } catch(e){}
+  }
+  function loadState() {
+    try { const c = localStorage.getItem(CONFIG.STORAGE_CART); if (c) cart = JSON.parse(c);
+          const f = localStorage.getItem(CONFIG.STORAGE_FAVS); if (f) favorites = JSON.parse(f); } catch(e){}
+  }
+  function debounce(fn, delay) { return function(...args) { clearTimeout(searchDebounce); searchDebounce = setTimeout(() => fn.apply(this, args), delay); }; }
+
+  // ===== BÚSQUEDA =====
+  function openSearch() { searchExpand.classList.add('open'); searchInput.focus(); }
+  function closeSearch() { searchExpand.classList.remove('open'); searchInput.value = ''; searchQuery = ''; renderProducts(); }
+  searchToggle.addEventListener('click', e => { e.stopPropagation(); if (searchExpand.classList.contains('open')) closeSearch(); else openSearch(); });
+  searchClose.addEventListener('click', e => { e.stopPropagation(); closeSearch(); });
+  document.addEventListener('click', e => { const inside = searchExpand.contains(e.target) || searchToggle.contains(e.target); if (!inside && searchExpand.classList.contains('open')) closeSearch(); });
+  const handleSearch = debounce(function() { searchQuery = searchInput.value.toLowerCase().trim(); renderProducts(); }, 200);
+  searchInput.addEventListener('input', handleSearch);
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
+
+  // ===== FAVORITOS =====
+  function isFavorite(id) { return favorites.includes(id); }
+  function toggleFavorite(pid) {
+    const i = favorites.indexOf(pid);
+    if (i >= 0) { favorites.splice(i,1); showToast('Eliminado de favoritos'); } else { favorites.push(pid); showToast('Añadido a favoritos','success'); }
+    saveState();
+    const btn = document.getElementById('fav-'+pid);
+    if (btn) btn.innerHTML = isFavorite(pid) ? '❤️' : '🤍';
+  }
+
+  // ===== CATEGORÍAS =====
+  function renderCategories() {
+    const types = ["TODOS", ...new Set(inventory.map(p => p.type).filter(Boolean))];
+    catContainer.innerHTML = types.map(t =>
+      `<button class="cat-btn ${currentCategory === t ? 'active' : ''}" onclick="Dari.setCategory('${encodeURIComponent(t)}')">${sanitize(t)}</button>`
+    ).join('');
+  }
+  function setCategory(cat) { currentCategory = decodeURIComponent(cat); renderCategories(); renderProducts(); }
+
+  // ===== CANTIDAD =====
+  function changeQty(pid, delta) {
+    const input = document.getElementById('qty-'+pid);
+    const p = inventory.find(x => x.id === pid);
+    if (!input || !p) return;
+    let v = parseInt(input.value) || 1;
+    v = Math.max(1, Math.min(v + delta, p.stock));
+    input.value = v;
+    updateAddBtn(pid, v, p.stock);
+  }
+  function handleQtyInput(pid) {
+    const input = document.getElementById('qty-'+pid);
+    const p = inventory.find(x => x.id === pid);
+    if (!input || !p) return;
+    let v = parseInt(input.value);
+    if (isNaN(v) || v < 1) v = 1;
+    if (v > p.stock) v = p.stock;
+    input.value = v;
+    updateAddBtn(pid, v, p.stock);
+  }
+  function updateAddBtn(pid, qty, stock) {
+    const btn = document.getElementById('add-btn-'+pid);
+    if (btn) btn.disabled = qty > stock || stock <= 0;
+  }
+
+  // ===== RENDER PRODUCTOS =====
+  function renderProducts() {
+    let list = currentCategory === "TODOS" ? [...inventory] : inventory.filter(p => p.type === currentCategory);
+    if (searchQuery) {
+      list = list.filter(p => (p.name && p.name.toLowerCase().includes(searchQuery)) ||
+                              (p.type && p.type.toLowerCase().includes(searchQuery)) ||
+                              (p.id && p.id.toLowerCase().includes(searchQuery)));
     }
-
-    function resetZoom() {
-      currentScale = 1;
-      currentTranslateX = 0;
-      currentTranslateY = 0;
-      lightboxImg.style.transform = `scale(1) translate(0px, 0px)`;
-      lightboxImg.classList.remove('zoomed');
-      lightbox.style.cursor = 'zoom-out';
-      isZoomed = false;
+    if (!list.length) {
+      grid.innerHTML = `<div class="empty-state"><div class="empty-icon">${searchQuery?'🔍':'💎'}</div><p class="empty-text">${searchQuery?'No se encontraron resultados':'No hay productos en esta categoría'}</p></div>`;
+      return;
     }
-
-    // Eventos de lightbox
-    lightbox.addEventListener('click', function(e) {
-      if (e.target === this || e.target === lightboxInner || e.target === lightboxImg) {
-        closeLightbox();
-      }
+    let html = '';
+    list.forEach((p, i) => {
+      const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
+      const fav = isFavorite(p.id);
+      const imgSrc = fixDriveUrl(p.img, 400); // miniatura optimizada
+      const nameEnc = encodeURIComponent(p.name);
+      const idEnc = encodeURIComponent(p.id);
+      html += `
+      <article class="card card-enter" style="animation-delay:${Math.min(i,15)*0.04}s">
+        <div class="card-image">
+          <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy" decoding="async"
+               onclick="Dari.openLightbox('${imgSrc}','${nameEnc}')"
+               onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
+          <div class="placeholder">💍</div>
+          <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation(); Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
+          ${out ? '<span class="stock-badge">Agotado</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
+        </div>
+        <div class="card-body">
+          <p class="card-type">${sanitize(p.type)}</p>
+          <h3 class="card-title">${sanitize(p.name)}</h3>
+          <div class="card-price-row"><span class="card-price">${formatPrice(p.price)}</span><span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span></div>
+          <div class="qty-row">
+            <div class="qty-control">
+              <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',-1)" ${out?'disabled':''}>–</button>
+              <input type="number" id="qty-${p.id}" class="qty-value" value="1" min="1" max="${p.stock}"
+                     oninput="Dari.handleQtyInput('${idEnc}')" ${out?'disabled':''}>
+              <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',1)" ${out?'disabled':''}>+</button>
+            </div>
+          </div>
+          <button id="add-btn-${p.id}" class="add-btn" onclick="Dari.addToCart('${idEnc}')" ${out?'disabled':''}>${out?'Agotado':'Añadir'}</button>
+        </div>
+      </article>`;
     });
+    grid.innerHTML = html;
+    // actualizar estados de botones
+    list.forEach(p => { const inp = document.getElementById('qty-'+p.id); if (inp) updateAddBtn(p.id, parseInt(inp.value)||1, p.stock); });
+  }
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeLightbox();
-        closeCartModal();
-        closeSearch();
-      }
+  // ===== CARRITO =====
+  function addToCart(pid) {
+    const p = inventory.find(x => x.id === pid);
+    if (!p || p.stock <= 0) return;
+    const qty = parseInt(document.getElementById('qty-'+pid).value) || 1;
+    if (qty > p.stock) { showToast('Solo hay '+p.stock+' unidades','error'); return; }
+    const exist = cart.find(i => i.id === pid);
+    if (exist) { if (exist.q + qty > p.stock) { showToast('Máximo '+p.stock,'error'); return; } exist.q += qty; }
+    else cart.push({ id: p.id, name: p.name, price: p.price, q: qty });
+    updateCartBar();
+    saveState();
+    showToast('Añadido al carrito','success');
+    const badge = cartCountDisplay;
+    badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce');
+  }
+
+  function updateCartBar() {
+    const total = cart.reduce((s,i) => s + i.q, 0);
+    cartCountDisplay.textContent = total + (total === 1 ? ' item' : ' items');
+    cartSummary.classList.toggle('show', total > 0);
+    renderCartModal();
+  }
+
+  function renderCartModal() {
+    if (!cart.length) {
+      cartModalItems.innerHTML = `<div class="empty-state" style="padding:30px 0"><div class="empty-icon">🛒</div><p class="empty-text">Vacío</p></div>`;
+      modalTotal.textContent = '$0';
+      return;
+    }
+    let total = 0;
+    let html = '';
+    cart.forEach((item, idx) => {
+      total += item.price * item.q;
+      html += `
+      <div class="cart-item">
+        <div class="cart-item-info"><div class="cart-item-name">${sanitize(item.name)}</div><div class="cart-item-price">${formatPrice(item.price)} c/u</div></div>
+        <div class="cart-item-actions">
+          <div class="cart-qty">
+            <button class="cart-qty-btn" onclick="Dari.updateCartItemQty(${idx},-1)">−</button>
+            <input type="number" class="cart-qty-input" value="${item.q}" min="1" oninput="Dari.updateCartItemQty(${idx},0,true)" id="cart-qty-${idx}">
+            <button class="cart-qty-btn" onclick="Dari.updateCartItemQty(${idx},1)">+</button>
+          </div>
+          <button class="cart-delete" onclick="Dari.removeCartItem(${idx})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+        </div>
+      </div>`;
     });
+    cartModalItems.innerHTML = html;
+    modalTotal.textContent = formatPrice(total);
+  }
 
-    lightboxImg.addEventListener('wheel', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      let newScale = currentScale + delta;
-      newScale = Math.max(0.5, Math.min(newScale, 3.0));
-      if (newScale !== currentScale) {
-        currentScale = newScale;
-        lightboxImg.style.transform = `scale(${currentScale}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
-        lightboxImg.classList.toggle('zoomed', currentScale > 1);
-        lightbox.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out';
-        isZoomed = currentScale > 1;
+  function updateCartItemQty(idx, delta, fromInput) {
+    const item = cart[idx];
+    const p = inventory.find(x => x.id === item.id);
+    if (!p) return;
+    let q = fromInput ? parseInt(document.getElementById('cart-qty-'+idx).value) : item.q + delta;
+    if (isNaN(q) || q < 1) q = 1;
+    if (p.stock && q > p.stock) { showToast('Máximo '+p.stock,'error'); q = p.stock; }
+    item.q = q;
+    updateCartBar();
+    saveState();
+  }
+
+  function removeCartItem(idx) {
+    const name = cart[idx]?.name || 'Producto';
+    cart.splice(idx, 1);
+    updateCartBar();
+    saveState();
+    showToast(name + ' eliminado');
+    if (!cart.length) closeCartModal();
+  }
+
+  function openCartModal() { cartModal.classList.add('show'); renderCartModal(); document.body.style.overflow = 'hidden'; }
+  function closeCartModal() { cartModal.classList.remove('show'); document.body.style.overflow = ''; }
+
+  function sendCartOrder() {
+    if (!cart.length) return;
+    let total = 0;
+    const lines = cart.map(i => { total += i.price * i.q; return `${i.q} x ${i.id} ${i.name} (${formatPrice(i.price * i.q)})`; }).join('\n');
+    window.open(`https://wa.me/${CONFIG.ws}?text=${encodeURIComponent(`Hola Joyas Dari. Deseo comprar:\n\n${lines}\n\nTotal: ${formatPrice(total)}\n\nQuedo atento. 💎`)}`,'_blank');
+  }
+
+  // ===== SKELETONS =====
+  function renderSkeletons() {
+    grid.innerHTML = Array(8).fill('').map(() => `
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:80%"></div><div class="skeleton skeleton-line" style="width:50%;height:14px;margin-top:12px"></div></div>
+    `).join('');
+  }
+
+  // ===== CARGA DE DATOS =====
+  async function loadData() {
+    if (isLoading) return;
+    isLoading = true;
+    renderSkeletons();
+    loadState();
+
+    try {
+      const res = await fetch(CONFIG.apiUrl);
+      if (!res.ok) throw new Error('Error HTTP: '+res.status);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      if (!data.productos || !data.productos.length) {
+        grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No hay productos</p></div>`;
+        return;
       }
-    }, { passive: false });
+      inventory = data.productos.map((p, i) => ({
+        id: p.ID || p.id || `P${i}`,
+        type: p.Tipo || p.tipo || 'Otros',
+        name: p.Contenido || p.contenido || '',
+        stock: parseInt(p.Stock || p.stock || 0),
+        price: parseInt(p.Precio || p.precio || 0),
+        img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '', 400)
+      })).filter(p => p.id && p.name);
 
-    lightboxImg.addEventListener('dblclick', function(e) {
-      e.preventDefault();
-      if (currentScale > 1) {
-        resetZoom();
-      } else {
-        currentScale = 1.5;
-        lightboxImg.style.transform = `scale(${currentScale}) translate(0px, 0px)`;
-        lightboxImg.classList.add('zoomed');
-        lightbox.style.cursor = 'zoom-in';
-        isZoomed = true;
-      }
-    });
-
-    lightboxImg.addEventListener('mousedown', function(e) {
-      if (currentScale <= 1) return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      startTranslateX = currentTranslateX;
-      startTranslateY = currentTranslateY;
-      lightboxImg.style.cursor = 'grabbing';
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', function(e) {
-      if (!isDragging || currentScale <= 1) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      currentTranslateX = startTranslateX + dx;
-      currentTranslateY = startTranslateY + dy;
-      lightboxImg.style.transform = `scale(${currentScale}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
-    });
-
-    document.addEventListener('mouseup', function() {
-      if (isDragging) {
-        isDragging = false;
-        lightboxImg.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out';
-      }
-    });
-
-    lightboxImg.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 1) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        touchStartTranslateX = currentTranslateX;
-        touchStartTranslateY = currentTranslateY;
-      } else if (e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        touchDist = Math.sqrt(dx * dx + dy * dy);
-        touchStartScale = currentScale;
-      }
-    }, { passive: true });
-
-    lightboxImg.addEventListener('touchmove', function(e) {
-      if (e.touches.length === 1 && currentScale > 1) {
-        const dx = e.touches[0].clientX - touchStartX;
-        const dy = e.touches[0].clientY - touchStartY;
-        currentTranslateX = touchStartTranslateX + dx;
-        currentTranslateY = touchStartTranslateY + dy;
-        lightboxImg.style.transform = `scale(${currentScale}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
-      } else if (e.touches.length === 2) {
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const newDist = Math.sqrt(dx * dx + dy * dy);
-        const scaleFactor = newDist / touchDist;
-        let newScale = touchStartScale * scaleFactor;
-        newScale = Math.max(0.5, Math.min(newScale, 3.0));
-        if (newScale !== currentScale) {
-          currentScale = newScale;
-          lightboxImg.style.transform = `scale(${currentScale}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
-          lightboxImg.classList.toggle('zoomed', currentScale > 1);
-          lightbox.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out';
-          isZoomed = currentScale > 1;
-        }
-      }
-    }, { passive: true });
-
-    lightboxClose.addEventListener('click', function(e) {
-      e.stopPropagation();
-      closeLightbox();
-    });
-
-    // ===== FUNCIONES AUXILIARES =====
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-    function sanitize(str) {
-      return str ? escapeHtml(String(str)).trim() : '';
-    }
-    function formatPrice(n) {
-      return '$' + n.toLocaleString('es-CL');
-    }
-    // 🔥 CORRECCIÓN: usar &sz=w800 (sin &amp;)
-    function fixDriveUrl(url) {
-      if (!url || url.length < 10) return CONFIG.defImg;
-      const m = url.match(/(?:id=|d\/|file\/d\/)([\w-]{25,})/);
-      return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w800` : CONFIG.defImg;
-    }
-
-    function showToast(msg, type = '') {
-      const c = $('toastContainer');
-      const t = document.createElement('div');
-      t.className = 'toast ' + type;
-      t.textContent = msg;
-      c.appendChild(t);
-      setTimeout(() => t.remove(), 2600);
-    }
-
-    function saveState() {
-      try {
-        localStorage.setItem(CONFIG.STORAGE_CART, JSON.stringify(cart));
-        localStorage.setItem(CONFIG.STORAGE_FAVS, JSON.stringify(favorites));
-      } catch(e){}
-    }
-    function loadState() {
-      try {
-        const c = localStorage.getItem(CONFIG.STORAGE_CART);
-        if (c) cart = JSON.parse(c);
-        const f = localStorage.getItem(CONFIG.STORAGE_FAVS);
-        if (f) favorites = JSON.parse(f);
-      } catch(e){}
-    }
-
-    // ===== SEARCH =====
-    function openSearch() {
-      searchExpandable.classList.add('open');
-      searchInput.focus();
-    }
-    function closeSearch() {
-      searchExpandable.classList.remove('open');
-      searchInput.value = '';
-      searchQuery = '';
-      renderProducts();
-    }
-
-    searchToggleBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (searchExpandable.classList.contains('open')) {
-        closeSearch();
-      } else {
-        openSearch();
-      }
-    });
-    searchCloseBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      closeSearch();
-    });
-    document.addEventListener('click', function(e) {
-      const isInside = searchExpandable.contains(e.target) || searchToggleBtn.contains(e.target);
-      if (!isInside && searchExpandable.classList.contains('open')) {
-        closeSearch();
-      }
-    });
-
-    const handleSearch = debounce(function() {
-      searchQuery = searchInput.value.toLowerCase().trim();
-      renderProducts();
-    }, 250);
-    searchInput.addEventListener('input', handleSearch);
-    searchInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeSearch();
-    });
-
-    function debounce(fn, delay) {
-      return function(...args) {
-        clearTimeout(searchDebounce);
-        searchDebounce = setTimeout(() => fn.apply(this, args), delay);
-      };
-    }
-
-    // ===== FAVORITOS =====
-    function isFavorite(id) { return favorites.includes(id); }
-    function toggleFavorite(pid) {
-      const i = favorites.indexOf(pid);
-      if (i >= 0) {
-        favorites.splice(i, 1);
-        showToast('Eliminado de favoritos');
-      } else {
-        favorites.push(pid);
-        showToast('Añadido a favoritos', 'success');
-      }
-      saveState();
-      const btn = document.getElementById('fav-' + pid);
-      if (btn) {
-        btn.innerHTML = isFavorite(pid) ? '❤️' : '🤍';
-      }
-    }
-
-    // ===== CATEGORÍAS =====
-    function renderCategories() {
-      const types = ["TODOS", ...new Set(inventory.map(p => p.type).filter(Boolean))];
-      const container = $('catContainer');
-      container.innerHTML = types.map(t =>
-        `<button class="cat-btn ${currentCategory === t ? 'active' : ''}" 
-                 role="tab" aria-selected="${currentCategory === t}"
-                 onclick="JoyasDari.setCategory('${encodeURIComponent(t)}')">${sanitize(t)}</button>`
-      ).join('');
-    }
-
-    function setCategory(cat) {
-      currentCategory = decodeURIComponent(cat);
       renderCategories();
       renderProducts();
+      if (cart.length) updateCartBar();
+    } catch (e) {
+      console.error('Error:', e);
+      grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p class="empty-text">Error al cargar</p><button onclick="Dari.loadData()" style="margin-top:12px;padding:8px 20px;border:1px solid #C5CBC8;border-radius:100px;background:#fff;cursor:pointer;font-size:12px;">Reintentar</button></div>`;
+    } finally {
+      isLoading = false;
     }
+  }
 
-    // ===== CANTIDAD =====
-    function changeQty(pid, delta) {
-      const input = document.getElementById('qty-' + pid);
-      const p = inventory.find(x => x.id === pid);
-      if (!input || !p) return;
-      let v = parseInt(input.value) || 1;
-      v = Math.max(1, Math.min(v + delta, p.stock));
-      input.value = v;
-      updateAddBtn(pid, v, p.stock);
-    }
+  // ===== EXPONER API GLOBAL =====
+  window.Dari = {
+    openLightbox,
+    closeLightbox,
+    toggleFavorite,
+    setCategory,
+    changeQty,
+    handleQtyInput,
+    addToCart,
+    updateCartBar,
+    renderCartModal,
+    updateCartItemQty,
+    removeCartItem,
+    openCartModal,
+    closeCartModal,
+    sendCartOrder,
+    loadData,
+    showToast,
+    CONFIG
+  };
 
-    function handleQtyInput(pid) {
-      const input = document.getElementById('qty-' + pid);
-      const p = inventory.find(x => x.id === pid);
-      if (!input || !p) return;
-      let v = parseInt(input.value);
-      if (isNaN(v) || v < 1) v = 1;
-      if (v > p.stock) v = p.stock;
-      input.value = v;
-      updateAddBtn(pid, v, p.stock);
-    }
-
-    function updateAddBtn(pid, qty, stock) {
-      const btn = document.getElementById('add-btn-' + pid);
-      if (btn) btn.disabled = qty > stock || stock <= 0;
-    }
-
-    // ===== RENDER PRODUCTOS =====
-    function renderProducts() {
-      const grid = $('grid');
-      let list = currentCategory === "TODOS" ? [...inventory] : inventory.filter(p => p.type === currentCategory);
-      if (searchQuery) {
-        list = list.filter(p =>
-          (p.name && p.name.toLowerCase().includes(searchQuery)) ||
-          (p.type && p.type.toLowerCase().includes(searchQuery)) ||
-          (p.id && p.id.toLowerCase().includes(searchQuery))
-        );
-      }
-
-      if (!list.length) {
-        grid.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">${searchQuery ? '🔍' : '💎'}</div>
-            <p class="empty-text">${searchQuery ? 'No se encontraron resultados' : 'No hay productos en esta categoría'}</p>
-          </div>`;
-        return;
-      }
-
-      grid.innerHTML = list.map((p, i) => {
-        const out = p.stock <= 0;
-        const low = p.stock > 0 && p.stock <= 5;
-        const fav = isFavorite(p.id);
-        const imgSrc = sanitize(p.img);
-        const nameEnc = encodeURIComponent(p.name);
-        const idEnc = encodeURIComponent(p.id);
-        const typeEnc = encodeURIComponent(p.type);
-        return `
-        <article class="card card-enter" style="animation-delay:${Math.min(i, 20) * 0.03}s" role="listitem">
-          <div class="card-image">
-            <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy"
-                 onclick="JoyasDari.openLightbox('${imgSrc}','${nameEnc}')"
-                 onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
-            <div class="placeholder">💍</div>
-            <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation(); JoyasDari.toggleFavorite('${idEnc}')" aria-label="${fav ? 'Quitar de favoritos' : 'Añadir a favoritos'}">
-              ${fav ? '❤️' : '🤍'}
-            </button>
-            ${out ? '<span class="stock-badge">Agotado</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
-          </div>
-          <div class="card-body">
-            <p class="card-type">${sanitize(p.type)}</p>
-            <h3 class="card-title">${sanitize(p.name)}</h3>
-            <div class="card-price-row">
-              <span class="card-price">${formatPrice(p.price)}</span>
-              <span class="card-stock">${out ? 'Sin stock' : 'Stock: ' + p.stock}</span>
-            </div>
-            <div class="qty-row">
-              <div class="qty-control">
-                <button class="qty-btn" onclick="JoyasDari.changeQty('${idEnc}',-1)" ${out?'disabled':''}>–</button>
-                <input type="number" id="qty-${p.id}" class="qty-value" value="1" min="1" max="${p.stock}"
-                       oninput="JoyasDari.handleQtyInput('${idEnc}')" ${out?'disabled':''}>
-                <button class="qty-btn" onclick="JoyasDari.changeQty('${idEnc}',1)" ${out?'disabled':''}>+</button>
-              </div>
-            </div>
-            <button id="add-btn-${p.id}" class="add-btn" onclick="JoyasDari.addToCart('${idEnc}')" ${out?'disabled':''}>
-              ${out ? 'Agotado' : 'Añadir'}
-            </button>
-          </div>
-        </article>`;
-      }).join('');
-    }
-
-    // ===== CARRITO =====
-    function addToCart(pid) {
-      const p = inventory.find(x => x.id === pid);
-      if (!p || p.stock <= 0) return;
-      const qty = parseInt(document.getElementById('qty-' + pid).value) || 1;
-      if (qty > p.stock) {
-        showToast('Solo hay ' + p.stock + ' unidades', 'error');
-        return;
-      }
-      const exist = cart.find(i => i.id === pid);
-      if (exist) {
-        if (exist.q + qty > p.stock) {
-          showToast('Máximo ' + p.stock + ' unidades', 'error');
-          return;
-        }
-        exist.q += qty;
-      } else {
-        cart.push({ id: p.id, name: p.name, price: p.price, q: qty });
-      }
-      updateCartBar();
-      saveState();
-      showToast('Añadido al carrito', 'success');
-      const badge = document.getElementById('cartCountDisplay');
-      badge.classList.remove('bounce');
-      void badge.offsetWidth;
-      badge.classList.add('bounce');
-    }
-
-    function updateCartBar() {
-      const total = cart.reduce((s,i) => s + i.q, 0);
-      const bar = $('cartSummary');
-      $('cartCountDisplay').textContent = total + (total === 1 ? ' item' : ' items');
-      bar.classList.toggle('show', total > 0);
-      renderCartModal();
-    }
-
-    function renderCartModal() {
-      const cont = $('cartModalItems');
-      if (!cart.length) {
-        cont.innerHTML = `
-          <div class="empty-state" style="padding:40px 0">
-            <div class="empty-icon">🛒</div>
-            <p class="empty-text">Tu carrito está vacío</p>
-          </div>`;
-        $('modalTotalAmount').textContent = '$0';
-        return;
-      }
-      let total = 0;
-      cont.innerHTML = cart.map((item, idx) => {
-        total += item.price * item.q;
-        return `
-        <div class="cart-item">
-          <div class="cart-item-info">
-            <div class="cart-item-name">${sanitize(item.name)}</div>
-            <div class="cart-item-price">${formatPrice(item.price)} c/u</div>
-          </div>
-          <div class="cart-item-actions">
-            <div class="cart-qty">
-              <button class="cart-qty-btn" onclick="JoyasDari.updateCartItemQty(${idx},-1)" aria-label="Disminuir cantidad">−</button>
-              <input type="number" class="cart-qty-input" value="${item.q}" min="1"
-                     oninput="JoyasDari.updateCartItemQty(${idx},0,true)" id="cart-qty-${idx}">
-              <button class="cart-qty-btn" onclick="JoyasDari.updateCartItemQty(${idx},1)" aria-label="Aumentar cantidad">+</button>
-            </div>
-            <button class="cart-delete" onclick="JoyasDari.removeCartItem(${idx})" aria-label="Eliminar del carrito">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-              </svg>
-            </button>
-          </div>
-        </div>`;
-      }).join('');
-      $('modalTotalAmount').textContent = formatPrice(total);
-    }
-
-    function updateCartItemQty(idx, delta, fromInput) {
-      const item = cart[idx];
-      const p = inventory.find(x => x.id === item.id);
-      if (!p) return;
-      let q = fromInput ? parseInt(document.getElementById('cart-qty-' + idx).value) : item.q + delta;
-      if (isNaN(q) || q < 1) q = 1;
-      if (p.stock && q > p.stock) {
-        showToast('Máximo ' + p.stock, 'error');
-        q = p.stock;
-      }
-      item.q = q;
-      updateCartBar();
-      saveState();
-    }
-
-    function removeCartItem(idx) {
-      const name = cart[idx]?.name || 'Producto';
-      cart.splice(idx, 1);
-      updateCartBar();
-      saveState();
-      showToast(name + ' eliminado');
-      if (!cart.length) closeCartModal();
-    }
-
-    function openCartModal() {
-      $('cartModal').classList.add('show');
-      renderCartModal();
-      document.body.style.overflow = 'hidden';
-    }
-    function closeCartModal() {
-      $('cartModal').classList.remove('show');
-      document.body.style.overflow = '';
-    }
-
-    function sendCartOrder() {
-      if (!cart.length) return;
-      let total = 0;
-      const lines = cart.map(i => {
-        total += i.price * i.q;
-        return `${i.q} x ${i.id} ${i.name} (${formatPrice(i.price * i.q)})`;
-      }).join('\n');
-      window.open(`https://wa.me/${CONFIG.ws}?text=${encodeURIComponent(
-        `Hola Joyas Dari. Deseo comprar:\n\n${lines}\n\nTotal: ${formatPrice(total)}\n\nQuedo atento. 💎`
-      )}`, '_blank');
-    }
-
-    // ===== CARGA DE DATOS =====
-    function renderSkeletons() {
-      $('grid').innerHTML = Array(8).fill('').map(() => `
-        <div class="skeleton-card">
-          <div class="skeleton skeleton-img"></div>
-          <div class="skeleton skeleton-line" style="width:40%"></div>
-          <div class="skeleton skeleton-line" style="width:80%"></div>
-          <div class="skeleton skeleton-line" style="width:50%;height:16px;margin-top:16px"></div>
-        </div>
-      `).join('');
-    }
-
-    async function loadData() {
-      if (isLoading) return;
-      isLoading = true;
-      renderSkeletons();
-
-      try {
-        console.log('🔄 Cargando datos...');
-        const res = await fetchWithRetry(CONFIG.apiUrl);
-        const data = await res.json();
-        console.log('📦 Datos recibidos:', data);
-
-        if (data.error) throw new Error(data.error);
-
-        if (!data.productos || data.productos.length === 0) {
-          $('grid').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-icon">📋</div>
-              <p class="empty-text">No hay productos disponibles</p>
-            </div>`;
-          return;
-        }
-
-        inventory = data.productos.map((p, i) => ({
-          id: p.ID || p.id || `P${i}`,
-          type: p.Tipo || p.tipo || 'Otros',
-          name: p.Contenido || p.contenido || '',
-          stock: parseInt(p.Stock || p.stock || 0),
-          price: parseInt(p.Precio || p.precio || 0),
-          img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '')
-        })).filter(p => p.id && p.name);
-
-        console.log(`✅ ${inventory.length} productos cargados`);
-        retryCount = 0;
-        renderCategories();
-        renderProducts();
-        if (cart.length) updateCartBar();
-
-      } catch (e) {
-        console.error('❌ Error:', e);
-        $('grid').innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">⚠️</div>
-            <p class="empty-text">Error al cargar los productos</p>
-            <p style="font-size:13px;color:#858585;margin-top:8px;">${e.message}</p>
-            <button onclick="JoyasDari.loadData()" style="margin-top:16px;padding:10px 24px;border:1px solid #C5CBC8;border-radius:100px;background:white;cursor:pointer;font-size:13px;">Reintentar</button>
-          </div>`;
-      } finally {
-        isLoading = false;
-      }
-    }
-
-    // ===== FETCH CON REINTENTO =====
-    async function fetchWithRetry(url, options = {}, attempt = 1) {
-      try {
-        const res = await fetch(url, options);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res;
-      } catch (err) {
-        if (attempt <= MAX_RETRIES) {
-          const delay = 1000 * Math.pow(2, attempt - 1);
-          console.warn(`⏳ Reintento ${attempt}/${MAX_RETRIES} en ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
-          return fetchWithRetry(url, options, attempt + 1);
-        }
-        throw new Error(`Error de red después de ${MAX_RETRIES} intentos: ${err.message}`);
-      }
-    }
-
-    // ===== EXPONER FUNCIONES GLOBALMENTE =====
-    window.JoyasDari = {
-      openLightbox,
-      closeLightbox,
-      toggleFavorite,
-      setCategory,
-      changeQty,
-      handleQtyInput,
-      addToCart,
-      updateCartBar,
-      renderCartModal,
-      updateCartItemQty,
-      removeCartItem,
-      openCartModal,
-      closeCartModal,
-      sendCartOrder,
-      loadData,
-      showToast,
-      CONFIG,
-    };
-
-    // ===== INICIO =====
-    loadState();
-    window.addEventListener('DOMContentLoaded', function() {
-      loadData();
-    });
-
-  })();
-  </script>
+  // ===== INICIO =====
+  loadState();
+  document.addEventListener('DOMContentLoaded', loadData);
+})();
+</script>
 </body>
 </html>
