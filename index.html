@@ -975,23 +975,18 @@
     <div id="grid" class="product-grid"></div>
   </main>
 
-  <!-- FOOTER (sin texto de correo) -->
+  <!-- FOOTER -->
   <footer class="footer">
-    <!-- Facebook (próximamente) -->
     <div class="social-btn" onclick="showToast('Pronto tendremos Facebook')" aria-label="Facebook">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/>
       </svg>
     </div>
-
-    <!-- Instagram (real) -->
     <a href="https://www.instagram.com/joyas.dari/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram de Joyas Dari">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2C5.8 4 4 5.8 4 7.6v8.8C4 18.2 5.8 20 7.6 20h8.8c1.8 0 3.6-1.8 3.6-3.6V7.6C20 5.8 18.2 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 110 2.5 1.25 1.25 0 010-2.5zM12 7a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/>
       </svg>
     </a>
-
-    <!-- Correo electrónico (solo ícono) -->
     <a href="mailto:dari.joyas@gmail.com" class="social-btn" aria-label="Correo electrónico de Joyas Dari">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -1031,13 +1026,14 @@
     "use strict";
 
     // ========== CONFIGURACIÓN ==========
-    // ⚠️ ACTUALIZA ESTA URL CON LA NUEVA QUE OBTENGAS AL DESPLEGAR
     const CONFIG = {
       apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
       ws: '56935781897',
       defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&amp;sz=w500',
       STORAGE_CART: 'dari_cart',
-      STORAGE_FAVS: 'dari_favs'
+      STORAGE_FAVS: 'dari_favs',
+      CACHE_KEY: 'dari_productos',
+      CACHE_EXPIRY: 5 * 60 * 1000 // 5 minutos
     };
 
     console.log('🔍 Joyas Dari - Modo depuración activado');
@@ -1047,6 +1043,7 @@
     let currentCategory = "TODOS";
     let searchQuery = '';
     let searchDebounce = null;
+    let isLoading = false;
 
     // ===== ELEMENTOS DEL BUSCADOR EXPANDIBLE =====
     const searchToggleBtn = document.getElementById('searchToggleBtn');
@@ -1393,7 +1390,7 @@
       )}`, '_blank');
     };
 
-    // ===== CARGA DE DATOS =====
+    // ===== CARGA DE DATOS CON CACHÉ =====
     function renderSkeletons() {
       document.getElementById('grid').innerHTML = Array(8).fill('').map(() => `
         <div class="skeleton-card">
@@ -1405,87 +1402,141 @@
       `).join('');
     }
 
-    async function loadData() {
-      renderSkeletons();
-      loadState();
+    // Guardar en caché
+    function saveToCache(data) {
+      try {
+        const cacheData = {
+          timestamp: Date.now(),
+          productos: data.productos,
+          presupuestos: data.presupuestos
+        };
+        localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(cacheData));
+        console.log('💾 Datos guardados en caché');
+      } catch(e){}
+    }
+
+    // Cargar desde caché
+    function loadFromCache() {
+      try {
+        const raw = localStorage.getItem(CONFIG.CACHE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        const age = Date.now() - data.timestamp;
+        if (age > CONFIG.CACHE_EXPIRY) {
+          console.log('⏰ Caché expirado');
+          return null;
+        }
+        console.log('📂 Datos cargados desde caché');
+        return data;
+      } catch(e){ return null; }
+    }
+
+    async function loadData(forceRefresh = false) {
+      if (isLoading) return;
+      isLoading = true;
 
       const grid = document.getElementById('grid');
 
+      // Mostrar skeletons solo si no hay datos en caché
+      if (!forceRefresh) {
+        const cached = loadFromCache();
+        if (cached && cached.productos && cached.productos.length > 0) {
+          console.log(`📂 Usando caché: ${cached.productos.length} productos`);
+          processProducts(cached.productos);
+          isLoading = false;
+          // Cargar en segundo plano para actualizar
+          fetchData(true);
+          return;
+        }
+      }
+
+      renderSkeletons();
+      await fetchData(forceRefresh);
+      isLoading = false;
+    }
+
+    async function fetchData(forceRefresh) {
       try {
         console.log('🔄 Cargando datos desde:', CONFIG.apiUrl);
 
         const res = await fetch(CONFIG.apiUrl);
-
-        if (!res.ok) {
-          throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
-        }
+        if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
 
         const data = await res.json();
         console.log('📦 Datos recibidos:', data);
 
-        if (data.error) {
-          throw new Error('Error de la API: ' + data.error);
+        if (data.error) throw new Error('Error de la API: ' + data.error);
+
+        if (data.productos && data.productos.length > 0) {
+          saveToCache(data);
         }
 
-        if (!data.productos || !Array.isArray(data.productos) || data.productos.length === 0) {
-          grid.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-icon">📋</div>
-              <p class="empty-text">No hay productos en la hoja</p>
-              <p style="font-size:12px;color:#858585;margin-top:8px;word-break:break-all;max-width:500px;margin-left:auto;margin-right:auto;">
-                ⚠️ La API devolvió ${data.productos ? data.productos.length : '0'} productos.
-                <br><br>
-                <span style="font-size:11px;color:#b0b0b0;">Revisa que tu hoja tenga datos y que los encabezados sean: ID, Tipo, Contenido, Stock, Precio, Link de la Imagen</span>
-              </p>
-            </div>`;
-          console.warn('⚠️ No se encontraron productos en la API');
-          return;
-        }
-
-        console.log(`✅ Procesando ${data.productos.length} productos...`);
-
-        inventory = data.productos.map((p, index) => {
-          const id = p.ID || p.id || `P${index}`;
-          const type = p.Tipo || p.tipo || 'Otros';
-          const name = p.Contenido || p.contenido || '';
-          const stock = parseInt(p.Stock || p.stock || 0);
-          const price = parseInt(p.Precio || p.precio || 0);
-          const img = fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '');
-
-          if (index === 0) {
-            console.log('📄 Ejemplo de producto mapeado:', { id, type, name, stock, price, img });
-          }
-
-          return { id, type, name, stock, price, img };
-        }).filter(p => p.id && p.name);
-
-        console.log(`✅ ${inventory.length} productos cargados correctamente`);
-
-        renderCategories();
-        renderProducts();
-        if (cart.length) updateCartBar();
+        processProducts(data.productos || []);
 
       } catch (e) {
         console.error('❌ Error cargando datos:', e);
-        grid.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">⚠️</div>
-            <p class="empty-text">Error al cargar los productos</p>
-            <p style="font-size:13px;color:#858585;margin-top:8px;max-width:500px;margin-left:auto;margin-right:auto;word-break:break-word;">
-              ${e.message || 'Error desconocido'}
-            </p>
-            <button onclick="location.reload()" 
-                    style="margin-top:16px;padding:10px 24px;border:1px solid #C5CBC8;border-radius:100px;background:white;cursor:pointer;font-size:13px;color:#282828;">
-              Reintentar
-            </button>
-            <p style="font-size:11px;color:#a0a0a0;margin-top:12px;">
-              💡 Abre la consola (F12) para más detalles
-            </p>
-          </div>`;
+        // Si hay error y hay caché, mostrarlo
+        const cached = loadFromCache();
+        if (cached && cached.productos && cached.productos.length > 0) {
+          console.log('📂 Usando caché de emergencia');
+          processProducts(cached.productos);
+        } else {
+          document.getElementById('grid').innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">⚠️</div>
+              <p class="empty-text">Error al cargar los productos</p>
+              <p style="font-size:13px;color:#858585;margin-top:8px;max-width:500px;margin-left:auto;margin-right:auto;word-break:break-word;">
+                ${e.message || 'Error desconocido'}
+              </p>
+              <button onclick="loadData(true)" 
+                      style="margin-top:16px;padding:10px 24px;border:1px solid #C5CBC8;border-radius:100px;background:white;cursor:pointer;font-size:13px;color:#282828;">
+                Reintentar
+              </button>
+            </div>`;
+        }
       }
     }
 
-    window.onload = loadData;
+    function processProducts(productosRaw) {
+      console.log(`✅ Procesando ${productosRaw.length} productos...`);
+
+      inventory = productosRaw.map((p, index) => {
+        const id = p.ID || p.id || `P${index}`;
+        const type = p.Tipo || p.tipo || 'Otros';
+        const name = p.Contenido || p.contenido || '';
+        const stock = parseInt(p.Stock || p.stock || 0);
+        const price = parseInt(p.Precio || p.precio || 0);
+        const img = fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '');
+
+        if (index === 0) {
+          console.log('📄 Ejemplo de producto mapeado:', { id, type, name, stock, price, img });
+        }
+
+        return { id, type, name, stock, price, img };
+      }).filter(p => p.id && p.name);
+
+      console.log(`✅ ${inventory.length} productos cargados correctamente`);
+
+      renderCategories();
+      renderProducts();
+      if (cart.length) updateCartBar();
+
+      // Mostrar mensaje de éxito
+      if (inventory.length > 0) {
+        console.log(`🎉 ¡${inventory.length} productos cargados!`);
+        // Ocultar skeletons (ya renderizados)
+      }
+    }
+
+    window.onload = function() {
+      loadState();
+      loadData(false);
+    };
+
+    // Recargar manual con fuerza
+    window.refreshData = function() {
+      loadData(true);
+    };
   })();
   </script>
 </body>
