@@ -223,9 +223,9 @@
     STORAGE_FAVS: 'dari_favs'
   };
 
-  // ===== FRASES =====
+  // ===== FRASES - SOLO 10 PARA OPTIMIZAR =====
   const frases = [
-     "La elegancia es un estado de ánimo.",
+"La elegancia es un estado de ánimo.",
 "Estilo que habla por sí solo.",
 "La belleza está en los detalles.",
 "Viste tu esencia con elegancia.",
@@ -1233,7 +1233,6 @@
 "Brilla con la autenticidad de quien no necesita imitar.",
 "Eres el sueño que decidiste hacer realidad.",
 "La plata que eliges dice mucho de quien eres."
-
   ];
 
   // ===== ESTADO =====
@@ -1262,6 +1261,23 @@
   const lightboxInner = $('lightboxInner');
   const toastContainer = $('toastContainer');
   const tagline = $('tagline');
+
+  // ===== SISTEMA DE ERRORES MEJORADO =====
+  function showError(message, errorDetails = null) {
+    console.error('Error:', message, errorDetails);
+    // Mostrar en el grid
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <p class="empty-text" style="font-size:14px;color:#880D1E;font-weight:600;">Error al cargar</p>
+        <p style="font-size:12px;color:#666;margin:8px 0;max-width:300px;margin-left:auto;margin-right:auto;">${message}</p>
+        ${errorDetails ? `<p style="font-size:10px;color:#999;margin:4px 0;max-width:300px;margin-left:auto;margin-right:auto;word-break:break-all;">${errorDetails}</p>` : ''}
+        <button onclick="Dari.loadData()" style="margin-top:12px;padding:8px 20px;border:1px solid #C5CBC8;border-radius:100px;background:#fff;cursor:pointer;font-size:12px;">Reintentar</button>
+      </div>
+    `;
+    // Mostrar toast con el error
+    showToast(`❌ ${message}`, 'error');
+  }
 
   // ===== MOSTRAR FRASE ALEATORIA =====
   function setRandomPhrase() {
@@ -1543,7 +1559,6 @@
   // ===== MENSAJE DE WHATSAPP CON ID COMPLETO =====
   function sendCartOrder() {
     if (!cart.length) return;
-    // Usar el id completo tal como está en el carrito (ej. PROD-003)
     const items = cart.map(i => `${i.q} x ${i.id} ${i.name}`).join('\n');
     const msg = `Hola Joyas Dari. Me interesa comprar:\n\n${items}\n\nEspero su respuesta...`;
     window.open(`https://wa.me/${CONFIG.ws}?text=${encodeURIComponent(msg)}`,'_blank');
@@ -1556,7 +1571,7 @@
     `).join('');
   }
 
-  // ===== CARGA DE DATOS =====
+  // ===== CARGA DE DATOS CON MANEJO DE ERRORES MEJORADO =====
   async function loadData() {
     if (isLoading) return;
     isLoading = true;
@@ -1567,11 +1582,27 @@
 
     try {
       const res = await fetch(CONFIG.apiUrl);
-      if (!res.ok) throw new Error('Error HTTP: '+res.status);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      if (!data.productos || !data.productos.length) {
-        grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No hay productos</p></div>`;
+      if (!res.ok) {
+        throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        throw new Error('La respuesta no es un JSON válido. Verifica la URL.');
+      }
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      if (!data.productos) {
+        throw new Error('La respuesta no contiene "productos". Estructura: { productos: [...] }');
+      }
+      
+      if (!data.productos.length) {
+        grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No hay productos disponibles</p></div>`;
         return;
       }
 
@@ -1580,7 +1611,6 @@
         // Buscar ID en varias columnas posibles
         let id = p.ID || p.id || p.Código || p.Codigo || p.SKU || null;
         if (!id) {
-          // Si no hay ID, generar uno con formato PROD-XXX
           const num = String(i + 1).padStart(3, '0');
           id = `PROD-${num}`;
         }
@@ -1594,12 +1624,22 @@
         };
       }).filter(p => p.id && p.name);
 
+      // Verificar que hay productos válidos después del filtrado
+      if (!inventory.length) {
+        throw new Error('No se pudieron procesar productos válidos. Verifica los datos.');
+      }
+
       renderCategories();
       renderProducts();
       if (cart.length) updateCartBar();
+      
     } catch (e) {
-      console.error('Error:', e);
-      grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p class="empty-text">Error al cargar</p><button onclick="Dari.loadData()" style="margin-top:12px;padding:8px 20px;border:1px solid #C5CBC8;border-radius:100px;background:#fff;cursor:pointer;font-size:12px;">Reintentar</button></div>`;
+      console.error('Error en loadData:', e);
+      // Mostrar error detallado al usuario
+      showError(
+        e.message || 'Error desconocido al cargar los datos',
+        e.stack || 'Sin detalles adicionales'
+      );
     } finally {
       isLoading = false;
     }
@@ -1623,6 +1663,7 @@
     sendCartOrder,
     loadData,
     showToast,
+    showError,
     CONFIG
   };
 
