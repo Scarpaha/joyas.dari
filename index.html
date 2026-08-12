@@ -223,9 +223,9 @@
     STORAGE_FAVS: 'dari_favs'
   };
 
-  // ===== FRASES (¡AGREGA AQUÍ TUS FRASES!) =====
+  // ===== FRASES =====
   const frases = [
-    "La elegancia es un estado de ánimo.",
+     "La elegancia es un estado de ánimo.",
 "Estilo que habla por sí solo.",
 "La belleza está en los detalles.",
 "Viste tu esencia con elegancia.",
@@ -1234,7 +1234,6 @@
 "Eres el sueño que decidiste hacer realidad.",
 "La plata que eliges dice mucho de quien eres."
 
-
   ];
 
   // ===== ESTADO =====
@@ -1271,7 +1270,7 @@
     tagline.textContent = frases[randomIndex];
   }
 
-  // ===== LIGHTBOX (simplificada) =====
+  // ===== LIGHTBOX =====
   let currentScale = 1, translateX = 0, translateY = 0, isDragging = false;
   let startX, startY, startTranslateX, startTranslateY;
 
@@ -1298,14 +1297,12 @@
     lightbox.style.cursor = 'zoom-out';
   }
 
-  // Eventos lightbox
   lightbox.addEventListener('click', e => {
     if (e.target === lightbox || e.target === lightboxInner || e.target === lightboxImg) closeLightbox();
   });
   lightboxClose.addEventListener('click', e => { e.stopPropagation(); closeLightbox(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeCartModal(); } });
 
-  // Zoom con rueda
   lightboxImg.addEventListener('wheel', e => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? -0.08 : 0.08;
@@ -1318,14 +1315,12 @@
     }
   }, { passive: false });
 
-  // Doble clic
   lightboxImg.addEventListener('dblclick', e => {
     e.preventDefault();
     if (currentScale > 1) resetZoom();
     else { currentScale = 1.5; lightboxImg.style.transform = 'scale(1.5) translate(0,0)'; lightboxImg.classList.add('zoomed'); lightbox.style.cursor = 'zoom-in'; }
   });
 
-  // Arrastre
   lightboxImg.addEventListener('mousedown', e => {
     if (currentScale <= 1) return;
     isDragging = true;
@@ -1545,11 +1540,13 @@
   function openCartModal() { cartModal.classList.add('show'); renderCartModal(); document.body.style.overflow = 'hidden'; }
   function closeCartModal() { cartModal.classList.remove('show'); document.body.style.overflow = ''; }
 
+  // ===== MENSAJE DE WHATSAPP CON ID COMPLETO =====
   function sendCartOrder() {
     if (!cart.length) return;
-    let total = 0;
-    const lines = cart.map(i => { total += i.price * i.q; return `${i.q} x ${i.id} ${i.name} (${formatPrice(i.price * i.q)})`; }).join('\n');
-    window.open(`https://wa.me/${CONFIG.ws}?text=${encodeURIComponent(`Hola Joyas Dari. Deseo comprar:\n\n${lines}\n\nTotal: ${formatPrice(total)}\n\nQuedo atento. 💎`)}`,'_blank');
+    // Usar el id completo tal como está en el carrito (ej. PROD-003)
+    const items = cart.map(i => `${i.q} x ${i.id} ${i.name}`).join('\n');
+    const msg = `Hola Joyas Dari. Me interesa comprar:\n\n${items}\n\nEspero su respuesta...`;
+    window.open(`https://wa.me/${CONFIG.ws}?text=${encodeURIComponent(msg)}`,'_blank');
   }
 
   // ===== SKELETONS =====
@@ -1566,7 +1563,6 @@
     renderSkeletons();
     loadState();
 
-    // Mostrar frase aleatoria
     setRandomPhrase();
 
     try {
@@ -1578,14 +1574,25 @@
         grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No hay productos</p></div>`;
         return;
       }
-      inventory = data.productos.map((p, i) => ({
-        id: p.ID || p.id || `P${i}`,
-        type: p.Tipo || p.tipo || 'Otros',
-        name: p.Contenido || p.contenido || '',
-        stock: parseInt(p.Stock || p.stock || 0),
-        price: parseInt(p.Precio || p.precio || 0),
-        img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '', 400)
-      })).filter(p => p.id && p.name);
+
+      // ===== MAPEO DE PRODUCTOS CON ID COMPLETO =====
+      inventory = data.productos.map((p, i) => {
+        // Buscar ID en varias columnas posibles
+        let id = p.ID || p.id || p.Código || p.Codigo || p.SKU || null;
+        if (!id) {
+          // Si no hay ID, generar uno con formato PROD-XXX
+          const num = String(i + 1).padStart(3, '0');
+          id = `PROD-${num}`;
+        }
+        return {
+          id: String(id).trim(),
+          type: p.Tipo || p.tipo || 'Otros',
+          name: p.Contenido || p.contenido || '',
+          stock: parseInt(p.Stock || p.stock || 0),
+          price: parseInt(p.Precio || p.precio || 0),
+          img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '', 400)
+        };
+      }).filter(p => p.id && p.name);
 
       renderCategories();
       renderProducts();
