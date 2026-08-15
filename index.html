@@ -57,6 +57,7 @@
     .card-body{padding:12px 12px 14px;display:flex;flex-direction:column;flex:1}
     .card-type{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
     .card-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;line-height:1.3;color:var(--dark);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-detail{font-size:11px;color:var(--muted);font-weight:400;line-height:1.4;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .card-price-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
     .card-price{font-size:16px;font-weight:600;color:var(--dark)}
     .card-stock{font-size:10px;color:var(--muted)}
@@ -223,7 +224,7 @@
     STORAGE_FAVS: 'dari_favs'
   };
 
-  // ===== FRASES - SOLO 10 PARA OPTIMIZAR =====
+  // ===== FRASES =====
   const frases = [
 "La elegancia es un estado de ánimo.",
 "Estilo que habla por sí solo.",
@@ -1262,10 +1263,9 @@
   const toastContainer = $('toastContainer');
   const tagline = $('tagline');
 
-  // ===== SISTEMA DE ERRORES MEJORADO =====
+  // ===== SISTEMA DE ERRORES =====
   function showError(message, errorDetails = null) {
     console.error('Error:', message, errorDetails);
-    // Mostrar en el grid
     grid.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">⚠️</div>
@@ -1275,11 +1275,10 @@
         <button onclick="Dari.loadData()" style="margin-top:12px;padding:8px 20px;border:1px solid #C5CBC8;border-radius:100px;background:#fff;cursor:pointer;font-size:12px;">Reintentar</button>
       </div>
     `;
-    // Mostrar toast con el error
     showToast(`❌ ${message}`, 'error');
   }
 
-  // ===== MOSTRAR FRASE ALEATORIA =====
+  // ===== MOSTRAR FRASE =====
   function setRandomPhrase() {
     if (frases.length === 0) return;
     const randomIndex = Math.floor(Math.random() * frases.length);
@@ -1460,12 +1459,16 @@
                onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
           <div class="placeholder">💍</div>
           <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation(); Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
-          ${out ? '<span class="stock-badge">Agotado</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
+          ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
         </div>
         <div class="card-body">
           <p class="card-type">${sanitize(p.type)}</p>
           <h3 class="card-title">${sanitize(p.name)}</h3>
-          <div class="card-price-row"><span class="card-price">${formatPrice(p.price)}</span><span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span></div>
+          ${p.detail ? `<p class="card-detail">Detalles: ${sanitize(p.detail)}</p>` : ''}
+          <div class="card-price-row">
+            <span class="card-price">${formatPrice(p.price)}</span>
+            <span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span>
+          </div>
           <div class="qty-row">
             <div class="qty-control">
               <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',-1)" ${out?'disabled':''}>–</button>
@@ -1474,7 +1477,7 @@
               <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',1)" ${out?'disabled':''}>+</button>
             </div>
           </div>
-          <button id="add-btn-${p.id}" class="add-btn" onclick="Dari.addToCart('${idEnc}')" ${out?'disabled':''}>${out?'Agotado':'Añadir'}</button>
+          <button id="add-btn-${p.id}" class="add-btn" onclick="Dari.addToCart('${idEnc}')" ${out?'disabled':''}>${out?'Vendido':'Añadir'}</button>
         </div>
       </article>`;
     });
@@ -1556,7 +1559,6 @@
   function openCartModal() { cartModal.classList.add('show'); renderCartModal(); document.body.style.overflow = 'hidden'; }
   function closeCartModal() { cartModal.classList.remove('show'); document.body.style.overflow = ''; }
 
-  // ===== MENSAJE DE WHATSAPP CON ID COMPLETO =====
   function sendCartOrder() {
     if (!cart.length) return;
     const items = cart.map(i => `${i.q} x ${i.id} ${i.name}`).join('\n');
@@ -1571,13 +1573,12 @@
     `).join('');
   }
 
-  // ===== CARGA DE DATOS CON MANEJO DE ERRORES MEJORADO =====
+  // ===== CARGA DE DATOS =====
   async function loadData() {
     if (isLoading) return;
     isLoading = true;
     renderSkeletons();
     loadState();
-
     setRandomPhrase();
 
     try {
@@ -1606,9 +1607,7 @@
         return;
       }
 
-      // ===== MAPEO DE PRODUCTOS CON ID COMPLETO =====
       inventory = data.productos.map((p, i) => {
-        // Buscar ID en varias columnas posibles
         let id = p.ID || p.id || p.Código || p.Codigo || p.SKU || null;
         if (!id) {
           const num = String(i + 1).padStart(3, '0');
@@ -1620,11 +1619,11 @@
           name: p.Contenido || p.contenido || '',
           stock: parseInt(p.Stock || p.stock || 0),
           price: parseInt(p.Precio || p.precio || 0),
-          img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '', 400)
+          img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '', 400),
+          detail: p.Detalles || p.detalles || p.Detalle || p.detalle || p.Descripción || p.descripcion || ''
         };
       }).filter(p => p.id && p.name);
 
-      // Verificar que hay productos válidos después del filtrado
       if (!inventory.length) {
         throw new Error('No se pudieron procesar productos válidos. Verifica los datos.');
       }
@@ -1635,7 +1634,6 @@
       
     } catch (e) {
       console.error('Error en loadData:', e);
-      // Mostrar error detallado al usuario
       showError(
         e.message || 'Error desconocido al cargar los datos',
         e.stack || 'Sin detalles adicionales'
