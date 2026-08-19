@@ -42,7 +42,105 @@
     .cart-summary.show{display:flex}
     @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     
-    /* ===== GRID Y TARJETAS MÁS CUADRADAS ===== */
+    /* ===== CARRUSEL (ajustado para igualar grilla) ===== */
+    .carousel-wrapper {
+      position: relative;
+      padding: 12px 4px 20px;
+      max-width: 1100px;
+      margin: 0 auto 8px;
+      background: var(--bg);
+      border-bottom: 1px solid rgba(40,40,40,0.04);
+      display: none;
+    }
+    .carousel-wrapper.show {
+      display: block;
+    }
+    .carousel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--dark);
+      padding: 0 0 10px 0;
+      letter-spacing: 0.02em;
+    }
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .carousel-track {
+      display: flex;
+      gap: 2px;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      padding: 0;
+      will-change: transform;
+    }
+    .carousel-slide {
+      flex: 0 0 calc((100% - 2px) / 2);
+      min-width: 0;
+    }
+    @media (min-width: 640px) {
+      .carousel-slide {
+        flex: 0 0 calc((100% - 4px) / 3);
+      }
+    }
+    @media (min-width: 1024px) {
+      .carousel-slide {
+        flex: 0 0 calc((100% - 6px) / 4);
+      }
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(40,40,40,0.6);
+      backdrop-filter: blur(4px);
+      border: 0;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-btn:hover {
+      background: rgba(40,40,40,0.8);
+    }
+    .carousel-btn.prev {
+      left: 4px;
+    }
+    .carousel-btn.next {
+      right: 4px;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 0 4px;
+    }
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--silver);
+      border: 0;
+      cursor: pointer;
+      transition: background 0.2s;
+      padding: 0;
+    }
+    .carousel-dot.active {
+      background: var(--teal-light);
+      width: 20px;
+      border-radius: 4px;
+    }
+
+    /* ===== GRID Y TARJETAS ===== */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -70,16 +168,49 @@
       background: #fff;
       border-radius: 8px;
       overflow: hidden;
-      border: 1px solid rgba(40, 40, 40, 0.04);
+      border: 1px solid #E5E9EC;
       box-shadow: 0 1px 2px rgba(40, 40, 40, 0.03);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
       display: flex;
       flex-direction: column;
       margin-bottom: 2px;
+      position: relative;
+      height: 100%;
     }
     .card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(40, 40, 40, 0.06);
+    }
+    .card.offer {
+      border: 2px solid var(--teal-light);
+      background: #F8FDFC;
+    }
+    .card.offer .card-body {
+      background: #F8FDFC;
+    }
+    .card.offer .card-price-row .original-price {
+      text-decoration: line-through;
+      color: var(--muted);
+      font-size: 12px;
+      margin-right: 6px;
+    }
+    .card.offer .card-price-row .offer-price {
+      color: var(--bordeaux);
+      font-weight: 700;
+    }
+    .offer-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--bordeaux);
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      z-index: 3;
     }
 
     .card-image {
@@ -98,15 +229,6 @@
     }
     .card-image img:hover {
       transform: scale(1.04);
-    }
-    .card-image .placeholder {
-      display: none;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      color: #A0A8A4;
     }
     .fav-btn {
       position: absolute;
@@ -188,6 +310,8 @@
       align-items: baseline;
       justify-content: space-between;
       margin-bottom: 4px;
+      flex-wrap: wrap;
+      gap: 2px;
     }
     .card-price {
       font-size: 14px;
@@ -263,6 +387,7 @@
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.2s;
+      text-align: center;
     }
     .add-btn:hover:not(:disabled) {
       background: var(--teal);
@@ -655,7 +780,6 @@
       40% { transform: scale(1.15); }
     }
 
-    /* Ajustes extra para móviles muy pequeños */
     @media (max-width: 480px) {
       .header-top { padding: 10px 10px 2px; }
       .logo-img { height: 34px; }
@@ -664,7 +788,6 @@
       .tagline { font-size: 12px; }
       .lightbox img { max-width: 98vw; max-height: 85vh; }
       .lightbox-close { top: 10px; right: 14px; width: 36px; height: 36px; font-size: 20px; }
-      /* Ajuste adicional para grid en móvil muy pequeño */
       .product-grid {
         gap: 2px;
         padding: 8px 2px 20px;
@@ -733,6 +856,17 @@
 </header>
 
 <main>
+  <!-- CARRUSEL DE OFERTAS -->
+  <div id="carouselWrapper" class="carousel-wrapper">
+    <h2 id="carouselTitle" class="carousel-title">Ofertas</h2>
+    <div class="carousel-container">
+      <div class="carousel-track" id="carouselTrack"></div>
+      <button class="carousel-btn prev" id="carouselPrev">‹</button>
+      <button class="carousel-btn next" id="carouselNext">›</button>
+    </div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+
   <div id="grid" class="product-grid"></div>
 </main>
 
@@ -778,7 +912,6 @@
 (function(){
   "use strict";
 
-  // ===== CONFIG =====
   const CONFIG = {
     apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
     ws: '56935781897',
@@ -787,9 +920,8 @@
     STORAGE_FAVS: 'dari_favs'
   };
 
-  // ===== FRASES =====
   const frases = [
-"La elegancia es un estado de ánimo.",
+ "La elegancia es un estado de ánimo.",
 "Estilo que habla por sí solo.",
 "La belleza está en los detalles.",
 "Viste tu esencia con elegancia.",
@@ -1799,14 +1931,13 @@
 "La plata que eliges dice mucho de quien eres."
   ];
 
-  // ===== ESTADO =====
   let inventory = [], cart = [], favorites = [];
   let currentCategory = "TODOS";
   let searchQuery = '';
   let searchDebounce = null;
   let isLoading = false;
+  let tituloOferta = "Ofertas";
 
-  // ===== DOM REFS =====
   const $ = id => document.getElementById(id);
   const grid = $('grid');
   const catContainer = $('catContainer');
@@ -1825,8 +1956,13 @@
   const lightboxInner = $('lightboxInner');
   const toastContainer = $('toastContainer');
   const tagline = $('tagline');
+  const carouselWrapper = $('carouselWrapper');
+  const carouselTitle = $('carouselTitle');
+  const carouselTrack = $('carouselTrack');
+  const carouselPrev = $('carouselPrev');
+  const carouselNext = $('carouselNext');
+  const carouselDots = $('carouselDots');
 
-  // ===== SISTEMA DE ERRORES =====
   function showError(message, errorDetails = null) {
     console.error('Error:', message, errorDetails);
     grid.innerHTML = `
@@ -1841,7 +1977,6 @@
     showToast(`❌ ${message}`, 'error');
   }
 
-  // ===== MOSTRAR FRASE =====
   function setRandomPhrase() {
     if (frases.length === 0) return;
     const randomIndex = Math.floor(Math.random() * frases.length);
@@ -1943,11 +2078,11 @@
 
   // ===== BÚSQUEDA =====
   function openSearch() { searchExpand.classList.add('open'); searchInput.focus(); }
-  function closeSearch() { searchExpand.classList.remove('open'); searchInput.value = ''; searchQuery = ''; renderProducts(); }
+  function closeSearch() { searchExpand.classList.remove('open'); searchInput.value = ''; searchQuery = ''; renderProducts(); renderCarousel(); }
   searchToggle.addEventListener('click', e => { e.stopPropagation(); if (searchExpand.classList.contains('open')) closeSearch(); else openSearch(); });
   searchClose.addEventListener('click', e => { e.stopPropagation(); closeSearch(); });
   document.addEventListener('click', e => { const inside = searchExpand.contains(e.target) || searchToggle.contains(e.target); if (!inside && searchExpand.classList.contains('open')) closeSearch(); });
-  const handleSearch = debounce(function() { searchQuery = searchInput.value.toLowerCase().trim(); renderProducts(); }, 200);
+  const handleSearch = debounce(function() { searchQuery = searchInput.value.toLowerCase().trim(); renderProducts(); renderCarousel(); }, 200);
   searchInput.addEventListener('input', handleSearch);
   searchInput.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
 
@@ -1968,9 +2103,9 @@
       `<button class="cat-btn ${currentCategory === t ? 'active' : ''}" onclick="Dari.setCategory('${encodeURIComponent(t)}')">${sanitize(t)}</button>`
     ).join('');
   }
-  function setCategory(cat) { currentCategory = decodeURIComponent(cat); renderCategories(); renderProducts(); }
+  function setCategory(cat) { currentCategory = decodeURIComponent(cat); renderCategories(); renderProducts(); renderCarousel(); }
 
-  // ===== CANTIDAD =====
+  // ===== CANTIDAD (solo para la grilla) =====
   function changeQty(pid, delta) {
     const input = document.getElementById('qty-'+pid);
     const p = inventory.find(x => x.id === pid);
@@ -1995,7 +2130,88 @@
     if (btn) btn.disabled = qty > stock || stock <= 0;
   }
 
-  // ===== RENDER PRODUCTOS =====
+  // ===== CARRUSEL =====
+  let carouselIndex = 0;
+  let carouselInterval = null;
+  let carouselItems = [];
+
+  function renderCarousel() {
+    const show = (currentCategory === "TODOS" && searchQuery === '');
+    if (!show) {
+      carouselWrapper.classList.remove('show');
+      if (carouselInterval) { clearInterval(carouselInterval); carouselInterval = null; }
+      return;
+    }
+
+    const offerItems = inventory.filter(p => p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0);
+    if (offerItems.length === 0) {
+      carouselWrapper.classList.remove('show');
+      return;
+    }
+
+    carouselWrapper.classList.add('show');
+    carouselTitle.textContent = tituloOferta || "Ofertas";
+
+    carouselItems = offerItems;
+    const slidesHtml = offerItems.map(p => createProductCardHtml(p, true)).join('');
+    carouselTrack.innerHTML = slidesHtml;
+
+    const totalSlides = offerItems.length;
+    const dotsHtml = Array.from({length: totalSlides}, (_, i) => 
+      `<button class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`
+    ).join('');
+    carouselDots.innerHTML = dotsHtml;
+
+    carouselIndex = 0;
+    requestAnimationFrame(() => {
+      updateCarouselPosition();
+    });
+
+    document.querySelectorAll('.carousel-dot').forEach(dot => {
+      dot.addEventListener('click', function() {
+        const idx = parseInt(this.dataset.index);
+        goToSlide(idx);
+      });
+    });
+
+    carouselPrev.onclick = () => goToSlide(carouselIndex - 1);
+    carouselNext.onclick = () => goToSlide(carouselIndex + 1);
+
+    if (carouselInterval) clearInterval(carouselInterval);
+    carouselInterval = setInterval(() => {
+      goToSlide(carouselIndex + 1);
+    }, 2000);
+  }
+
+  function goToSlide(index) {
+    const total = carouselItems.length;
+    if (total === 0) return;
+    if (index < 0) index = total - 1;
+    if (index >= total) index = 0;
+    carouselIndex = index;
+    updateCarouselPosition();
+    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+  }
+
+  function updateCarouselPosition() {
+    const track = carouselTrack;
+    const slides = track.querySelectorAll('.carousel-slide');
+    if (!slides.length) return;
+    const slideWidth = slides[0].offsetWidth;
+    const gap = 2;
+    const offset = carouselIndex * (slideWidth + gap);
+    track.style.transform = `translateX(-${offset}px)`;
+  }
+
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => updateCarouselPosition(), 100);
+  });
+
+  // ===== RENDER PRODUCTOS (grilla) =====
   function renderProducts() {
     let list = currentCategory === "TODOS" ? [...inventory] : inventory.filter(p => p.type === currentCategory);
     if (searchQuery) {
@@ -2009,27 +2225,61 @@
     }
     let html = '';
     list.forEach((p, i) => {
-      const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
-      const fav = isFavorite(p.id);
-      const imgSrc = fixDriveUrl(p.img, 400);
-      const nameEnc = encodeURIComponent(p.name);
-      const idEnc = encodeURIComponent(p.id);
-      html += `
-      <article class="card card-enter" style="animation-delay:${Math.min(i,15)*0.04}s">
-        <div class="card-image">
-          <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy" decoding="async"
-               onclick="Dari.openLightbox('${imgSrc}','${nameEnc}')"
-               onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
-          <div class="placeholder">💍</div>
-          <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation(); Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
-          ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
-        </div>
+      html += createProductCardHtml(p, false);
+    });
+    grid.innerHTML = html;
+    list.forEach(p => { 
+      const inp = document.getElementById('qty-'+p.id); 
+      if (inp) updateAddBtn(p.id, parseInt(inp.value)||1, p.stock); 
+    });
+  }
+
+  // ===== CREAR HTML DE TARJETA =====
+  function createProductCardHtml(p, isCarousel) {
+    const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
+    const fav = isFavorite(p.id);
+    const imgSrc = fixDriveUrl(p.img, 400);
+    const nameEnc = encodeURIComponent(p.name);
+    const idEnc = encodeURIComponent(p.id);
+    const isOffer = p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0;
+    const offerPrice = isOffer ? p.oferta : null;
+    const normalPrice = p.price;
+
+    const offerClass = isOffer ? 'offer' : '';
+    const badgeOffer = isOffer ? `<div class="offer-badge">OFERTA</div>` : '';
+
+    let priceHtml = '';
+    if (isOffer) {
+      priceHtml = `<span class="original-price">${formatPrice(normalPrice)}</span><span class="offer-price">${formatPrice(offerPrice)}</span>`;
+    } else {
+      priceHtml = `<span class="card-price">${formatPrice(normalPrice)}</span>`;
+    }
+
+    // ---- CUERPO DE LA TARJETA ----
+    let bodyHtml = '';
+    if (isCarousel) {
+      // Carrusel: sin controles de cantidad, solo botón "Añadir 1"
+      bodyHtml = `
         <div class="card-body">
           <p class="card-type">${sanitize(p.type)}</p>
           <h3 class="card-title">${sanitize(p.name)}</h3>
           ${p.detail ? `<p class="card-detail">Detalles: ${sanitize(p.detail)}</p>` : ''}
           <div class="card-price-row">
-            <span class="card-price">${formatPrice(p.price)}</span>
+            ${priceHtml}
+            <span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span>
+          </div>
+          <button class="add-btn" onclick="Dari.addOneFromCarousel('${idEnc}')" ${out?'disabled':''}>${out?'Vendido':'Añadir 1'}</button>
+        </div>
+      `;
+    } else {
+      // Grilla: controles de cantidad y botón "Añadir"
+      bodyHtml = `
+        <div class="card-body">
+          <p class="card-type">${sanitize(p.type)}</p>
+          <h3 class="card-title">${sanitize(p.name)}</h3>
+          ${p.detail ? `<p class="card-detail">Detalles: ${sanitize(p.detail)}</p>` : ''}
+          <div class="card-price-row">
+            ${priceHtml}
             <span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span>
           </div>
           <div class="qty-row">
@@ -2042,18 +2292,64 @@
           </div>
           <button id="add-btn-${p.id}" class="add-btn" onclick="Dari.addToCart('${idEnc}')" ${out?'disabled':''}>${out?'Vendido':'Añadir'}</button>
         </div>
-      </article>`;
-    });
-    grid.innerHTML = html;
-    list.forEach(p => { const inp = document.getElementById('qty-'+p.id); if (inp) updateAddBtn(p.id, parseInt(inp.value)||1, p.stock); });
+      `;
+    }
+
+    // Elementos comunes (imagen, favoritos, badge)
+    let extraHtml = '';
+    if (!isCarousel) {
+      extraHtml = `
+        <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation(); Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
+        ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
+      `;
+    } else {
+      // En el carrusel también mostramos favoritos (opcional)
+      extraHtml = `
+        <button id="fav-car-${p.id}" class="fav-btn" onclick="event.stopPropagation(); Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
+        ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
+      `;
+    }
+
+    const cardClass = `card ${offerClass} card-enter ${isCarousel ? 'carousel-slide' : ''}`;
+    const delay = isCarousel ? 0 : Math.min(parseInt(p.id?.slice(-3) || '0'), 15) * 0.04;
+
+    return `
+      <article class="${cardClass}" style="animation-delay:${delay}s">
+        <div class="card-image">
+          <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy" decoding="async"
+               onclick="Dari.openLightbox('${imgSrc}','${nameEnc}')"
+               onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
+          <div class="placeholder">💍</div>
+          ${badgeOffer}
+          ${extraHtml}
+        </div>
+        ${bodyHtml}
+      </article>
+    `;
   }
 
-  // ===== CARRITO =====
+  // ===== FUNCIONES DEL CARRITO =====
+  // Añadir desde la grilla (con cantidad del input)
   function addToCart(pid) {
     const p = inventory.find(x => x.id === pid);
     if (!p || p.stock <= 0) return;
     const qty = parseInt(document.getElementById('qty-'+pid).value) || 1;
     if (qty > p.stock) { showToast('Solo hay '+p.stock+' unidades','error'); return; }
+    const exist = cart.find(i => i.id === pid);
+    if (exist) { if (exist.q + qty > p.stock) { showToast('Máximo '+p.stock,'error'); return; } exist.q += qty; }
+    else cart.push({ id: p.id, name: p.name, price: p.price, q: qty });
+    updateCartBar();
+    saveState();
+    showToast('Añadido al carrito','success');
+    const badge = cartCountDisplay;
+    badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce');
+  }
+
+  // Añadir 1 unidad desde el carrusel
+  function addOneFromCarousel(pid) {
+    const p = inventory.find(x => x.id === pid);
+    if (!p || p.stock <= 0) return;
+    const qty = 1;
     const exist = cart.find(i => i.id === pid);
     if (exist) { if (exist.q + qty > p.stock) { showToast('Máximo '+p.stock,'error'); return; } exist.q += qty; }
     else cart.push({ id: p.id, name: p.name, price: p.price, q: qty });
@@ -2170,11 +2466,18 @@
         return;
       }
 
+      tituloOferta = data.titulo_oferta || "Ofertas";
+
       inventory = data.productos.map((p, i) => {
         let id = p.ID || p.id || p.Código || p.Codigo || p.SKU || null;
         if (!id) {
           const num = String(i + 1).padStart(3, '0');
           id = `PROD-${num}`;
+        }
+        const ofertaVal = p.Oferta !== undefined ? p.Oferta : p.oferta;
+        let oferta = null;
+        if (ofertaVal !== undefined && ofertaVal !== null && ofertaVal !== '' && !isNaN(parseFloat(ofertaVal))) {
+          oferta = parseFloat(ofertaVal);
         }
         return {
           id: String(id).trim(),
@@ -2183,7 +2486,8 @@
           stock: parseInt(p.Stock || p.stock || 0),
           price: parseInt(p.Precio || p.precio || 0),
           img: fixDriveUrl(p['Link de la Imagen'] || p.link_de_la_imagen || p.imagen || '', 400),
-          detail: p.Detalles || p.detalles || p.Detalle || p.detalle || p.Descripción || p.descripcion || ''
+          detail: p.Detalles || p.detalles || p.Detalle || p.detalle || p.Descripción || p.descripcion || '',
+          oferta: oferta
         };
       }).filter(p => p.id && p.name);
 
@@ -2192,6 +2496,7 @@
       }
 
       renderCategories();
+      renderCarousel();
       renderProducts();
       if (cart.length) updateCartBar();
       
@@ -2215,6 +2520,7 @@
     changeQty,
     handleQtyInput,
     addToCart,
+    addOneFromCarousel,
     updateCartBar,
     renderCartModal,
     updateCartItemQty,
