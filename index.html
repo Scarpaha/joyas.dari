@@ -12,11 +12,11 @@
   <meta property="og:type" content="website">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ===== ESTILOS MEJORADOS: SIN MAX-WIDTH + EFECTO MÁQUINA ===== */
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
     :root{--dark:#282828;--teal:#15696F;--teal-light:#63BDB5;--muted:#858585;--bg:#EEF2F0;--white:#FFFFFF;--bordeaux:#880D1E;--silver:#E5E9EC}
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{background:var(--bg);color:var(--dark);font-family:'Inter',system-ui,sans-serif;font-weight:400;line-height:1.5}
+    body{background:var(--bg);color:var(--dark);font-family:'Inter',system-ui,sans-serif;font-weight:400;line-height:1.5;overflow-x:hidden}
+
     .header{position:sticky;top:0;z-index:50;background:rgba(40,40,40,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;border-bottom:1px solid rgba(255,255,255,0.06)}
     .header-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 4px;gap:10px}
     .logo-img{height:40px;width:auto;display:block}
@@ -33,18 +33,8 @@
     .search-expandable .search-close-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:0;border:0;color:rgba(255,255,255,0.5);font-size:18px;cursor:pointer;padding:2px}
     .tagline-container{text-align:center;padding:2px 16px 6px;min-height:32px;display:flex;align-items:center;justify-content:center}
     .tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:rgba(255,255,255,0.85);letter-spacing:0.04em;transition:opacity 0.3s;display:inline-block;min-height:1.5em}
-    /* ---- EFECTO MÁQUINA DE ESCRIBIR (cursor) ---- */
-    .tagline.typing::after {
-      content: '|';
-      animation: blink 0.7s step-end infinite;
-      margin-left: 2px;
-      color: var(--teal-light);
-      font-weight: 300;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
+    .tagline.typing::after{content:'|';animation:blink 0.7s step-end infinite;margin-left:2px;color:var(--teal-light);font-weight:300}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
     .categories{display:flex;gap:6px;overflow-x:auto;padding:0 12px 10px;scrollbar-width:none}
     .categories::-webkit-scrollbar{display:none}
@@ -54,811 +44,243 @@
     .cart-summary{display:none;align-items:center;justify-content:space-between;background:var(--teal);margin:0 12px 10px;padding:8px 14px;border-radius:100px;color:#fff;animation:fadeUp 0.25s ease;box-shadow:0 4px 16px rgba(21,105,111,0.25)}
     .cart-summary.show{display:flex}
     @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    
-    /* ===== CARRUSEL (ancho completo) ===== */
-    .carousel-wrapper {
-      position: relative;
-      padding: 12px 8px 20px;
-      background: var(--bg);
-      border-bottom: 1px solid rgba(40,40,40,0.04);
-      display: none;
+
+    .carousel-wrapper{position:relative;padding:16px 0 20px;background:linear-gradient(180deg,#F4F7F5 0%, var(--bg) 100%);border-bottom:1px solid rgba(40,40,40,0.04);display:none;overflow:hidden}
+    .carousel-wrapper.show{display:block}
+    .carousel-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--dark);padding:0 0 12px 16px;letter-spacing:0.02em}
+
+    .ring-3d-stage{position:relative;width:100%;height:440px;perspective:1400px;perspective-origin:50% 50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;overflow:visible}
+    .ring-3d-stage.dragging{cursor:grabbing}
+
+    .ring-3d{position:relative;width:100%;height:100%;transform-style:preserve-3d;will-change:transform}
+
+    .ring-3d-item{position:absolute;top:50%;left:50%;width:200px;height:360px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 12px 40px rgba(40,40,40,0.18), 0 2px 8px rgba(40,40,40,0.08);border:1px solid rgba(40,40,40,0.06);backface-visibility:hidden;display:flex;flex-direction:column;cursor:pointer;transform-origin:center center}
+    .ring-3d-item.offer{border:2px solid var(--teal-light)}
+
+    .ring-3d-img{position:relative;width:100%;height:190px;overflow:hidden;background:#E8ECE9;flex-shrink:0;cursor:zoom-in}
+    .ring-3d-img img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+
+    .ring-3d-badge{position:absolute;top:8px;left:8px;background:var(--bordeaux);color:#fff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.08em;z-index:2}
+    .ring-3d-stock{position:absolute;bottom:8px;left:8px;background:rgba(40,40,40,0.85);color:#fff;font-size:9px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em;backdrop-filter:blur(4px)}
+    .ring-3d-stock.low{background:var(--bordeaux)}
+
+    .ring-3d-body{padding:10px 12px 12px;display:flex;flex-direction:column;flex:1 1 auto;gap:4px;background:#fff;min-height:0}
+    .ring-3d-type{font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);flex-shrink:0}
+    .ring-3d-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;line-height:1.15;color:var(--dark);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px;max-height:36px;flex-shrink:0}
+    .ring-3d-prices{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;flex-shrink:0;margin-top:auto;padding-top:4px}
+    .ring-3d-price{font-size:15px;font-weight:700;color:var(--dark)}
+    .ring-3d-price-old{font-size:11px;color:var(--muted);text-decoration:line-through}
+    .ring-3d-price-offer{font-size:15px;font-weight:700;color:var(--bordeaux)}
+    .ring-3d-add{width:100%;padding:8px;border:0;border-radius:100px;background:var(--dark);color:#fff;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:6px;position:relative;z-index:5;flex-shrink:0}
+    .ring-3d-add:hover:not(:disabled){background:var(--teal)}
+    .ring-3d-add:disabled{background:#C5CBC8;cursor:not-allowed}
+
+    .ring-controls{display:flex;justify-content:center;align-items:center;gap:14px;padding:16px 0 0}
+    .ring-btn{width:38px;height:38px;border-radius:50%;background:var(--dark);color:#fff;border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1;transition:all 0.2s;box-shadow:0 4px 12px rgba(40,40,40,0.15)}
+    .ring-btn:hover{background:var(--teal);transform:scale(1.06)}
+    .ring-btn:active{transform:scale(0.96)}
+    .ring-dots{display:flex;gap:6px;align-items:center}
+    .ring-dot{width:8px;height:8px;border-radius:50%;background:var(--silver);border:0;padding:0;cursor:pointer;transition:all 0.25s}
+    .ring-dot.active{background:var(--teal-light);width:22px;border-radius:4px}
+
+    .ring-3d-stage.flat{height:auto;min-height:0;perspective:none;display:flex;justify-content:center;align-items:center;padding:8px 16px 4px}
+    .ring-3d-stage.flat .ring-3d{transform:none !important;transform-style:flat;display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;height:auto;min-height:0}
+    .ring-3d-stage.flat .ring-3d-item{position:relative;top:auto;left:auto;margin:0;transform:none !important;flex-shrink:0}
+
+    @media (min-width:640px){
+      .ring-3d-stage{height:500px;perspective:1600px}
+      .ring-3d-item{width:220px;height:390px}
+      .ring-3d-img{height:210px}
+      .ring-3d-name{font-size:17px;min-height:40px;max-height:40px}
     }
-    .carousel-wrapper.show { display: block; }
-    .carousel-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 500;
-      color: var(--dark);
-      padding: 0 0 10px 8px;
-      letter-spacing: 0.02em;
+    @media (min-width:1024px){
+      .ring-3d-stage{height:620px;perspective:2000px}
+      .ring-3d-item{width:260px;height:470px}
+      .ring-3d-img{height:260px}
+      .ring-3d-name{font-size:20px;min-height:48px;max-height:48px}
+      .ring-3d-price,.ring-3d-price-offer{font-size:18px}
+      .carousel-title{font-size:28px;padding-left:24px}
     }
-    .carousel-container {
-      position: relative;
-      overflow: hidden;
-      touch-action: pan-y;
+    @media (min-width:1280px){
+      .ring-3d-stage{height:660px;perspective:2200px}
+      .ring-3d-item{width:280px;height:490px}
+      .ring-3d-img{height:280px}
+      .ring-3d-name{font-size:22px;min-height:52px;max-height:52px}
     }
-    .carousel-track {
-      display: flex;
-      gap: 2px;
-      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-      padding: 0;
-      will-change: transform;
-    }
-    .carousel-slide {
-      flex: 0 0 calc((100% - 2px) / 2);
-      min-width: 0;
-    }
-    @media (min-width: 640px) {
-      .carousel-slide { flex: 0 0 calc((100% - 4px) / 3); }
-    }
-    @media (min-width: 1024px) {
-      .carousel-slide { flex: 0 0 calc((100% - 6px) / 4); }
-    }
-    @media (min-width: 1280px) {
-      .carousel-slide { flex: 0 0 calc((100% - 8px) / 5); }
+    @media (max-width:480px){
+      .ring-3d-stage{height:420px;perspective:1200px}
+      .ring-3d-item{width:180px;height:340px}
+      .ring-3d-img{height:170px}
+      .ring-3d-name{font-size:14px;min-height:32px;max-height:32px}
+      .ring-3d-price,.ring-3d-price-offer{font-size:13px}
+      .carousel-title{font-size:20px}
+      .ring-btn{width:34px;height:34px;font-size:18px}
     }
 
-    .carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(40,40,40,0.6);
-      backdrop-filter: blur(4px);
-      border: 0;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      z-index: 10;
-      transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .carousel-btn:hover { background: rgba(40,40,40,0.8); }
-    .carousel-btn.prev { left: 4px; }
-    .carousel-btn.next { right: 4px; }
-    .carousel-dots {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      padding: 12px 0 4px;
-    }
-    .carousel-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--silver);
-      border: 0;
-      cursor: pointer;
-      transition: background 0.2s;
-      padding: 0;
-    }
-    .carousel-dot.active {
-      background: var(--teal-light);
-      width: 20px;
-      border-radius: 4px;
-    }
+    .product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;padding:10px 4px 30px;margin:0}
+    @media (min-width:640px){.product-grid{grid-template-columns:repeat(3,1fr);gap:4px;padding:12px 6px 40px}}
+    @media (min-width:1024px){.product-grid{grid-template-columns:repeat(3,1fr);gap:12px;padding:24px 12px 50px}}
+    @media (min-width:1280px){.product-grid{grid-template-columns:repeat(4,1fr);gap:16px;padding:32px 16px 60px}}
 
-    /* ===== GRID Y TARJETAS (ANCHO COMPLETO) ===== */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2px;
-      padding: 10px 4px 30px;
-      margin: 0;
+    .card{background:#fff;border-radius:8px;overflow:hidden;border:1px solid #E5E9EC;box-shadow:0 1px 2px rgba(40,40,40,0.03);transition:transform 0.25s ease,box-shadow 0.25s ease,border-color 0.2s;display:flex;flex-direction:column;margin-bottom:2px;position:relative;height:100%}
+    @media (min-width:1024px){
+      .card{border-radius:14px;border-color:#E5E9EC;box-shadow:0 2px 8px rgba(40,40,40,0.04);margin-bottom:0}
+      .card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(40,40,40,0.08);border-color:var(--teal-light)}
     }
-    @media (min-width: 640px) {
-      .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 4px;
-        padding: 12px 6px 40px;
-      }
-    }
-    @media (min-width: 1024px) {
-      .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        padding: 24px 12px 50px;
-      }
-    }
-    @media (min-width: 1280px) {
-      .product-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        padding: 32px 16px 60px;
-      }
-    }
+    .card.offer{border:2px solid var(--teal-light);background:#F8FDFC}
+    .card.offer .card-body{background:#F8FDFC}
+    .card.offer .card-price-row .original-price{text-decoration:line-through;color:var(--muted);font-size:12px;margin-right:6px}
+    .card.offer .card-price-row .offer-price{color:var(--bordeaux);font-weight:700}
+    .offer-badge{position:absolute;top:8px;left:8px;background:var(--bordeaux);color:#fff;font-size:8px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.06em;z-index:3}
 
-    .card {
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #E5E9EC;
-      box-shadow: 0 1px 2px rgba(40, 40, 40, 0.03);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s;
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 2px;
-      position: relative;
-      height: 100%;
-    }
-    @media (min-width: 1024px) {
-      .card {
-        border-radius: 14px;
-        border-color: #E5E9EC;
-        box-shadow: 0 2px 8px rgba(40, 40, 40, 0.04);
-        margin-bottom: 0;
-      }
-      .card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 32px rgba(40, 40, 40, 0.08);
-        border-color: var(--teal-light);
-      }
-    }
-    .card.offer {
-      border: 2px solid var(--teal-light);
-      background: #F8FDFC;
-    }
-    .card.offer .card-body { background: #F8FDFC; }
-    .card.offer .card-price-row .original-price {
-      text-decoration: line-through;
-      color: var(--muted);
-      font-size: 12px;
-      margin-right: 6px;
-    }
-    .card.offer .card-price-row .offer-price {
-      color: var(--bordeaux);
-      font-weight: 700;
-    }
-    .offer-badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: var(--bordeaux);
-      color: #fff;
-      font-size: 8px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      z-index: 3;
-    }
+    .card-image{position:relative;aspect-ratio:1/1;background:#E8ECE9;overflow:hidden}
+    .card-image img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;cursor:zoom-in;display:block}
+    .card-image img:hover{transform:scale(1.04)}
+    .fav-btn{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.9);border:0;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:all 0.15s;z-index:2}
+    .fav-btn:hover{transform:scale(1.1)}
+    .stock-badge{position:absolute;bottom:8px;left:8px;background:var(--bordeaux);color:#fff;font-size:8px;font-weight:600;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em}
+    .stock-badge.low{background:var(--dark)}
 
-    .card-image {
-      position: relative;
-      aspect-ratio: 1/1;
-      background: #E8ECE9;
-      overflow: hidden;
-    }
-    .card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s;
-      cursor: zoom-in;
-      display: block;
-    }
-    .card-image img:hover { transform: scale(1.04); }
-    .fav-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.9);
-      border: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      transition: all 0.15s;
-      z-index: 2;
-    }
-    .fav-btn:hover { transform: scale(1.1); }
-    .stock-badge {
-      position: absolute;
-      bottom: 8px;
-      left: 8px;
-      background: var(--bordeaux);
-      color: #fff;
-      font-size: 8px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .stock-badge.low { background: var(--dark); }
+    .card-body{padding:8px 8px 10px;display:flex;flex-direction:column;flex:1}
+    @media (min-width:1024px){.card-body{padding:16px 16px 18px}}
+    @media (min-width:1280px){.card-body{padding:20px 20px 22px}}
 
-    .card-body {
-      padding: 8px 8px 10px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-    @media (min-width: 1024px) {
-      .card-body {
-        padding: 16px 16px 18px;
-      }
-    }
-    @media (min-width: 1280px) {
-      .card-body {
-        padding: 20px 20px 22px;
-      }
-    }
+    .card-type{font-size:8px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:2px}
+    @media (min-width:1024px){.card-type{font-size:11px;margin-bottom:6px}}
 
-    .card-type {
-      font-size: 8px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--teal);
-      margin-bottom: 2px;
-    }
-    @media (min-width: 1024px) {
-      .card-type {
-        font-size: 11px;
-        margin-bottom: 6px;
-      }
-    }
+    .card-title{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;line-height:1.2;color:var(--dark);margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width:1024px){.card-title{font-size:20px;margin-bottom:6px}}
+    @media (min-width:1280px){.card-title{font-size:22px}}
 
-    .card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 14px;
-      font-weight: 500;
-      line-height: 1.2;
-      color: var(--dark);
-      margin-bottom: 2px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    @media (min-width: 1024px) {
-      .card-title {
-        font-size: 20px;
-        margin-bottom: 6px;
-      }
-    }
-    @media (min-width: 1280px) {
-      .card-title {
-        font-size: 22px;
-      }
-    }
+    .card-detail{font-size:10px;color:var(--muted);font-weight:400;line-height:1.3;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width:1024px){.card-detail{font-size:13px;margin-bottom:8px}}
 
-    .card-detail {
-      font-size: 10px;
-      color: var(--muted);
-      font-weight: 400;
-      line-height: 1.3;
-      margin-bottom: 2px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    @media (min-width: 1024px) {
-      .card-detail {
-        font-size: 13px;
-        margin-bottom: 8px;
-      }
-    }
+    .card-price-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:2px}
+    .card-price{font-size:14px;font-weight:600;color:var(--dark)}
+    @media (min-width:1024px){.card-price{font-size:20px}}
+    @media (min-width:1280px){.card-price{font-size:22px}}
+    .card-stock{font-size:9px;color:var(--muted)}
+    @media (min-width:1024px){.card-stock{font-size:12px}}
 
-    .card-price-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 4px;
-      flex-wrap: wrap;
-      gap: 2px;
-    }
-    .card-price {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--dark);
-    }
-    @media (min-width: 1024px) {
-      .card-price {
-        font-size: 20px;
-      }
-    }
-    @media (min-width: 1280px) {
-      .card-price {
-        font-size: 22px;
-      }
-    }
-    .card-stock {
-      font-size: 9px;
-      color: var(--muted);
-    }
-    @media (min-width: 1024px) {
-      .card-stock {
-        font-size: 12px;
-      }
-    }
+    .qty-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+    @media (min-width:1024px){.qty-row{margin-bottom:10px}}
 
-    .qty-row {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 4px;
-    }
-    @media (min-width: 1024px) {
-      .qty-row {
-        margin-bottom: 10px;
-      }
-    }
+    .qty-control{display:flex;align-items:center;background:#E8ECE9;border-radius:100px;padding:2px}
+    @media (min-width:1024px){.qty-control{padding:4px}}
 
-    .qty-control {
-      display: flex;
-      align-items: center;
-      background: #E8ECE9;
-      border-radius: 100px;
-      padding: 2px;
-    }
-    @media (min-width: 1024px) {
-      .qty-control {
-        padding: 4px;
-      }
-    }
+    .qty-btn{width:24px;height:24px;border:0;background:#fff;border-radius:50%;font-size:12px;font-weight:500;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:all 0.15s}
+    .qty-btn:hover:not(:disabled){background:var(--silver)}
+    .qty-btn:disabled{opacity:0.3;cursor:not-allowed}
+    @media (min-width:1024px){.qty-btn{width:34px;height:34px;font-size:16px}}
 
-    .qty-btn {
-      width: 24px;
-      height: 24px;
-      border: 0;
-      background: #fff;
-      border-radius: 50%;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-      transition: all 0.15s;
-    }
-    .qty-btn:hover:not(:disabled) {
-      background: var(--silver);
-      transform: scale(1.04);
-    }
-    .qty-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    @media (min-width: 1024px) {
-      .qty-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 16px;
-      }
-    }
+    .qty-value{width:28px;text-align:center;border:0;background:0;font-size:12px;font-weight:600;color:var(--dark);outline:0;-moz-appearance:textfield}
+    .qty-value::-webkit-outer-spin-button,.qty-value::-webkit-inner-spin-button{-webkit-appearance:none}
+    @media (min-width:1024px){.qty-value{width:40px;font-size:16px}}
 
-    .qty-value {
-      width: 28px;
-      text-align: center;
-      border: 0;
-      background: 0;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--dark);
-      outline: 0;
-      -moz-appearance: textfield;
-    }
-    .qty-value::-webkit-outer-spin-button,
-    .qty-value::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-    }
-    @media (min-width: 1024px) {
-      .qty-value {
-        width: 40px;
-        font-size: 16px;
-      }
-    }
+    .add-btn{width:100%;padding:6px;border:0;border-radius:100px;background:var(--dark);color:#fff;font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;text-align:center}
+    .add-btn:hover:not(:disabled){background:var(--teal)}
+    .add-btn:disabled{background:#C5CBC8;cursor:not-allowed}
+    @media (min-width:1024px){.add-btn{padding:12px;font-size:13px;letter-spacing:0.1em}}
+    @media (min-width:1280px){.add-btn{padding:14px;font-size:14px}}
 
-    .add-btn {
-      width: 100%;
-      padding: 6px;
-      border: 0;
-      border-radius: 100px;
-      background: var(--dark);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-    }
-    .add-btn:hover:not(:disabled) {
-      background: var(--teal);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(21, 105, 111, 0.2);
-    }
-    .add-btn:disabled {
-      background: #C5CBC8;
-      cursor: not-allowed;
-    }
-    @media (min-width: 1024px) {
-      .add-btn {
-        padding: 12px;
-        font-size: 13px;
-        letter-spacing: 0.1em;
-      }
-    }
-    @media (min-width: 1280px) {
-      .add-btn {
-        padding: 14px;
-        font-size: 14px;
-      }
-    }
+    .empty-state{grid-column:1/-1;text-align:center;padding:50px 16px}
+    .empty-icon{font-size:40px;margin-bottom:10px}
+    .empty-text{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--muted)}
+    .skeleton-card{background:#fff;border-radius:8px;overflow:hidden}
+    .skeleton{background:linear-gradient(90deg,#E0E5E2 25%,#EEF2F0 50%,#E0E5E2 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .skeleton-img{aspect-ratio:1/1}
+    .skeleton-line{height:10px;border-radius:6px;margin:8px 12px}
 
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 50px 16px;
-    }
-    .empty-icon { font-size: 40px; margin-bottom: 10px; }
-    .empty-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
-      color: var(--muted);
-    }
-    .skeleton-card { background: #fff; border-radius: 8px; overflow: hidden; }
-    .skeleton {
-      background: linear-gradient(90deg, #E0E5E2 25%, #EEF2F0 50%, #E0E5E2 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 8px;
-    }
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    .skeleton-img { aspect-ratio: 1/1; }
-    .skeleton-line { height: 10px; border-radius: 6px; margin: 8px 12px; }
+    .cart-modal{display:none;position:fixed;inset:0;background:rgba(40,40,40,0.5);backdrop-filter:blur(4px);z-index:100;align-items:flex-end;justify-content:center}
+    .cart-modal.show{display:flex}
+    .cart-panel{background:#fff;width:100%;max-width:420px;max-height:80vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:slideUp 0.3s cubic-bezier(0.22,1,0.36,1);box-shadow:0 -8px 30px rgba(0,0,0,0.08)}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .cart-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid #E5E9EC}
+    .cart-header h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--dark)}
+    .cart-close{width:32px;height:32px;border-radius:50%;border:0;background:#EEF2F0;font-size:20px;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s}
+    .cart-close:hover{background:#E0E5E2}
+    .cart-items{flex:1;overflow-y:auto;padding:6px 16px}
+    .cart-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #EEF2F0;gap:10px}
+    .cart-item:last-child{border-bottom:0}
+    .cart-item-info{flex:1;min-width:0}
+    .cart-item-name{font-weight:500;font-size:13px;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+    .cart-item-price{font-size:11px;color:var(--muted)}
+    .cart-item-actions{display:flex;align-items:center;gap:6px}
+    .cart-qty{display:flex;align-items:center;background:#EEF2F0;border-radius:100px;padding:2px}
+    .cart-qty-btn{width:26px;height:26px;border:0;background:#fff;border-radius:50%;font-size:14px;font-weight:500;color:var(--dark);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.04);transition:all 0.15s}
+    .cart-qty-btn:hover{background:var(--silver)}
+    .cart-qty-input{width:30px;text-align:center;border:0;background:0;font-size:13px;font-weight:600;outline:0;color:var(--dark)}
+    .cart-delete{width:30px;height:30px;border-radius:50%;border:0;background:#FDF2F2;color:var(--bordeaux);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+    .cart-delete:hover{background:#FEE2E2;transform:scale(1.04)}
+    .cart-footer{padding:14px 18px 24px;border-top:1px solid #E5E9EC;background:#F8FAF9}
+    .cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .cart-total-label{font-size:14px;color:var(--muted)}
+    .cart-total-amount{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--dark)}
+    .whatsapp-btn{width:100%;padding:12px;border:0;border-radius:100px;background:var(--teal);color:#fff;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+    .whatsapp-btn:hover{background:#12575C}
 
-    .cart-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(40, 40, 40, 0.5);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      align-items: flex-end;
-      justify-content: center;
+    .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:200;align-items:center;justify-content:center;cursor:zoom-out;overflow:hidden;user-select:none}
+    .lightbox.show{display:flex}
+    .lightbox .lightbox-inner{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .lightbox img{max-width:95vw;max-height:90vh;width:auto;height:auto;object-fit:contain;border-radius:6px;box-shadow:0 16px 48px rgba(0,0,0,0.4);transition:transform 0.1s;touch-action:none;cursor:zoom-in}
+    .lightbox img.zoomed{cursor:zoom-out}
+    .lightbox-close{position:absolute;top:16px;right:20px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(0,0,0,0.4);color:#fff;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;backdrop-filter:blur(6px);z-index:10}
+    .lightbox-close:hover{background:rgba(255,255,255,0.15)}
+    .lightbox .zoom-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.3);font-size:11px;font-family:'Inter',sans-serif;letter-spacing:0.02em;pointer-events:none;background:rgba(0,0,0,0.2);padding:4px 14px;border-radius:20px;backdrop-filter:blur(4px)}
+    .toast-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:300;pointer-events:none}
+    .toast{background:var(--dark);color:#fff;padding:10px 20px;border-radius:100px;font-size:12px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,0.15);animation:toastIn 0.3s ease;white-space:nowrap}
+    .toast.success{background:var(--teal)}
+    .toast.error{background:var(--bordeaux)}
+    @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .footer{background:var(--dark);padding:24px 16px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+    .social-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#E8EEF4;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;text-decoration:none}
+    .social-btn:hover{background:var(--teal-light);color:var(--dark);border-color:var(--teal-light);transform:scale(1.06)}
+    .card-enter{animation:cardIn 0.35s cubic-bezier(0.22,1,0.36,1) both}
+    @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .bounce{animation:bounce 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+    @keyframes bounce{0%,100%{transform:scale(1)}40%{transform:scale(1.15)}}
+    @media (min-width:1024px){
+      .header-top{padding:16px 24px 8px}
+      .logo-img{height:50px}
+      .brand-title{font-size:32px;letter-spacing:0.06em}
+      .header-action-btn{width:44px;height:44px;font-size:20px}
+      .search-expandable.open{width:280px}
+      .search-expandable input{padding:10px 36px 10px 40px;font-size:15px}
+      .tagline{font-size:16px}
+      .cat-btn{padding:8px 20px;font-size:12px}
+      .categories{padding:0 16px 12px;gap:10px}
+      .cart-summary{margin:0 16px 10px;padding:10px 18px}
     }
-    .cart-modal.show { display: flex; }
-    .cart-panel {
-      background: #fff;
-      width: 100%;
-      max-width: 420px;
-      max-height: 80vh;
-      border-radius: 20px 20px 0 0;
-      display: flex;
-      flex-direction: column;
-      animation: slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
+    @media (min-width:1280px){
+      .header-top{padding:20px 32px 10px}
+      .logo-img{height:56px}
+      .brand-title{font-size:36px}
+      .search-expandable.open{width:320px}
     }
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
+    @media (max-width:480px){
+      .header-top{padding:10px 10px 2px}
+      .logo-img{height:34px}
+      .brand-title{font-size:20px;letter-spacing:0.02em}
+      .search-expandable.open{width:140px}
+      .tagline{font-size:12px}
+      .lightbox img{max-width:98vw;max-height:85vh}
+      .lightbox-close{top:10px;right:14px;width:36px;height:36px;font-size:20px}
+      .product-grid{gap:2px;padding:8px 2px 20px}
+      .card-body{padding:6px 6px 8px}
+      .card-title{font-size:13px}
+      .card-price{font-size:13px}
+      .add-btn{font-size:9px;padding:5px}
     }
-    .cart-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 18px 12px;
-      border-bottom: 1px solid #E5E9EC;
+    @media (min-width:768px){
+      .header-top{padding:14px 20px 6px}
+      .brand-title{font-size:28px}
+      .logo-img{height:44px}
+      .search-expandable.open{width:260px}
+      .lightbox img{max-width:90vw;max-height:85vh}
     }
-    .cart-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 500;
-      color: var(--dark);
-    }
-    .cart-close {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 0;
-      background: #EEF2F0;
-      font-size: 20px;
-      color: var(--dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s;
-    }
-    .cart-close:hover { background: #E0E5E2; }
-    .cart-items { flex: 1; overflow-y: auto; padding: 6px 16px; }
-    .cart-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #EEF2F0;
-      gap: 10px;
-    }
-    .cart-item:last-child { border-bottom: 0; }
-    .cart-item-info { flex: 1; min-width: 0; }
-    .cart-item-name {
-      font-weight: 500;
-      font-size: 13px;
-      color: var(--dark);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 2px;
-    }
-    .cart-item-price { font-size: 11px; color: var(--muted); }
-    .cart-item-actions { display: flex; align-items: center; gap: 6px; }
-    .cart-qty {
-      display: flex;
-      align-items: center;
-      background: #EEF2F0;
-      border-radius: 100px;
-      padding: 2px;
-    }
-    .cart-qty-btn {
-      width: 26px;
-      height: 26px;
-      border: 0;
-      background: #fff;
-      border-radius: 50%;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-      transition: all 0.15s;
-    }
-    .cart-qty-btn:hover { background: var(--silver); }
-    .cart-qty-input {
-      width: 30px;
-      text-align: center;
-      border: 0;
-      background: 0;
-      font-size: 13px;
-      font-weight: 600;
-      outline: 0;
-      color: var(--dark);
-    }
-    .cart-delete {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 0;
-      background: #FDF2F2;
-      color: var(--bordeaux);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-    }
-    .cart-delete:hover { background: #FEE2E2; transform: scale(1.04); }
-    .cart-footer {
-      padding: 14px 18px 24px;
-      border-top: 1px solid #E5E9EC;
-      background: #F8FAF9;
-    }
-    .cart-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-    .cart-total-label { font-size: 14px; color: var(--muted); }
-    .cart-total-amount {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--dark);
-    }
-    .whatsapp-btn {
-      width: 100%;
-      padding: 12px;
-      border: 0;
-      border-radius: 100px;
-      background: var(--teal);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .whatsapp-btn:hover { background: #12575C; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(21,105,111,0.2); }
-
-    .lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      cursor: zoom-out;
-      overflow: hidden;
-      user-select: none;
-    }
-    .lightbox.show { display: flex; }
-    .lightbox .lightbox-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .lightbox img {
-      max-width: 95vw;
-      max-height: 90vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 6px;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-      transition: transform 0.1s;
-      touch-action: none;
-      cursor: zoom-in;
-    }
-    .lightbox img.zoomed { cursor: zoom-out; }
-    .lightbox-close {
-      position: absolute;
-      top: 16px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: rgba(0, 0, 0, 0.4);
-      color: #fff;
-      font-size: 26px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      backdrop-filter: blur(6px);
-      z-index: 10;
-    }
-    .lightbox-close:hover { background: rgba(255,255,255,0.15); transform: scale(1.06); }
-    .lightbox .zoom-hint {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 11px;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: 0.02em;
-      pointer-events: none;
-      background: rgba(0,0,0,0.2);
-      padding: 4px 14px;
-      border-radius: 20px;
-      backdrop-filter: blur(4px);
-    }
-    .toast-container {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 300;
-      pointer-events: none;
-    }
-    .toast {
-      background: var(--dark);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 500;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-      animation: toastIn 0.3s ease;
-      white-space: nowrap;
-    }
-    .toast.success { background: var(--teal); }
-    .toast.error { background: var(--bordeaux); }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .footer {
-      background: var(--dark);
-      padding: 24px 16px;
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .social-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.04);
-      color: #E8EEF4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .social-btn:hover {
-      background: var(--teal-light);
-      color: var(--dark);
-      border-color: var(--teal-light);
-      transform: scale(1.06);
-    }
-    .card-enter {
-      animation: cardIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .bounce {
-      animation: bounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes bounce {
-      0%, 100% { transform: scale(1); }
-      40% { transform: scale(1.15); }
-    }
-    @media (min-width: 1024px) {
-      .header-top { padding: 16px 24px 8px; }
-      .logo-img { height: 50px; }
-      .brand-title { font-size: 32px; letter-spacing: 0.06em; }
-      .header-action-btn { width: 44px; height: 44px; font-size: 20px; }
-      .search-expandable.open { width: 280px; }
-      .search-expandable input { padding: 10px 36px 10px 40px; font-size: 15px; }
-      .tagline { font-size: 16px; }
-      .cat-btn { padding: 8px 20px; font-size: 12px; }
-      .categories { padding: 0 16px 12px; gap: 10px; }
-      .cart-summary { margin: 0 16px 10px; padding: 10px 18px; }
-    }
-    @media (min-width: 1280px) {
-      .header-top { padding: 20px 32px 10px; }
-      .logo-img { height: 56px; }
-      .brand-title { font-size: 36px; }
-      .search-expandable.open { width: 320px; }
-    }
-    @media (max-width: 480px) {
-      .header-top { padding: 10px 10px 2px; }
-      .logo-img { height: 34px; }
-      .brand-title { font-size: 20px; letter-spacing: 0.02em; }
-      .search-expandable.open { width: 140px; }
-      .tagline { font-size: 12px; }
-      .lightbox img { max-width: 98vw; max-height: 85vh; }
-      .lightbox-close { top: 10px; right: 14px; width: 36px; height: 36px; font-size: 20px; }
-      .product-grid { gap: 2px; padding: 8px 2px 20px; }
-      .card-body { padding: 6px 6px 8px; }
-      .card-title { font-size: 13px; }
-      .card-price { font-size: 13px; }
-      .add-btn { font-size: 9px; padding: 5px; }
-    }
-    @media (min-width: 768px) {
-      .header-top { padding: 14px 20px 6px; }
-      .brand-title { font-size: 28px; }
-      .logo-img { height: 44px; }
-      .search-expandable.open { width: 260px; }
-      .lightbox img { max-width: 90vw; max-height: 85vh; }
+    @media (prefers-reduced-motion: reduce){
+      .ring-3d,.ring-3d-item,.card{transition:none!important;animation:none!important}
     }
   </style>
 </head>
@@ -900,12 +322,14 @@
 <main>
   <div id="carouselWrapper" class="carousel-wrapper">
     <h2 id="carouselTitle" class="carousel-title">Ofertas</h2>
-    <div class="carousel-container">
-      <div class="carousel-track" id="carouselTrack"></div>
-      <button class="carousel-btn prev" id="carouselPrev">‹</button>
-      <button class="carousel-btn next" id="carouselNext">›</button>
+    <div class="ring-3d-stage" id="ringStage">
+      <div class="ring-3d" id="ring3d"></div>
     </div>
-    <div class="carousel-dots" id="carouselDots"></div>
+    <div class="ring-controls" id="ringControls">
+      <button class="ring-btn" id="ringPrev" aria-label="Anterior">‹</button>
+      <div class="ring-dots" id="ringDots"></div>
+      <button class="ring-btn" id="ringNext" aria-label="Siguiente">›</button>
+    </div>
   </div>
   <div id="grid" class="product-grid"></div>
 </main>
@@ -952,973 +376,21 @@
 
   const CONFIG = {
     apiUrl: 'https://script.google.com/macros/s/AKfycbzVgoeVshhknH9Oe_a8LHagxOPmSZO5XTuWbeT-ovOKg3WJ90uwZ6of3PuulVuNysE8/exec',
-    ws: '56933634348',  // Número actualizado
+    ws: '56933634348',
     defImg: 'https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w400',
     STORAGE_CART: 'dari_cart',
     STORAGE_FAVS: 'dari_favs'
   };
 
   const frases = [
-  "La elegancia es un estado de ánimo.",
-  "Estilo que habla por sí solo.",
-  "La belleza está en los detalles.",
-  "Viste tu esencia con elegancia.",
-  "Donde el estilo encuentra el alma.",
-  "Elegancia sin esfuerzo.",
-  "La plata como segunda piel.",
-  "Brilla con tu propia luz.",
-  "La verdadera elegancia no se grita, se susurra.",
-  "Tu estilo, tu firma.",
-  "Menos es más, pero con estilo.",
-  "La elegancia es atemporal.",
-  "Cada día es una pasarela.",
-  "La sencillez es la máxima sofisticación.",
-  "El estilo es la respuesta a todo.",
-  "Refleja quién eres.",
-  "La elegancia no se compra, se lleva.",
-  "Un toque de distinción.",
-  "Tu brillo, tu regla.",
-  "La moda pasa, el estilo permanece.",
-  "Sofisticación en cada movimiento.",
-  "La elegancia es la única belleza que nunca se desvanece.",
-  "Viste con la confianza de ser tú.",
-  "La plata te hace brillar.",
-  "Tu accesorio favorito: la confianza.",
-  "Detalles que marcan la diferencia.",
-  "Elegancia para el día a día.",
-  "El estilo es una forma de decir quién eres.",
-  "Siempre clásica, siempre tú.",
-  "La belleza de lo simple.",
-  "Cada pieza cuenta una historia de estilo.",
-  "El lujo está en los pequeños detalles.",
-  "Tu estilo te define.",
-  "Elegancia sin edad.",
-  "Brilla con autenticidad.",
-  "La sutileza del buen gusto.",
-  "Estilo que inspira.",
-  "La elegancia es un viaje, no un destino.",
-  "Tu esencia en cada joya.",
-  "La plata, tu aliada de estilo.",
-  "Distinción en estado puro.",
-  "El estilo es una actitud.",
-  "Detalles que enamoran.",
-  "La elegancia nunca pasa de moda.",
-  "Tu estilo, tu poder.",
-  "La belleza está en la autenticidad.",
-  "Brilla con naturalidad.",
-  "La sutileza de ser única.",
-  "Estilo que perdura.",
-  "La elegancia del día a día.",
-  "Tu toque personal.",
-  "La plata, el lujo discreto.",
-  "Refleja tu esencia.",
-  "El estilo es la clave.",
-  "Elegancia en cada detalle.",
-  "La sencillez que enamora.",
-  "Tu estilo es único.",
-  "Brilla con clase.",
-  "La elegancia no tiene edad.",
-  "El estilo es libertad.",
-  "Detalles que brillan.",
-  "La elegancia se lleva por dentro.",
-  "Tu esencia brilla.",
-  "Estilo sin esfuerzo.",
-  "La belleza de ser tú.",
-  "La plata te acompaña.",
-  "El estilo es una declaración.",
-  "Elegancia en movimiento.",
-  "Refleja tu luz.",
-  "La sutileza de la elegancia.",
-  "Tu estilo es tu huella.",
-  "Brilla con autenticidad.",
-  "La elegancia está en los detalles.",
-  "El estilo es personal.",
-  "La plata, tu mejor accesorio.",
-  "Elegancia que inspira.",
-  "La sencillez es el lujo.",
-  "Tu estilo te representa.",
-  "Brilla con confianza.",
-  "La elegancia es un arte.",
-  "Detalles con alma.",
-  "El estilo es una forma de vida.",
-  "La elegancia perdura.",
-  "Tu esencia en cada pieza.",
-  "Brilla con estilo.",
-  "La sutileza de ser auténtica.",
-  "El estilo es poder.",
-  "Elegancia para siempre.",
-  "La belleza de lo eterno.",
-  "Tu estilo es tu sello.",
-  "Brilla con elegancia.",
-  "La plata, tu compañera de vida.",
-  "El estilo es una elección.",
-  "Elegancia en cada gesto.",
-  "Refleja tu esencia.",
-  "La sencillez que conquista.",
-  "Tu estilo es único.",
-  "Brilla con naturalidad.",
-  "La elegancia es un don.",
-  "Detalles que hablan.",
-  "El estilo es tu voz.",
-  "Elegancia que trasciende.",
-  "La belleza de lo auténtico.",
-  "Tu esencia brilla con luz propia.",
-  "Brilla con distinción.",
-  "La plata te da el toque.",
-  "El estilo es una actitud.",
-  "Elegancia en cada momento.",
-  "Refleja tu luz interior.",
-  "La sutileza de la elegancia.",
-  "Tu estilo es tu fuerza.",
-  "Brilla con clase.",
-  "La elegancia no se negocia.",
-  "El estilo es eterno.",
-  "Detalles que inspiran.",
-  "La elegancia es un sentimiento.",
-  "Tu esencia es única.",
-  "Brilla con autenticidad.",
-  "La plata, tu sello personal.",
-  "El estilo es tu mejor carta de presentación.",
-  "Plata 925: pureza que perdura.",
-  "La plata que brilla con alma.",
-  "Calidad que se siente.",
-  "Plata de ley para corazones de ley.",
-  "El brillo eterno de la plata.",
-  "Tu esencia en plata pura.",
-  "Plata 925, brillo sin igual.",
-  "La plata que te acompaña siempre.",
-  "Pureza en cada pieza.",
-  "El metal de los sueños.",
-  "Plata que cuenta historias.",
-  "Brilla con la luz de la plata.",
-  "La plata es eterna.",
-  "Calidad que enamora.",
-  "Plata 925, la elección perfecta.",
-  "El brillo de la autenticidad.",
-  "Tu joya en plata pura.",
-  "La plata que refleja tu esencia.",
-  "Pureza y estilo.",
-  "El metal que te define.",
-  "Plata que perdura en el tiempo.",
-  "Brilla con la pureza de la plata.",
-  "La plata es un tesoro.",
-  "Calidad que se nota.",
-  "Plata 925, la mejor aliada.",
-  "El brillo de lo auténtico.",
-  "Tu esencia en cada detalle de plata.",
-  "La plata que te hace brillar.",
-  "Pureza que inspira.",
-  "El metal de la elegancia.",
-  "Plata que nunca pasa de moda.",
-  "Brilla con la luz de la plata.",
-  "La plata es sinónimo de calidad.",
-  "Calidad que perdura.",
-  "Plata 925, la elección inteligente.",
-  "El brillo de la distinción.",
-  "Tu joya, tu esencia en plata.",
-  "La plata que te acompaña.",
-  "Pureza y elegancia.",
-  "El metal de los momentos especiales.",
-  "Plata que brilla con luz propia.",
-  "Brilla con la autenticidad de la plata.",
-  "La plata es un símbolo de estilo.",
-  "Calidad que trasciende.",
-  "Plata 925, la mejor opción.",
-  "El brillo de la eternidad.",
-  "Tu esencia en plata de ley.",
-  "La plata que te hace única.",
-  "Pureza que enamora.",
-  "El metal de la confianza.",
-  "Plata que perdura en el recuerdo.",
-  "Brilla con la pureza de la plata.",
-  "La plata es un clásico.",
-  "Calidad que se lleva.",
-  "Plata 925, la elección de estilo.",
-  "El brillo de la autenticidad.",
-  "Tu joya en plata pura.",
-  "La plata que refleja tu luz.",
-  "Pureza y distinción.",
-  "El metal de la elegancia.",
-  "Plata que cuenta tu historia.",
-  "Brilla con la luz de la plata.",
-  "La plata es sinónimo de lujo.",
-  "Calidad que se siente.",
-  "Plata 925, la mejor inversión.",
-  "El brillo de la eternidad.",
-  "Tu esencia en plata de ley.",
-  "La plata que te acompaña siempre.",
-  "Pureza que inspira.",
-  "El metal de los sueños.",
-  "Plata que perdura en el tiempo.",
-  "Brilla con la autenticidad de la plata.",
-  "La plata es un tesoro.",
-  "Calidad que enamora.",
-  "Plata 925, la elección perfecta.",
-  "El brillo de la distinción.",
-  "Tu joya, tu esencia.",
-  "La plata que te hace brillar.",
-  "Pureza y estilo.",
-  "El metal de la confianza.",
-  "Plata que nunca falla.",
-  "Brilla con la luz de la plata.",
-  "La plata es sinónimo de calidad.",
-  "Calidad que perdura.",
-  "Plata 925, la mejor aliada.",
-  "El brillo de la autenticidad.",
-  "Tu esencia en cada detalle.",
-  "La plata que te define.",
-  "Pureza que trasciende.",
-  "El metal de la elegancia.",
-  "Plata que brilla con alma.",
-  "Brilla con la pureza de la plata.",
-  "La plata es eterna.",
-  "Calidad que se nota.",
-  "Plata 925, la elección inteligente.",
-  "El brillo de la eternidad.",
-  "Tu joya en plata pura.",
-  "La plata que te acompaña.",
-  "Pureza y elegancia.",
-  "El metal de los momentos especiales.",
-  "Eres suficiente tal como eres.",
-  "Tu brillo no depende de nadie.",
-  "El amor propio es el mejor accesorio.",
-  "Eres tu propia joya.",
-  "Brilla con la fuerza de ser tú.",
-  "El poder está en tu interior.",
-  "Valórate como la joya que eres.",
-  "Eres dueña de tu luz.",
-  "El amor propio es el primer paso.",
-  "No necesitas permiso para brillar.",
-  "Eres fuerte, eres única.",
-  "Tu valor no se negocia.",
-  "Brilla sin miedo.",
-  "El amor propio es la mayor riqueza.",
-  "Eres capaz de lograr todo lo que te propongas.",
-  "Tu esencia es perfecta.",
-  "El poder de ser auténtica.",
-  "Eres luz, eres fuerza.",
-  "El amor propio es un acto de rebelión.",
-  "Brilla con la confianza de ser tú.",
-  "Eres tu propia heroína.",
-  "El valor está en tu interior.",
-  "No hay nadie como tú.",
-  "Brilla con orgullo.",
-  "El amor propio es el mejor regalo.",
-  "Eres suficiente, siempre.",
-  "Tu fuerza viene de dentro.",
-  "El poder de la autenticidad.",
-  "Eres dueña de tu destino.",
-  "Brilla con la luz de tu alma.",
-  "El amor propio es un viaje.",
-  "Eres valiosa por quien eres.",
-  "Tu esencia es tu poder.",
-  "El poder de ser única.",
-  "Eres capaz de soñar en grande.",
-  "Brilla sin pedir permiso.",
-  "El amor propio es la base de todo.",
-  "Eres fuerte, eres valiente.",
-  "Tu valor no tiene precio.",
-  "El poder de la autoaceptación.",
-  "Eres dueña de tu felicidad.",
-  "Brilla con la fuerza de tu ser.",
-  "El amor propio es un acto de valentía.",
-  "Eres suficiente tal como eres.",
-  "Tu esencia es tu mayor tesoro.",
-  "El poder de ser auténtica.",
-  "Eres capaz de cumplir tus metas.",
-  "Brilla con la confianza de ser tú.",
-  "El amor propio es la clave.",
-  "Eres única e irrepetible.",
-  "Tu fuerza es tu mayor aliada.",
-  "El poder de la autoestima.",
-  "Eres dueña de tu luz.",
-  "Brilla con orgullo de ser quien eres.",
-  "El amor propio es el mejor viaje.",
-  "Eres valiosa por quien eres.",
-  "Tu esencia es tu poder.",
-  "El poder de ser única.",
-  "Eres capaz de lograr lo que te propongas.",
-  "Brilla sin miedo a ser tú.",
-  "El amor propio es la mayor inversión.",
-  "Eres fuerte, eres libre.",
-  "Tu valor no se mide por lo que tienes.",
-  "El poder de la autenticidad.",
-  "Eres dueña de tu camino.",
-  "Brilla con la luz de tu alma.",
-  "El amor propio es un acto de amor.",
-  "Eres suficiente, siempre.",
-  "Tu esencia es tu mayor riqueza.",
-  "El poder de ser auténtica.",
-  "Eres capaz de darte lo que mereces.",
-  "Brilla con la confianza de ser tú.",
-  "El amor propio es el primer paso hacia la felicidad.",
-  "Eres única, eres especial.",
-  "Tu fuerza es tu mejor aliada.",
-  "El poder de la autoestima.",
-  "Eres dueña de tu destino.",
-  "Brilla con orgullo de ser quien eres.",
-  "El amor propio es el mejor regalo que puedes darte.",
-  "Eres valiosa por quien eres.",
-  "Tu esencia es tu poder.",
-  "El poder de ser única.",
-  "Eres capaz de soñar en grande.",
-  "Brilla sin pedir permiso.",
-  "El amor propio es la base de todo.",
-  "Eres fuerte, eres valiente.",
-  "Tu valor no tiene precio.",
-  "El poder de la autoaceptación.",
-  "Eres dueña de tu felicidad.",
-  "Brilla con la fuerza de tu ser.",
-  "El amor propio es un acto de valentía.",
-  "Eres suficiente tal como eres.",
-  "Tu esencia es tu mayor tesoro.",
-  "El poder de ser auténtica.",
-  "Eres capaz de cumplir tus metas.",
-  "Brilla con la confianza de ser tú.",
-  "El amor propio es la clave.",
-  "Eres única e irrepetible.",
-  "Tu fuerza es tu mayor aliada.",
-  "El poder de la autoestima.",
-  "Eres dueña de tu luz.",
-  "Brilla con orgullo de ser quien eres.",
-  "Como la luna, brillas en la oscuridad.",
-  "La naturaleza en cada detalle.",
-  "Geometría que enamora.",
-  "Luna llena de estilo.",
-  "La belleza de lo natural.",
-  "Formas que inspiran.",
-  "Como la luna, única en tu especie.",
-  "La naturaleza es mi inspiración.",
-  "Geometría con alma.",
-  "Luna que guía tu camino.",
-  "La esencia de la naturaleza.",
-  "Formas que cuentan historias.",
-  "Como la luna, siempre presente.",
-  "La naturaleza en su máxima expresión.",
-  "Geometría que fluye.",
-  "Luna de plata.",
-  "La belleza de lo orgánico.",
-  "Formas que enamoran.",
-  "Como la luna, llena de misterio.",
-  "La naturaleza es arte.",
-  "Geometría que conecta.",
-  "Luna que ilumina tu esencia.",
-  "La fuerza de la naturaleza.",
-  "Formas que definen.",
-  "Como la luna, en constante cambio.",
-  "La naturaleza en cada pieza.",
-  "Geometría con propósito.",
-  "Luna que te acompaña.",
-  "La sabiduría de la naturaleza.",
-  "Formas que inspiran.",
-  "Como la luna, brillas con luz propia.",
-  "La naturaleza es mi guía.",
-  "Geometría que transforma.",
-  "Luna que te da fuerza.",
-  "La esencia de lo natural.",
-  "Formas que fluyen.",
-  "Como la luna, eres única.",
-  "La naturaleza en su estado más puro.",
-  "Geometría que une.",
-  "Luna que te protege.",
-  "La belleza de lo silvestre.",
-  "Formas que conectan.",
-  "Como la luna, eres libre.",
-  "La naturaleza es mi refugio.",
-  "Geometría con significado.",
-  "Luna que te inspira.",
-  "La fuerza de lo natural.",
-  "Formas que definen tu estilo.",
-  "Como la luna, brillas en la oscuridad.",
-  "La naturaleza en cada detalle.",
-  "Geometría que enamora.",
-  "Luna llena de estilo.",
-  "La belleza de lo natural.",
-  "Formas que inspiran.",
-  "Como la luna, única en tu especie.",
-  "La naturaleza es mi inspiración.",
-  "Geometría con alma.",
-  "Luna que guía tu camino.",
-  "La esencia de la naturaleza.",
-  "Formas que cuentan historias.",
-  "Como la luna, siempre presente.",
-  "La naturaleza en su máxima expresión.",
-  "Geometría que fluye.",
-  "Luna de plata.",
-  "La belleza de lo orgánico.",
-  "Formas que enamoran.",
-  "Como la luna, llena de misterio.",
-  "La naturaleza es arte.",
-  "Geometría que conecta.",
-  "Luna que ilumina tu esencia.",
-  "La fuerza de la naturaleza.",
-  "Formas que definen.",
-  "Como la luna, en constante cambio.",
-  "La naturaleza en cada pieza.",
-  "Geometría con propósito.",
-  "Luna que te acompaña.",
-  "La sabiduría de la naturaleza.",
-  "Formas que inspiran.",
-  "Como la luna, brillas con luz propia.",
-  "La naturaleza es mi guía.",
-  "Geometría que transforma.",
-  "Luna que te da fuerza.",
-  "La esencia de lo natural.",
-  "Formas que fluyen.",
-  "Como la luna, eres única.",
-  "La naturaleza en su estado más puro.",
-  "Geometría que une.",
-  "Luna que te protege.",
-  "La belleza de lo silvestre.",
-  "Formas que conectan.",
-  "Como la luna, eres libre.",
-  "La naturaleza es mi refugio.",
-  "Geometría con significado.",
-  "Luna que te inspira.",
-  "La fuerza de lo natural.",
-  "Formas que definen tu estilo.",
-  "Como la luna, brillas en la oscuridad.",
-  "La naturaleza en cada detalle.",
-  "Geometría que enamora.",
-  "Luna llena de estilo.",
-  "La belleza de lo natural.",
-  "Formas que inspiran.",
-  "Como la luna, única en tu especie.",
-  "La naturaleza es mi inspiración.",
-  "Geometría con alma.",
-  "Luna que guía tu camino.",
-  "La esencia de la naturaleza.",
-  "Formas que cuentan historias.",
-  "Como la luna, siempre presente.",
-  "La naturaleza en su máxima expresión.",
-  "Geometría que fluye.",
-  "Luna de plata.",
-  "La belleza de lo orgánico.",
-  "Formas que enamoran.",
-  "Como la luna, llena de misterio.",
-  "La naturaleza es arte.",
-  "Geometría que conecta.",
-  "Luna que ilumina tu esencia.",
-  "La fuerza de la naturaleza.",
-  "Formas que definen.",
-  "Como la luna, en constante cambio.",
-  "La naturaleza en cada pieza.",
-  "Geometría con propósito.",
-  "Luna que te acompaña.",
-  "La sabiduría de la naturaleza.",
-  "Formas que inspiran.",
-  "Como la luna, brillas con luz propia.",
-  "La naturaleza es mi guía.",
-  "Geometría que transforma.",
-  "Luna que te da fuerza.",
-  "La esencia de lo natural.",
-  "Formas que fluyen.",
-  "Como la luna, eres única.",
-  "La naturaleza en su estado más puro.",
-  "Geometría que une.",
-  "Luna que te protege.",
-  "La belleza de lo silvestre.",
-  "Formas que conectan.",
-  "Como la luna, eres libre.",
-  "La naturaleza es mi refugio.",
-  "La belleza no tiene género.",
-  "Joyas para todas las almas.",
-  "La elegancia es universal.",
-  "Tu estilo, sin etiquetas.",
-  "La plata brilla para todos.",
-  "La belleza está en la diversidad.",
-  "Joyas que celebran quién eres.",
-  "El estilo no entiende de géneros.",
-  "Brilla con autenticidad, sin importar nada.",
-  "La elegancia es para todos.",
-  "Tu esencia, sin límites.",
-  "La plata te queda bien.",
-  "La belleza no entiende de etiquetas.",
-  "Joyas para cada historia.",
-  "El estilo es libre.",
-  "Brilla con tu verdad.",
-  "La elegancia no tiene género.",
-  "Joyas para todas las personas.",
-  "La belleza está en la autenticidad.",
-  "El estilo es de todos.",
-  "La plata brilla en cada piel.",
-  "Joyas que abrazan la diversidad.",
-  "El estilo no tiene dueño.",
-  "Brilla con libertad.",
-  "La elegancia es un derecho de todos.",
-  "Joyas para cada momento.",
-  "La belleza es diversa.",
-  "El estilo es personal.",
-  "La plata te queda bien.",
-  "Joyas que celebran la individualidad.",
-  "El estilo es único.",
-  "Brilla con tu esencia.",
-  "La elegancia es para todas las personas.",
-  "Joyas que unen.",
-  "La belleza no tiene fronteras.",
-  "El estilo es libertad.",
-  "La plata te queda bien.",
-  "Joyas que inspiran.",
-  "El estilo es diverso.",
-  "Brilla sin límites.",
-  "La elegancia es de todos.",
-  "Joyas para cada ser.",
-  "La belleza es infinita.",
-  "El estilo es único.",
-  "La plata te queda bien.",
-  "Joyas que conectan.",
-  "El estilo es universal.",
-  "Brilla con orgullo.",
-  "La elegancia no tiene género.",
-  "Joyas para todas las vidas.",
-  "La belleza está en la diversidad.",
-  "El estilo es de todos.",
-  "La plata brilla para todos.",
-  "Joyas que celebran quién eres.",
-  "El estilo no entiende de géneros.",
-  "Brilla con autenticidad.",
-  "La elegancia es universal.",
-  "Joyas para cada historia.",
-  "La belleza no entiende de etiquetas.",
-  "El estilo es libre.",
-  "La plata te queda bien.",
-  "Joyas que abrazan la diversidad.",
-  "El estilo no tiene dueño.",
-  "Brilla con libertad.",
-  "La elegancia es un derecho de todos.",
-  "Joyas para cada momento.",
-  "La belleza es diversa.",
-  "El estilo es personal.",
-  "La plata te queda bien.",
-  "Joyas que celebran la individualidad.",
-  "El estilo es único.",
-  "Brilla con tu esencia.",
-  "La elegancia es para todas las personas.",
-  "Joyas que unen.",
-  "La belleza no tiene fronteras.",
-  "El estilo es libertad.",
-  "La plata te queda bien.",
-  "Joyas que inspiran.",
-  "El estilo es diverso.",
-  "Brilla sin límites.",
-  "Actitud de plata.",
-  "Brilla con tu propia luz.",
-  "La vida es más bonita con estilo.",
-  "Actitud que brilla.",
-  "La confianza es tu mejor joya.",
-  "Brilla sin esfuerzo.",
-  "La vida es un escaparate.",
-  "Actitud de reina.",
-  "El brillo está en tu interior.",
-  "Brilla con alegría.",
-  "La vida es corta, usa la joya que te haga feliz.",
-  "Actitud positiva.",
-  "La confianza lo es todo.",
-  "Brilla con energía.",
-  "La vida es un juego de estilo.",
-  "Actitud ganadora.",
-  "El brillo de la felicidad.",
-  "Brilla con pasión.",
-  "La vida es más bella con plata.",
-  "Actitud de estrella.",
-  "La confianza es la clave.",
-  "Brilla con fuerza.",
-  "La vida es un sueño, vístelo con estilo.",
-  "Actitud imparable.",
-  "El brillo de la determinación.",
-  "Brilla con coraje.",
-  "La vida es un viaje, llévalo con estilo.",
-  "Actitud de lucha.",
-  "La confianza es poder.",
-  "Brilla con valentía.",
-  "La vida es un regalo, envuélvelo en plata.",
-  "Actitud de triunfadora.",
-  "El brillo de la perseverancia.",
-  "Brilla con esperanza.",
-  "La vida es una fiesta, vístete para ella.",
-  "Actitud de éxito.",
-  "La confianza es tu mejor aliada.",
-  "Brilla con amor.",
-  "La vida es una obra de arte, añade tu toque.",
-  "Actitud de grandeza.",
-  "El brillo de la superación.",
-  "Brilla con gratitud.",
-  "La vida es un baile, muévete con estilo.",
-  "Actitud de liderazgo.",
-  "La confianza es tu fortaleza.",
-  "Brilla con generosidad.",
-  "La vida es un lienzo, pinta con plata.",
-  "Actitud de innovación.",
-  "El brillo de la creatividad.",
-  "Brilla con imaginación.",
-  "La vida es una canción, cántala con estilo.",
-  "Actitud de cambio.",
-  "La confianza es tu motor.",
-  "Brilla con determinación.",
-  "La vida es un desafío, enfréntalo con estilo.",
-  "Actitud de resiliencia.",
-  "El brillo de la adaptabilidad.",
-  "Brilla con flexibilidad.",
-  "La vida es un aprendizaje, apréndelo con estilo.",
-  "Actitud de curiosidad.",
-  "La confianza es tu brújula.",
-  "Brilla con sabiduría.",
-  "La vida es un misterio, descúbrelo con estilo.",
-  "Actitud de exploración.",
-  "El brillo de la aventura.",
-  "Brilla con entusiasmo.",
-  "La vida es un sueño, vívelo con estilo.",
-  "Actitud de optimismo.",
-  "La confianza es tu mejor inversión.",
-  "Brilla con alegría de vivir.",
-  "La vida es un regalo, aprovéchalo con estilo.",
-  "Actitud de agradecimiento.",
-  "El brillo de la felicidad.",
-  "Brilla con amor propio.",
-  "La vida es una oportunidad, tómala con estilo.",
-  "Actitud de valentía.",
-  "La confianza es tu superpoder.",
-  "Brilla con autenticidad.",
-  "La vida es un cuento, escríbelo con estilo.",
-  "Actitud de perseverancia.",
-  "El brillo de la constancia.",
-  "Brilla con paciencia.",
-  "La vida es un viaje, disfrútalo con estilo.",
-  "Actitud de serenidad.",
-  "La confianza es tu ancla.",
-  "Brilla con tranquilidad.",
-  "La vida es un poema, recítalo con estilo.",
-  "Actitud de pasión.",
-  "El brillo de la intensidad.",
-  "Brilla con entrega.",
-  "La vida es un sueño, hazlo realidad con estilo.",
-  "Actitud de determinación.",
-  "La confianza es tu fuerza.",
-  "Brilla con convicción.",
-  "La vida es una batalla, gánala con estilo.",
-  "Actitud de victoria.",
-  "El brillo del triunfo.",
-  "Brilla con orgullo.",
-  "La vida es una fiesta, celébrala con estilo.",
-  "Actitud de celebración.",
-  "La confianza es tu mejor traje.",
-  "Brilla con elegancia.",
-  "La vida es un arte, exprésate con estilo.",
-  "Actitud de creatividad.",
-  "El brillo de la originalidad.",
-  "Brilla con tu sello personal.",
-  "La vida es un juego, juégalo con estilo.",
-  "Actitud de juego.",
-  "La confianza es tu mejor jugada.",
-  "Brilla con astucia.",
-  "La vida es una historia, cuéntala con estilo.",
-  "Actitud de narrador.",
-  "El brillo de la palabra.",
-  "Brilla con tu voz.",
-  "La vida es un sueño, vívelo con intensidad.",
-  "Actitud de soñador.",
-  "La confianza es tu mejor aliada.",
-  "Brilla con tus sueños.",
-  "La vida es un viaje, recórrelo con estilo.",
-  "Actitud de viajero.",
-  "El brillo de la aventura.",
-  "Brilla con curiosidad.",
-  "La vida es un misterio, desvela sus secretos con estilo.",
-  "Actitud de explorador.",
-  "La confianza es tu mejor mapa.",
-  "Brilla con tu propia luz.",
-  "La vida es un regalo, abrázalo con estilo.",
-  "Actitud de abrazo.",
-  "El brillo del amor.",
-  "Brilla con el corazón.",
-  "La vida es un susurro, escúchala con estilo.",
-  "Actitud de escucha.",
-  "La confianza es tu mejor consejera.",
-  "Brilla con sabiduría.",
-  "La vida es un silencio, siéntelo con estilo.",
-  "Actitud de introspección.",
-  "El brillo de la paz interior.",
-  "Brilla con serenidad.",
-  "La vida es un latido, siéntelo con estilo.",
-  "Actitud de vida.",
-  "La confianza es tu mejor esencia.",
-  "Brilla con tu verdad.",
-  "La vida es un instante, vívelo con estilo.",
-  "Actitud de presente.",
-  "El brillo del ahora.",
-  "Brilla con intensidad.",
-  "La vida es un destello, brilla con él.",
-  "Actitud de luz.",
-  "La confianza es tu mejor reflejo.",
-  "Brilla con tu reflejo.",
-  "La vida es un espejo, mírate con estilo.",
-  "Actitud de reflejo.",
-  "El brillo de la autenticidad.",
-  "Brilla con tu esencia.",
-  "La vida es una obra, sé el protagonista con estilo.",
-  "Actitud de protagonista.",
-  "La confianza es tu mejor guion.",
-  "Brilla con tu papel.",
-  "La vida es un escenario, actúa con estilo.",
-  "Actitud de actor.",
-  "Un regalo que perdura en el tiempo.",
-  "Para la persona que más quieres.",
-  "Un detalle que habla por sí solo.",
-  "El regalo perfecto para un corazón especial.",
-  "Una joya para un recuerdo eterno.",
-  "Para ella, con todo mi amor.",
-  "Un gesto que brilla.",
-  "El regalo que siempre recordará.",
-  "Para ti, con cariño.",
-  "Un detalle de plata para un alma de oro.",
-  "El regalo que refleja lo que sientes.",
-  "Para un amor único.",
-  "Una joya para un sentimiento eterno.",
-  "Para la persona que lo merece todo.",
-  "Un regalo con alma.",
-  "Para ti, que brillas con luz propia.",
-  "Un detalle que enamora.",
-  "El regalo que perdura.",
-  "Para un corazón de plata.",
-  "Un gesto que vale más que mil palabras.",
-  "El regalo perfecto para un amor sincero.",
-  "Para ella, con todo mi cariño.",
-  "Una joya para un recuerdo imborrable.",
-  "Para ti, que eres única.",
-  "Un detalle que emociona.",
-  "El regalo que siempre estará contigo.",
-  "Para un amor de ley.",
-  "Un gesto de plata para un alma de luz.",
-  "El regalo que refleja tu esencia.",
-  "Para un ser especial.",
-  "Una joya para un sentimiento profundo.",
-  "Para la persona que ilumina mi vida.",
-  "Un regalo con significado.",
-  "Para ti, con todo mi corazón.",
-  "Un detalle que perdura en el recuerdo.",
-  "El regalo perfecto para un amor eterno.",
-  "Para ella, con admiración.",
-  "Una joya para un vínculo especial.",
-  "Para ti, que eres mi mayor tesoro.",
-  "Un gesto que brilla con amor.",
-  "El regalo que habla de ti.",
-  "Para un amor que trasciende.",
-  "Un detalle de plata para un sentimiento de oro.",
-  "El regalo que siempre recordarás.",
-  "Para ti, con gratitud.",
-  "Una joya para un lazo eterno.",
-  "Para la persona que más admiro.",
-  "Un regalo con mucha luz.",
-  "Para ti, que eres mi inspiración.",
-  "Un detalle que perdura en el tiempo.",
-  "El regalo perfecto para un corazón noble.",
-  "Para ella, con respeto.",
-  "Una joya para un momento especial.",
-  "Para ti, que eres mi fuerza.",
-  "Un gesto que enamora.",
-  "El regalo que siempre llevarás contigo.",
-  "Para un amor de verdad.",
-  "Un detalle de plata para un alma bella.",
-  "El regalo que refleja tu luz.",
-  "Para un ser querido.",
-  "Una joya para un recuerdo feliz.",
-  "Para ti, con toda mi admiración.",
-  "Un regalo con mucho sentimiento.",
-  "Para la persona que más quiero.",
-  "Un detalle que perdura en el corazón.",
-  "El regalo perfecto para un amor incondicional.",
-  "Para ella, con devoción.",
-  "Una joya para un vínculo inquebrantable.",
-  "Para ti, que eres mi todo.",
-  "Un gesto que brilla con sinceridad.",
-  "El regalo que habla de nosotros.",
-  "Para un amor que no tiene fin.",
-  "Un detalle de plata para un sentimiento eterno.",
-  "El regalo que siempre te acompañará.",
-  "Para ti, con todo mi ser.",
-  "Una joya para un lazo de plata.",
-  "Para la persona que más respeto.",
-  "Un regalo con mucha alma.",
-  "Para ti, que eres mi luz.",
-  "Un detalle que perdura en la eternidad.",
-  "Brilla.",
-  "Eres única.",
-  "Brilla con estilo.",
-  "Eres luz.",
-  "Brilla con fuerza.",
-  "Eres plata.",
-  "Brilla con alma.",
-  "Eres poder.",
-  "Brilla con amor.",
-  "Eres magia.",
-  "Brilla con pasión.",
-  "Eres valiosa.",
-  "Brilla con verdad.",
-  "Eres auténtica.",
-  "Brilla con confianza.",
-  "Eres hermosa.",
-  "Brilla con elegancia.",
-  "Eres especial.",
-  "Brilla con esencia.",
-  "Eres importante.",
-  "Brilla con luz propia.",
-  "Eres única.",
-  "Brilla con todo.",
-  "Eres suficiente.",
-  "Brilla con alegría.",
-  "Eres increíble.",
-  "Brilla con orgullo.",
-  "Eres maravillosa.",
-  "Brilla con entusiasmo.",
-  "Eres extraordinaria.",
-  "Brilla con determinación.",
-  "Eres fuerte.",
-  "Brilla con valentía.",
-  "Eres valiente.",
-  "Brilla con esperanza.",
-  "Eres soñadora.",
-  "Brilla con gratitud.",
-  "Eres agradecida.",
-  "Brilla con generosidad.",
-  "Eres generosa.",
-  "Brilla con creatividad.",
-  "Eres creativa.",
-  "Brilla con imaginación.",
-  "Eres imaginativa.",
-  "Brilla con sabiduría.",
-  "Eres sabia.",
-  "Brilla con paciencia.",
-  "Eres paciente.",
-  "Brilla con serenidad.",
-  "Eres serena.",
-  "Brilla con amor propio.",
-  "Eres amor.",
-  "Brilla con autenticidad.",
-  "Eres auténtica.",
-  "Brilla con tu esencia.",
-  "Eres tu esencia.",
-  "Brilla con tu luz.",
-  "Eres tu luz.",
-  "Brilla con tu fuerza.",
-  "Eres tu fuerza.",
-  "Brilla con tu voz.",
-  "Eres tu voz.",
-  "Brilla con tu verdad.",
-  "Eres tu verdad.",
-  "Brilla con tu alma.",
-  "Eres tu alma.",
-  "Brilla con tu corazón.",
-  "Eres tu corazón.",
-  "Brilla con tu estilo.",
-  "Eres tu estilo.",
-  "Brilla con tu poder.",
-  "Eres tu poder.",
-  "Brilla con tu magia.",
-  "Eres tu magia.",
-  "Brilla con tu luz.",
-  "Eres tu luz.",
-  "Brilla con tu amor.",
-  "Eres tu amor.",
-  "Brilla con tu pasión.",
-  "Eres tu pasión.",
-  "Brilla con tu vida.",
-  "Eres tu vida.",
-  "Brilla con tu sueño.",
-  "Eres tu sueño.",
-  "Brilla con tu camino.",
-  "Eres tu camino.",
-  "Brilla con tu destino.",
-  "Eres tu destino.",
-  "Brilla con tu historia.",
-  "Eres tu historia.",
-  "Brilla con la fuerza de la luna.",
-  "Eres la joya más preciada.",
-  "La plata que llevas dentro.",
-  "Brilla con la luz de las estrellas.",
-  "Tu esencia es pura plata.",
-  "Eres un sueño hecho realidad.",
-  "La plata que te hace única.",
-  "Brilla con la magia de la naturaleza.",
-  "Eres una obra de arte.",
-  "La plata que te define.",
-  "Brilla con el poder de la geometría.",
-  "Eres un ser de luz.",
-  "La plata que te acompaña.",
-  "Brilla con la energía del universo.",
-  "Eres un regalo para el mundo.",
-  "La plata que te hace brillar.",
-  "Brilla con la armonía de las formas.",
-  "Eres una estrella en la tierra.",
-  "La plata que te da estilo.",
-  "Brilla con la esencia de la vida.",
-  "Eres un ser único.",
-  "La plata que te hace especial.",
-  "Brilla con la belleza de lo simple.",
-  "Eres un tesoro.",
-  "La plata que te hace auténtica.",
-  "Brilla con la fuerza de tu ser.",
-  "Eres una joya.",
-  "La plata que te hace brillar con luz propia.",
-  "Brilla con la elegancia de la naturaleza.",
-  "Eres un sueño.",
-  "La plata que te hace única.",
-  "Brilla con la magia de la luna.",
-  "Eres una obra maestra.",
-  "La plata que te define.",
-  "Brilla con el poder de la geometría.",
-  "Eres un ser de luz.",
-  "La plata que te acompaña.",
-  "Brilla con la energía del universo.",
-  "Eres un regalo para el mundo.",
-  "La plata que te hace brillar.",
-  "Brilla con la armonía de las formas.",
-  "Eres una estrella en la tierra.",
-  "La plata que te da estilo.",
-  "Brilla con la esencia de la vida.",
-  "Eres un ser único.",
-  "La plata que te hace especial.",
-  "Brilla con la belleza de lo simple.",
-  "Eres un tesoro.",
-  "La plata que te hace auténtica.",
-  "Brilla con la fuerza de tu ser.",
-  "Eres una joya.",
-  "La plata que te hace brillar con luz propia.",
-  "Brilla con la elegancia de la naturaleza.",
-  "Eres un sueño.",
-  "La plata que te hace única.",
-  "Brilla con la magia de la luna.",
-  "Eres una obra maestra.",
-  "Brilla con la esencia de la geometría.",
-  "Eres un ser de luz.",
-  "Brilla con la fuerza de la naturaleza.",
-  "Eres un regalo.",
-  "Brilla con la armonía de las formas.",
-  "Eres una estrella.",
-  "Brilla con la belleza de la plata.",
-  "Eres un tesoro.",
-  "Brilla con la magia de la geometría.",
-  "Eres una obra de arte.",
-  "Brilla con la esencia de la luna.",
-  "Eres un ser único.",
-  "Brilla con la fuerza de la geometría.",
-  "Eres una joya.",
-  "Brilla con la belleza de la naturaleza.",
-  "Eres un sueño hecho realidad.",
-  "Brilla con la magia de la plata.",
-  "Eres una estrella brillante.",
-  "Brilla con la armonía del universo.",
-  "Eres un ser especial.",
-  "Brilla con la esencia de la vida.",
-  "Eres un tesoro invaluable.",
-  "Brilla con la luz de tu alma.",
-  "Eres la dueña de tu brillo.",
-  "La plata que llevas puesta es un reflejo de tu esencia.",
-  "Brilla con la confianza de quien sabe que es única.",
-  "Eres la combinación perfecta de fuerza y delicadeza.",
-  "La plata 925 te acompaña en cada paso.",
-  "Brilla con la autenticidad de quien no necesita imitar.",
-  "Eres el sueño que decidiste hacer realidad.",
-  "La plata que eliges dice mucho de quien eres."
+    "La elegancia es un estado de ánimo.",
+    "Estilo que habla por sí solo.",
+    "La belleza está en los detalles.",
+    "Viste tu esencia con elegancia.",
+    "Donde el estilo encuentra el alma.",
+    "Elegancia sin esfuerzo.",
+    "La plata como segunda piel.",
+    "Brilla con tu propia luz.",
   ];
 
   let inventory = [], cart = [], favorites = [];
@@ -1948,64 +420,29 @@
   const tagline = $('tagline');
   const carouselWrapper = $('carouselWrapper');
   const carouselTitle = $('carouselTitle');
-  const carouselTrack = $('carouselTrack');
-  const carouselPrev = $('carouselPrev');
-  const carouselNext = $('carouselNext');
-  const carouselDots = $('carouselDots');
+  const ringStage = $('ringStage');
+  const ring3d = $('ring3d');
+  const ringPrev = $('ringPrev');
+  const ringNext = $('ringNext');
+  const ringDots = $('ringDots');
+  const ringControls = $('ringControls');
 
-  // ===== EFECTO MÁQUINA DE ESCRIBIR =====
-  let typeTimer = null;
-  let phraseCycleInterval = null;
-
-  function startPhraseCycle() {
-    if (phraseCycleInterval) clearTimeout(phraseCycleInterval);
-    setRandomPhrase(true);
-  }
-
-  function setRandomPhrase(cycle = false) {
+  // MÁQUINA DE ESCRIBIR
+  let typeTimer = null, phraseCycleInterval = null;
+  function startPhraseCycle(){ if (phraseCycleInterval) clearTimeout(phraseCycleInterval); setRandomPhrase(true); }
+  function setRandomPhrase(cycle = false){
     if (frases.length === 0) return;
-    
-    // Detener cualquier escritura o ciclo anterior
-    if (typeTimer) {
-      clearTimeout(typeTimer);
-      typeTimer = null;
-    }
-    if (phraseCycleInterval) {
-      clearTimeout(phraseCycleInterval);
-      phraseCycleInterval = null;
-    }
-
-    // Seleccionar frase aleatoria (evitar repetir la actual)
-    let randomIndex;
-    let currentText = tagline.textContent.trim();
-    if (frases.length > 1) {
-      do {
-        randomIndex = Math.floor(Math.random() * frases.length);
-      } while (frases[randomIndex] === currentText);
-    } else {
-      randomIndex = 0;
-    }
-    
+    if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+    if (phraseCycleInterval) { clearTimeout(phraseCycleInterval); phraseCycleInterval = null; }
+    let randomIndex, currentText = tagline.textContent.trim();
+    if (frases.length > 1) { do { randomIndex = Math.floor(Math.random() * frases.length); } while (frases[randomIndex] === currentText); }
+    else { randomIndex = 0; }
     const phrase = frases[randomIndex];
-    tagline.textContent = '';
-    tagline.classList.add('typing');
-
+    tagline.textContent = ''; tagline.classList.add('typing');
     let i = 0;
-    function typeChar() {
-      if (i < phrase.length) {
-        tagline.textContent = phrase.substring(0, i + 1);
-        i++;
-        typeTimer = setTimeout(typeChar, 70);
-      } else {
-        tagline.textContent = phrase;
-        tagline.classList.remove('typing');
-        // Programar la siguiente frase después de 4 segundos
-        if (cycle) {
-          phraseCycleInterval = setTimeout(() => {
-            setRandomPhrase(true);
-          }, 4000);
-        }
-      }
+    function typeChar(){
+      if (i < phrase.length) { tagline.textContent = phrase.substring(0, i + 1); i++; typeTimer = setTimeout(typeChar, 70); }
+      else { tagline.textContent = phrase; tagline.classList.remove('typing'); if (cycle) { phraseCycleInterval = setTimeout(() => { setRandomPhrase(true); }, 4000); } }
     }
     typeChar();
   }
@@ -2024,39 +461,24 @@
     showToast(`❌ ${message}`, 'error');
   }
 
-  // ===== LIGHTBOX =====
+  // LIGHTBOX
   let currentScale = 1, translateX = 0, translateY = 0, isDragging = false;
   let startX, startY, startTranslateX, startTranslateY;
-
   function openLightbox(src, alt) {
     if (!src || src === CONFIG.defImg) return;
     const highRes = src.replace(/&sz=w\d+/, '&sz=w1200');
-    lightboxImg.src = highRes;
-    lightboxImg.alt = alt || 'Joya';
-    resetZoom();
-    lightbox.classList.add('show');
-    document.body.style.overflow = 'hidden';
+    lightboxImg.src = highRes; lightboxImg.alt = alt || 'Joya';
+    resetZoom(); lightbox.classList.add('show'); document.body.style.overflow = 'hidden';
   }
-
-  function closeLightbox() {
-    lightbox.classList.remove('show');
-    document.body.style.overflow = '';
-    resetZoom();
-  }
-
+  function closeLightbox() { lightbox.classList.remove('show'); document.body.style.overflow = ''; resetZoom(); }
   function resetZoom() {
     currentScale = 1; translateX = 0; translateY = 0;
     lightboxImg.style.transform = 'scale(1) translate(0px,0px)';
-    lightboxImg.classList.remove('zoomed');
-    lightbox.style.cursor = 'zoom-out';
+    lightboxImg.classList.remove('zoomed'); lightbox.style.cursor = 'zoom-out';
   }
-
-  lightbox.addEventListener('click', e => {
-    if (e.target === lightbox || e.target === lightboxInner || e.target === lightboxImg) closeLightbox();
-  });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox || e.target === lightboxInner || e.target === lightboxImg) closeLightbox(); });
   lightboxClose.addEventListener('click', e => { e.stopPropagation(); closeLightbox(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeCartModal(); } });
-
   lightboxImg.addEventListener('wheel', e => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? -0.08 : 0.08;
@@ -2068,20 +490,16 @@
       lightbox.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out';
     }
   }, { passive: false });
-
   lightboxImg.addEventListener('dblclick', e => {
     e.preventDefault();
     if (currentScale > 1) resetZoom();
     else { currentScale = 1.5; lightboxImg.style.transform = 'scale(1.5) translate(0,0)'; lightboxImg.classList.add('zoomed'); lightbox.style.cursor = 'zoom-in'; }
   });
-
   lightboxImg.addEventListener('mousedown', e => {
     if (currentScale <= 1) return;
-    isDragging = true;
-    startX = e.clientX; startY = e.clientY;
+    isDragging = true; startX = e.clientX; startY = e.clientY;
     startTranslateX = translateX; startTranslateY = translateY;
-    lightboxImg.style.cursor = 'grabbing';
-    e.preventDefault();
+    lightboxImg.style.cursor = 'grabbing'; e.preventDefault();
   });
   document.addEventListener('mousemove', e => {
     if (!isDragging) return;
@@ -2091,7 +509,7 @@
   });
   document.addEventListener('mouseup', () => { isDragging = false; lightboxImg.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out'; });
 
-  // ===== FUNCIONES ÚTILES =====
+  // UTILIDADES
   function escapeHtml(str) { const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
   function sanitize(str) { return str ? escapeHtml(String(str)).trim() : ''; }
   function formatPrice(n) { return '$' + n.toLocaleString('es-CL'); }
@@ -2101,11 +519,8 @@
     return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w${size}` : CONFIG.defImg;
   }
   function showToast(msg, type = '') {
-    const t = document.createElement('div');
-    t.className = 'toast ' + type;
-    t.textContent = msg;
-    toastContainer.appendChild(t);
-    setTimeout(() => t.remove(), 2400);
+    const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+    toastContainer.appendChild(t); setTimeout(() => t.remove(), 2400);
   }
   function saveState() {
     try { localStorage.setItem(CONFIG.STORAGE_CART, JSON.stringify(cart));
@@ -2117,7 +532,7 @@
   }
   function debounce(fn, delay) { return function(...args) { clearTimeout(searchDebounce); searchDebounce = setTimeout(() => fn.apply(this, args), delay); }; }
 
-  // ===== BÚSQUEDA =====
+  // BÚSQUEDA
   function openSearch() { searchExpand.classList.add('open'); searchInput.focus(); }
   function closeSearch() { searchExpand.classList.remove('open'); searchInput.value = ''; searchQuery = ''; renderProducts(); renderCarousel(); }
   searchToggle.addEventListener('click', e => { e.stopPropagation(); if (searchExpand.classList.contains('open')) closeSearch(); else openSearch(); });
@@ -2127,7 +542,7 @@
   searchInput.addEventListener('input', handleSearch);
   searchInput.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
 
-  // ===== FAVORITOS =====
+  // FAVORITOS
   function isFavorite(id) { return favorites.includes(id); }
   function toggleFavorite(pid) {
     const i = favorites.indexOf(pid);
@@ -2137,7 +552,7 @@
     if (btn) btn.innerHTML = isFavorite(pid) ? '❤️' : '🤍';
   }
 
-  // ===== CATEGORÍAS =====
+  // CATEGORÍAS
   function renderCategories() {
     const types = ["TODOS", ...new Set(inventory.map(p => p.type).filter(Boolean))];
     catContainer.innerHTML = types.map(t =>
@@ -2146,15 +561,14 @@
   }
   function setCategory(cat) { currentCategory = decodeURIComponent(cat); renderCategories(); renderProducts(); renderCarousel(); }
 
-  // ===== CANTIDAD =====
+  // CANTIDAD
   function changeQty(pid, delta) {
     const input = document.getElementById('qty-'+pid);
     const p = inventory.find(x => x.id === pid);
     if (!input || !p) return;
     let v = parseInt(input.value) || 1;
     v = Math.max(1, Math.min(v + delta, p.stock));
-    input.value = v;
-    updateAddBtn(pid, v, p.stock);
+    input.value = v; updateAddBtn(pid, v, p.stock);
   }
   function handleQtyInput(pid) {
     const input = document.getElementById('qty-'+pid);
@@ -2163,84 +577,459 @@
     let v = parseInt(input.value);
     if (isNaN(v) || v < 1) v = 1;
     if (v > p.stock) v = p.stock;
-    input.value = v;
-    updateAddBtn(pid, v, p.stock);
+    input.value = v; updateAddBtn(pid, v, p.stock);
   }
   function updateAddBtn(pid, qty, stock) {
     const btn = document.getElementById('add-btn-'+pid);
     if (btn) btn.disabled = qty > stock || stock <= 0;
   }
 
-  // ===== CARRUSEL =====
-  let carouselIndex = 0;
-  let carouselInterval = null;
-  let carouselItems = [];
+  // CARRUSEL 3D
+  const AUTO_SPEED        = 0.06;
+  const SCROLL_MULT       = 0.22;
+  const EASING            = 0.045;
+  const AUTO_RESUME_MS    = 5000;
+  const DRAG_SENSITIVITY  = 0.35;
+  const MOMENTUM_FRICTION = 0.93;
+  const SNAP_THRESHOLD    = 0.05;
+  const INIT_DELAY_MS     = 600;
+  const DRAG_THRESHOLD    = 6;
+  const FRONT_ANGLE_MAX   = 22;
+
+  let carouselProducts = [];
+  let ringRotation = 0;
+  let ringTargetRotation = 0;
+  let ringAutoRotate = false;
+  let ringReady = false;
+  let ringAnimFrame = null;
+  let ringIndex = 0;
+  let autoRotateTimer = null;
+
+  let ringDragging = false;
+  let didDrag = false;
+  let downX = 0, downY = 0;
+  let dragStartPointerX = 0, dragStartPointerY = 0;
+  let ringStartX = 0;
+  let ringStartRotation = 0;
+  let ringLastX = 0;
+  let ringLastTime = 0;
+  let ringVelocity = 0;
+  let ringMomentumFrame = null;
+  let ringIsFlat = false;
 
   function renderCarousel() {
     const show = (currentCategory === "TODOS" && searchQuery === '');
     if (!show) {
       carouselWrapper.classList.remove('show');
-      if (carouselInterval) { clearInterval(carouselInterval); carouselInterval = null; }
+      stopRing();
       return;
     }
     const offerItems = inventory.filter(p => p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0);
     if (offerItems.length === 0) {
       carouselWrapper.classList.remove('show');
+      stopRing();
       return;
     }
+
     carouselWrapper.classList.add('show');
     carouselTitle.textContent = tituloOferta || "Ofertas";
-    carouselItems = offerItems;
-    const slidesHtml = offerItems.map(p => createProductCardHtml(p, true)).join('');
-    carouselTrack.innerHTML = slidesHtml;
-    const totalSlides = offerItems.length;
-    const dotsHtml = Array.from({length: totalSlides}, (_, i) => 
-      `<button class="carousel-dot ${i===0?'active':''}" data-index="${i}"></button>`
-    ).join('');
-    carouselDots.innerHTML = dotsHtml;
-    carouselIndex = 0;
-    requestAnimationFrame(() => { updateCarouselPosition(); });
-    document.querySelectorAll('.carousel-dot').forEach(dot => {
-      dot.addEventListener('click', function() {
-        const idx = parseInt(this.dataset.index);
-        goToSlide(idx);
+    carouselProducts = offerItems;
+
+    ringReady = false;
+    buildRing(offerItems);
+    buildRingDots(offerItems);
+    startRing();
+  }
+
+  function computeRadius(n) {
+    const w = window.innerWidth;
+    const baseR = w < 480 ? 240 : w < 640 ? 280 : w < 1024 ? 340 : w < 1280 ? 400 : 440;
+    const scale = n <= 4 ? 0.9 : n <= 6 ? 1 : n <= 8 ? 1.1 : 1.2;
+    return baseR * scale;
+  }
+
+  function buildRing(items) {
+    const n = items.length;
+    const stage = ringStage;
+    const ring = ring3d;
+
+    if (n <= 2) {
+      ringIsFlat = true;
+      stage.classList.add('flat');
+      ringControls.style.display = 'none';
+      ring.innerHTML = items.map((p, i) => createRingItemHtml(p, i, 0, 0, false)).join('');
+      attachRingHandlers();
+      return;
+    }
+
+    ringIsFlat = false;
+    stage.classList.remove('flat');
+    ringControls.style.display = 'flex';
+
+    const radius = computeRadius(n);
+    const anglePerItem = 360 / n;
+
+    ring.innerHTML = items.map((p, i) => {
+      const itemAngle = i * anglePerItem;
+      return createRingItemHtml(p, i, itemAngle, radius, true);
+    }).join('');
+
+    attachRingHandlers();
+  }
+
+  function createRingItemHtml(p, i, itemAngle, radius, use3d) {
+    const imgSrc = fixDriveUrl(p.img, 500);
+    const isOffer = p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0;
+    const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
+
+    const priceHtml = isOffer
+      ? `<span class="ring-3d-price-old">${formatPrice(p.price)}</span><span class="ring-3d-price-offer">${formatPrice(p.oferta)}</span>`
+      : `<span class="ring-3d-price">${formatPrice(p.price)}</span>`;
+
+    const transform = use3d
+      ? `transform: translate(-50%, -50%) rotateY(${itemAngle}deg) translateZ(${radius}px);`
+      : '';
+
+    return `
+      <article class="ring-3d-item ${isOffer?'offer':''}"
+               data-index="${i}"
+               style="${transform}">
+        <div class="ring-3d-img">
+          <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy" decoding="async"
+               onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
+          ${isOffer ? '<span class="ring-3d-badge">Oferta</span>' : ''}
+          ${out ? '<span class="ring-3d-stock">Vendido</span>' : low ? `<span class="ring-3d-stock low">Solo ${p.stock}</span>` : ''}
+        </div>
+        <div class="ring-3d-body">
+          <span class="ring-3d-type">${sanitize(p.type)}</span>
+          <h3 class="ring-3d-name">${sanitize(p.name)}</h3>
+          <div class="ring-3d-prices">${priceHtml}</div>
+          <button type="button" class="ring-3d-add" data-add-index="${i}" ${out?'disabled':''}>
+            ${out?'Vendido':'Añadir 1'}
+          </button>
+        </div>
+      </article>
+    `;
+  }
+
+  function attachRingHandlers() {
+    // El listener del botón se mantiene para clicks DIRECTOS (cuando el botón
+    // está al frente y el puntero cae directamente sobre él).
+    // Para botones "tapados" por otras tarjetas, se resuelve en handleClickAt.
+    ring3d.querySelectorAll('.ring-3d-add').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (didDrag) return;
+        const idx = parseInt(this.dataset.addIndex);
+        addOneFromCarouselByIndex(idx);
       });
     });
-    carouselPrev.onclick = () => goToSlide(carouselIndex - 1);
-    carouselNext.onclick = () => goToSlide(carouselIndex + 1);
-    if (carouselInterval) clearInterval(carouselInterval);
-    carouselInterval = setInterval(() => { goToSlide(carouselIndex + 1); }, 2000);
   }
 
-  function goToSlide(index) {
-    const total = carouselItems.length;
-    if (total === 0) return;
-    if (index < 0) index = total - 1;
-    if (index >= total) index = 0;
-    carouselIndex = index;
-    updateCarouselPosition();
-    document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-      dot.classList.toggle('active', i === index);
+  function buildRingDots(items) {
+    if (items.length <= 2) { ringDots.innerHTML = ''; return; }
+    ringDots.innerHTML = items.map((_, i) =>
+      `<button class="ring-dot ${i===0?'active':''}" data-index="${i}" aria-label="Ir al producto ${i+1}"></button>`
+    ).join('');
+    ringDots.querySelectorAll('.ring-dot').forEach(dot => {
+      dot.addEventListener('click', function() {
+        goToRingIndex(parseInt(this.dataset.index));
+      });
     });
   }
 
-  function updateCarouselPosition() {
-    const track = carouselTrack;
-    const slides = track.querySelectorAll('.carousel-slide');
-    if (!slides.length) return;
-    const slideWidth = slides[0].offsetWidth;
-    const gap = 2;
-    const offset = carouselIndex * (slideWidth + gap);
-    track.style.transform = `translateX(-${offset}px)`;
+  function goToRingIndex(i) {
+    const n = carouselProducts.length;
+    if (!n || ringIsFlat) return;
+    ringIndex = ((i % n) + n) % n;
+    const anglePerItem = 360 / n;
+    ringTargetRotation = -ringIndex * anglePerItem;
+    ringAutoRotate = false;
+    restartAutoRotateTimer();
+    updateRingDots();
   }
 
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => updateCarouselPosition(), 100);
+  function updateRingDots() {
+    if (ringIsFlat) return;
+    ringDots.querySelectorAll('.ring-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === ringIndex);
+    });
+  }
+
+  function startRing() {
+    ringRotation = 0;
+    ringTargetRotation = 0;
+    ringIndex = 0;
+    ringAutoRotate = false;
+    ringReady = false;
+    updateRingDots();
+
+    if (ringAnimFrame) cancelAnimationFrame(ringAnimFrame);
+    if (ringMomentumFrame) cancelAnimationFrame(ringMomentumFrame);
+    if (autoRotateTimer) clearTimeout(autoRotateTimer);
+
+    if (ringIsFlat) { ringReady = true; return; }
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function loop() {
+      if (ringReady && !reduced && ringAutoRotate && !ringDragging) {
+        ringTargetRotation -= AUTO_SPEED;
+      }
+      ringRotation += (ringTargetRotation - ringRotation) * EASING;
+      if (ringRotation > 360) { ringRotation -= 360; ringTargetRotation -= 360; }
+      if (ringRotation < 0)   { ringRotation += 360; ringTargetRotation += 360; }
+      ring3d.style.transform = `rotateY(${ringRotation}deg)`;
+
+      const n = carouselProducts.length;
+      if (ringReady && n > 2) {
+        const anglePerItem = 360 / n;
+        let bestI = 0, bestDist = 999;
+        for (let i = 0; i < n; i++) {
+          let a = (i * anglePerItem + ringRotation) % 360;
+          if (a < 0) a += 360;
+          const dist = Math.min(a, 360 - a);
+          if (dist < bestDist) { bestDist = dist; bestI = i; }
+        }
+        if (bestI !== ringIndex) { ringIndex = bestI; updateRingDots(); }
+      }
+      ringAnimFrame = requestAnimationFrame(loop);
+    }
+    loop();
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        ringReady = true;
+        setTimeout(() => { if (!ringDragging) ringAutoRotate = true; }, INIT_DELAY_MS);
+      });
+    });
+  }
+
+  function stopRing() {
+    if (ringAnimFrame) { cancelAnimationFrame(ringAnimFrame); ringAnimFrame = null; }
+    if (ringMomentumFrame) { cancelAnimationFrame(ringMomentumFrame); ringMomentumFrame = null; }
+    if (autoRotateTimer) { clearTimeout(autoRotateTimer); autoRotateTimer = null; }
+    ringReady = false;
+    ringAutoRotate = false;
+  }
+
+  function restartAutoRotateTimer() {
+    if (autoRotateTimer) clearTimeout(autoRotateTimer);
+    autoRotateTimer = setTimeout(() => {
+      if (ringReady && !ringDragging && !ringIsFlat) ringAutoRotate = true;
+    }, AUTO_RESUME_MS);
+  }
+
+  // ===== HIT-TEST MANUAL =====
+  function getCardAngle(i) {
+    const n = carouselProducts.length;
+    if (!n) return 0;
+    const anglePerItem = 360 / n;
+    let a = (i * anglePerItem + ringRotation) % 360;
+    if (a < 0) a += 360;
+    return Math.min(a, 360 - a);
+  }
+
+  function handleClickAt(x, y) {
+    const stack = document.elementsFromPoint(x, y);
+    if (!stack || !stack.length) return;
+
+    // PASO 1: Buscar cualquier botón "Añadir 1" en la pila (aunque esté tapado).
+    // Si lo encontramos, se procesa y se termina. Esto es lo que arregla
+    // que los botones de las tarjetas 2 y 4 (laterales) funcionen.
+    for (const el of stack) {
+      if (!el.classList) continue;
+      if (el.classList.contains('ring-dot')) return;
+      if (el.classList.contains('ring-3d-add')) {
+        if (el.disabled) return;
+        const idx = parseInt(el.dataset.addIndex);
+        if (!isNaN(idx)) addOneFromCarouselByIndex(idx);
+        return;
+      }
+    }
+
+    // PASO 2: No hay botón. Buscar la primera tarjeta y decidir:
+    //   - Si está al frente → abrir lightbox.
+    //   - Si está lateral o atrás → girar hacia ella.
+    for (const el of stack) {
+      if (!el.closest) continue;
+      const card = el.closest('.ring-3d-item');
+      if (card) {
+        const i = parseInt(card.dataset.index);
+        if (isNaN(i)) return;
+        const p = carouselProducts[i];
+        if (!p) return;
+
+        const distToFront = getCardAngle(i);
+
+        if (distToFront < FRONT_ANGLE_MAX) {
+          openLightbox(fixDriveUrl(p.img, 1200), p.name);
+        } else {
+          goToRingIndex(i);
+        }
+        return;
+      }
+    }
+  }
+
+  // ===== DRAG =====
+  function onPointerDown(e) {
+    if (!carouselProducts.length || !ringReady || ringIsFlat) return;
+    if (e.target.closest('button, a, input, select, textarea, .ring-dot')) return;
+
+    const p = e.touches ? e.touches[0] : e;
+    ringDragging = true;
+    didDrag = false;
+    downX = p.clientX;
+    downY = p.clientY;
+    dragStartPointerX = p.clientX;
+    dragStartPointerY = p.clientY;
+    ringStartX = p.clientX;
+    ringStartRotation = ringRotation;
+    ringTargetRotation = ringRotation;
+    ringLastX = ringStartX;
+    ringLastTime = performance.now();
+    ringVelocity = 0;
+    ringStage.classList.add('dragging');
+  }
+
+  function onPointerMove(e) {
+    if (!ringDragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    const x = p.clientX;
+    const y = p.clientY;
+
+    if (!didDrag) {
+      const dx0 = Math.abs(x - dragStartPointerX);
+      const dy0 = Math.abs(y - dragStartPointerY);
+      if (dx0 > DRAG_THRESHOLD || dy0 > DRAG_THRESHOLD) {
+        didDrag = true;
+        ringAutoRotate = false;
+        if (autoRotateTimer) { clearTimeout(autoRotateTimer); autoRotateTimer = null; }
+        if (e.pointerId !== undefined && ringStage.setPointerCapture) {
+          try { ringStage.setPointerCapture(e.pointerId); } catch(_) {}
+        }
+      } else {
+        return;
+      }
+    }
+
+    const dx = x - ringStartX;
+    const newRot = ringStartRotation + dx * DRAG_SENSITIVITY;
+    ringRotation = newRot;
+    ringTargetRotation = newRot;
+    const now = performance.now();
+    const dt = now - ringLastTime || 16;
+    ringVelocity = (x - ringLastX) / dt;
+    ringLastX = x;
+    ringLastTime = now;
+  }
+
+  function onPointerUp(e) {
+    if (!ringDragging) return;
+    const wasDrag = didDrag;
+    ringDragging = false;
+    ringStage.classList.remove('dragging');
+
+    if (wasDrag) {
+      if (Math.abs(ringVelocity) > SNAP_THRESHOLD) {
+        let v = ringVelocity * 10;
+        function momentum() {
+          v *= MOMENTUM_FRICTION;
+          ringRotation += v;
+          ringTargetRotation = ringRotation;
+          if (Math.abs(v) > 0.25) ringMomentumFrame = requestAnimationFrame(momentum);
+          else snapToNearest();
+        }
+        momentum();
+      } else snapToNearest();
+      restartAutoRotateTimer();
+      setTimeout(() => { didDrag = false; }, 0);
+    } else {
+      didDrag = false;
+      handleClickAt(downX, downY);
+    }
+  }
+
+  function snapToNearest() {
+    const n = carouselProducts.length;
+    if (!n || ringIsFlat) return;
+    const anglePerItem = 360 / n;
+    const snapped = Math.round(ringRotation / anglePerItem) * anglePerItem;
+    ringTargetRotation = snapped;
+    let norm = ((snapped % 360) + 360) % 360;
+    ringIndex = Math.round(norm / anglePerItem) % n;
+    updateRingDots();
+  }
+
+  if (window.PointerEvent) {
+    ringStage.addEventListener('pointerdown', onPointerDown);
+    ringStage.addEventListener('pointermove', onPointerMove);
+    ringStage.addEventListener('pointerup', onPointerUp);
+    ringStage.addEventListener('pointercancel', onPointerUp);
+  } else {
+    ringStage.addEventListener('touchstart', onPointerDown, { passive: true });
+    ringStage.addEventListener('touchmove', onPointerMove, { passive: true });
+    ringStage.addEventListener('touchend', onPointerUp);
+    ringStage.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+  }
+
+  ringPrev.addEventListener('click', () => {
+    const n = carouselProducts.length;
+    if (!n || !ringReady || ringIsFlat) return;
+    ringAutoRotate = false;
+    const anglePerItem = 360 / n;
+    ringTargetRotation = ringRotation + anglePerItem;
+    restartAutoRotateTimer();
+  });
+  ringNext.addEventListener('click', () => {
+    const n = carouselProducts.length;
+    if (!n || !ringReady || ringIsFlat) return;
+    ringAutoRotate = false;
+    const anglePerItem = 360 / n;
+    ringTargetRotation = ringRotation - anglePerItem;
+    restartAutoRotateTimer();
   });
 
-  // ===== RENDER PRODUCTOS =====
+  let lastScrollY = window.scrollY;
+  let scrollRafPending = false;
+  window.addEventListener('scroll', () => {
+    if (!carouselProducts.length || !ringReady || ringDragging || ringIsFlat) return;
+    if (scrollRafPending) return;
+    scrollRafPending = true;
+    requestAnimationFrame(() => {
+      const dy = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
+      if (Math.abs(dy) > 1) {
+        ringAutoRotate = false;
+        ringTargetRotation -= dy * SCROLL_MULT;
+        restartAutoRotateTimer();
+      }
+      scrollRafPending = false;
+    });
+  }, { passive: true });
+
+  let resizeTimeout;
+  let lastInnerWidth = window.innerWidth;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      if (Math.abs(window.innerWidth - lastInnerWidth) < 5) return;
+      lastInnerWidth = window.innerWidth;
+      if (carouselProducts.length) {
+        const savedRotation = ringRotation;
+        const savedTarget = ringTargetRotation;
+        buildRing(carouselProducts);
+        ringRotation = savedRotation;
+        ringTargetRotation = savedTarget;
+      }
+    }, 200);
+  });
+
+  // RENDER PRODUCTOS
   function renderProducts() {
     let list = currentCategory === "TODOS" ? [...inventory] : inventory.filter(p => p.type === currentCategory);
     if (searchQuery) {
@@ -2253,89 +1042,56 @@
       return;
     }
     let html = '';
-    list.forEach((p) => {
-      html += createProductCardHtml(p, false);
-    });
+    list.forEach((p) => { html += createProductCardHtml(p); });
     grid.innerHTML = html;
-    list.forEach(p => { 
-      const inp = document.getElementById('qty-'+p.id); 
-      if (inp) updateAddBtn(p.id, parseInt(inp.value)||1, p.stock); 
+    list.forEach(p => {
+      const inp = document.getElementById('qty-'+p.id);
+      if (inp) updateAddBtn(p.id, parseInt(inp.value)||1, p.stock);
     });
   }
 
-  // ===== CREAR HTML DE TARJETA =====
-  function createProductCardHtml(p, isCarousel) {
+  function createProductCardHtml(p) {
     const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
     const fav = isFavorite(p.id);
     const imgSrc = fixDriveUrl(p.img, 400);
     const nameEnc = encodeURIComponent(p.name);
     const idEnc = encodeURIComponent(p.id);
     const isOffer = p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0;
-    const offerPrice = isOffer ? p.oferta : null;
-    const normalPrice = p.price;
-
     const offerClass = isOffer ? 'offer' : '';
     const badgeOffer = isOffer ? `<div class="offer-badge">OFERTA</div>` : '';
 
-    let priceHtml = '';
-    if (isOffer) {
-      priceHtml = `<span class="original-price">${formatPrice(normalPrice)}</span><span class="offer-price">${formatPrice(offerPrice)}</span>`;
-    } else {
-      priceHtml = `<span class="card-price">${formatPrice(normalPrice)}</span>`;
-    }
+    let priceHtml = isOffer
+      ? `<span class="original-price">${formatPrice(p.price)}</span><span class="offer-price">${formatPrice(p.oferta)}</span>`
+      : `<span class="card-price">${formatPrice(p.price)}</span>`;
 
-    let bodyHtml = '';
-    if (isCarousel) {
-      bodyHtml = `
-        <div class="card-body">
-          <p class="card-type">${sanitize(p.type)}</p>
-          <h3 class="card-title">${sanitize(p.name)}</h3>
-          ${p.detail ? `<p class="card-detail">Detalles: ${sanitize(p.detail)}</p>` : ''}
-          <div class="card-price-row">
-            ${priceHtml}
-            <span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span>
-          </div>
-          <button class="add-btn" onclick="Dari.addOneFromCarousel('${idEnc}')" ${out?'disabled':''}>${out?'Vendido':'Añadir 1'}</button>
+    const bodyHtml = `
+      <div class="card-body">
+        <p class="card-type">${sanitize(p.type)}</p>
+        <h3 class="card-title">${sanitize(p.name)}</h3>
+        ${p.detail ? `<p class="card-detail">Detalles: ${sanitize(p.detail)}</p>` : ''}
+        <div class="card-price-row">
+          ${priceHtml}
+          <span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span>
         </div>
-      `;
-    } else {
-      bodyHtml = `
-        <div class="card-body">
-          <p class="card-type">${sanitize(p.type)}</p>
-          <h3 class="card-title">${sanitize(p.name)}</h3>
-          ${p.detail ? `<p class="card-detail">Detalles: ${sanitize(p.detail)}</p>` : ''}
-          <div class="card-price-row">
-            ${priceHtml}
-            <span class="card-stock">${out?'Sin stock':'Stock: '+p.stock}</span>
+        <div class="qty-row">
+          <div class="qty-control">
+            <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',-1)" ${out?'disabled':''}>–</button>
+            <input type="number" id="qty-${p.id}" class="qty-value" value="1" min="1" max="${p.stock}"
+                   oninput="Dari.handleQtyInput('${idEnc}')" ${out?'disabled':''}>
+            <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',1)" ${out?'disabled':''}>+</button>
           </div>
-          <div class="qty-row">
-            <div class="qty-control">
-              <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',-1)" ${out?'disabled':''}>–</button>
-              <input type="number" id="qty-${p.id}" class="qty-value" value="1" min="1" max="${p.stock}"
-                     oninput="Dari.handleQtyInput('${idEnc}')" ${out?'disabled':''}>
-              <button class="qty-btn" onclick="Dari.changeQty('${idEnc}',1)" ${out?'disabled':''}>+</button>
-            </div>
-          </div>
-          <button id="add-btn-${p.id}" class="add-btn" onclick="Dari.addToCart('${idEnc}')" ${out?'disabled':''}>${out?'Vendido':'Añadir'}</button>
         </div>
-      `;
-    }
+        <button id="add-btn-${p.id}" class="add-btn" onclick="Dari.addToCart('${idEnc}')" ${out?'disabled':''}>${out?'Vendido':'Añadir'}</button>
+      </div>
+    `;
 
-    let extraHtml = '';
-    if (!isCarousel) {
-      extraHtml = `
-        <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation();Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
-        ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
-      `;
-    } else {
-      extraHtml = `
-        <button id="fav-car-${p.id}" class="fav-btn" onclick="event.stopPropagation();Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
-        ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
-      `;
-    }
+    const extraHtml = `
+      <button id="fav-${p.id}" class="fav-btn" onclick="event.stopPropagation();Dari.toggleFavorite('${idEnc}')">${fav?'❤️':'🤍'}</button>
+      ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
+    `;
 
-    const cardClass = `card ${offerClass} card-enter ${isCarousel ? 'carousel-slide' : ''}`;
-    const delay = isCarousel ? 0 : Math.min(parseInt(p.id?.slice(-3) || '0'), 15) * 0.04;
+    const cardClass = `card ${offerClass} card-enter`;
+    const delay = Math.min(parseInt(p.id?.slice(-3) || '0'), 15) * 0.04;
 
     return `
       <article class="${cardClass}" style="animation-delay:${delay}s">
@@ -2343,7 +1099,6 @@
           <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy" decoding="async"
                onclick="Dari.openLightbox('${imgSrc}','${nameEnc}')"
                onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
-          <div class="placeholder">💍</div>
           ${badgeOffer}
           ${extraHtml}
         </div>
@@ -2352,7 +1107,7 @@
     `;
   }
 
-  // ===== CARRITO =====
+  // CARRITO
   function addToCart(pid) {
     const p = inventory.find(x => x.id === pid);
     if (!p || p.stock <= 0) return;
@@ -2361,23 +1116,39 @@
     const exist = cart.find(i => i.id === pid);
     if (exist) { if (exist.q + qty > p.stock) { showToast('Máximo '+p.stock,'error'); return; } exist.q += qty; }
     else cart.push({ id: p.id, name: p.name, price: p.price, q: qty });
-    updateCartBar();
-    saveState();
-    showToast('Añadido al carrito','success');
+    updateCartBar(); saveState(); showToast('Añadido al carrito','success');
+    const badge = cartCountDisplay;
+    badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce');
+  }
+
+  function addOneFromCarouselByIndex(idx) {
+    const p = carouselProducts[idx];
+    if (!p) { showToast('Producto no encontrado','error'); return; }
+    if (p.stock <= 0) { showToast('Sin stock','error'); return; }
+    const exist = cart.find(i => i.id === p.id);
+    if (exist) {
+      if (exist.q + 1 > p.stock) { showToast('Máximo '+p.stock,'error'); return; }
+      exist.q += 1;
+    } else {
+      cart.push({ id: p.id, name: p.name, price: p.price, q: 1 });
+    }
+    updateCartBar(); saveState(); showToast('Añadido al carrito','success');
     const badge = cartCountDisplay;
     badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce');
   }
 
   function addOneFromCarousel(pid) {
     const p = inventory.find(x => x.id === pid);
-    if (!p || p.stock <= 0) return;
-    const qty = 1;
+    if (!p) { showToast('Producto no encontrado','error'); return; }
+    if (p.stock <= 0) { showToast('Sin stock','error'); return; }
     const exist = cart.find(i => i.id === pid);
-    if (exist) { if (exist.q + qty > p.stock) { showToast('Máximo '+p.stock,'error'); return; } exist.q += qty; }
-    else cart.push({ id: p.id, name: p.name, price: p.price, q: qty });
-    updateCartBar();
-    saveState();
-    showToast('Añadido al carrito','success');
+    if (exist) {
+      if (exist.q + 1 > p.stock) { showToast('Máximo '+p.stock,'error'); return; }
+      exist.q += 1;
+    } else {
+      cart.push({ id: p.id, name: p.name, price: p.price, q: 1 });
+    }
+    updateCartBar(); saveState(); showToast('Añadido al carrito','success');
     const badge = cartCountDisplay;
     badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce');
   }
@@ -2392,11 +1163,9 @@
   function renderCartModal() {
     if (!cart.length) {
       cartModalItems.innerHTML = `<div class="empty-state" style="padding:30px 0"><div class="empty-icon">🛒</div><p class="empty-text">Vacío</p></div>`;
-      modalTotal.textContent = '$0';
-      return;
+      modalTotal.textContent = '$0'; return;
     }
-    let total = 0;
-    let html = '';
+    let total = 0, html = '';
     cart.forEach((item, idx) => {
       total += item.price * item.q;
       html += `
@@ -2423,17 +1192,13 @@
     let q = fromInput ? parseInt(document.getElementById('cart-qty-'+idx).value) : item.q + delta;
     if (isNaN(q) || q < 1) q = 1;
     if (p.stock && q > p.stock) { showToast('Máximo '+p.stock,'error'); q = p.stock; }
-    item.q = q;
-    updateCartBar();
-    saveState();
+    item.q = q; updateCartBar(); saveState();
   }
 
   function removeCartItem(idx) {
     const name = cart[idx]?.name || 'Producto';
     cart.splice(idx, 1);
-    updateCartBar();
-    saveState();
-    showToast(name + ' eliminado');
+    updateCartBar(); saveState(); showToast(name + ' eliminado');
     if (!cart.length) closeCartModal();
   }
 
@@ -2447,59 +1212,48 @@
     window.open(`https://wa.me/${CONFIG.ws}?text=${encodeURIComponent(msg)}`,'_blank');
   }
 
-  // ===== SKELETONS =====
   function renderSkeletons() {
     grid.innerHTML = Array(8).fill('').map(() => `
       <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line" style="width:40%"></div><div class="skeleton skeleton-line" style="width:80%"></div><div class="skeleton skeleton-line" style="width:50%;height:14px;margin-top:12px"></div></div>
     `).join('');
   }
 
-  // ===== CARGA DE DATOS =====
   async function loadData() {
     if (isLoading) return;
     isLoading = true;
     renderSkeletons();
     loadState();
-    // Iniciar el ciclo de frases con efecto máquina
     startPhraseCycle();
-
     try {
       const res = await fetch(CONFIG.apiUrl);
-      if (!res.ok) {
-        throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
       let data;
-      try {
-        data = await res.json();
-      } catch (parseError) {
-        throw new Error('La respuesta no es un JSON válido. Verifica la URL.');
-      }
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      if (!data.productos) {
-        throw new Error('La respuesta no contiene "productos". Estructura: { productos: [...] }');
-      }
+      try { data = await res.json(); } catch (parseError) { throw new Error('La respuesta no es un JSON válido. Verifica la URL.'); }
+      if (data.error) throw new Error(data.error);
+      if (!data.productos) throw new Error('La respuesta no contiene "productos". Estructura: { productos: [...] }');
       if (!data.productos.length) {
         grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p class="empty-text">No hay productos disponibles</p></div>`;
         return;
       }
-
       tituloOferta = data.titulo_oferta || "Ofertas";
 
+      const usedIds = new Set();
       inventory = data.productos.map((p, i) => {
-        let id = p.ID || p.id || p.Código || p.Codigo || p.SKU || null;
-        if (!id) {
-          const num = String(i + 1).padStart(3, '0');
-          id = `PROD-${num}`;
-        }
+        let rawId = p.ID || p.id || p.Código || p.Codigo || p.SKU || null;
+        let id = rawId ? String(rawId).trim() : '';
+        if (!id) { id = `PROD-${String(i + 1).padStart(3, '0')}`; }
+        let uniqueId = id;
+        let counter = 1;
+        while (usedIds.has(uniqueId)) { uniqueId = `${id}-${counter}`; counter++; }
+        usedIds.add(uniqueId);
+
         const ofertaVal = p.Oferta !== undefined ? p.Oferta : p.oferta;
         let oferta = null;
         if (ofertaVal !== undefined && ofertaVal !== null && ofertaVal !== '' && !isNaN(parseFloat(ofertaVal))) {
           oferta = parseFloat(ofertaVal);
         }
         return {
-          id: String(id).trim(),
+          id: uniqueId,
           type: p.Tipo || p.tipo || 'Otros',
           name: p.Contenido || p.contenido || '',
           stock: parseInt(p.Stock || p.stock || 0),
@@ -2510,50 +1264,28 @@
         };
       }).filter(p => p.id && p.name);
 
-      if (!inventory.length) {
-        throw new Error('No se pudieron procesar productos válidos. Verifica los datos.');
-      }
-
+      if (!inventory.length) throw new Error('No se pudieron procesar productos válidos. Verifica los datos.');
       renderCategories();
       renderCarousel();
       renderProducts();
       if (cart.length) updateCartBar();
-      
     } catch (e) {
       console.error('Error en loadData:', e);
-      showError(
-        e.message || 'Error desconocido al cargar los datos',
-        e.stack || 'Sin detalles adicionales'
-      );
+      showError(e.message || 'Error desconocido al cargar los datos', e.stack || 'Sin detalles adicionales');
     } finally {
       isLoading = false;
     }
   }
 
-  // ===== EXPONER API GLOBAL =====
   window.Dari = {
-    openLightbox,
-    closeLightbox,
-    toggleFavorite,
-    setCategory,
-    changeQty,
-    handleQtyInput,
-    addToCart,
-    addOneFromCarousel,
-    updateCartBar,
-    renderCartModal,
-    updateCartItemQty,
-    removeCartItem,
-    openCartModal,
-    closeCartModal,
-    sendCartOrder,
-    loadData,
-    showToast,
-    showError,
-    CONFIG
+    openLightbox, closeLightbox, toggleFavorite, setCategory,
+    changeQty, handleQtyInput, addToCart, addOneFromCarousel,
+    addOneFromCarouselByIndex,
+    updateCartBar, renderCartModal, updateCartItemQty, removeCartItem,
+    openCartModal, closeCartModal, sendCartOrder, loadData,
+    showToast, showError, CONFIG
   };
 
-  // ===== INICIO =====
   loadState();
   document.addEventListener('DOMContentLoaded', loadData);
 })();
