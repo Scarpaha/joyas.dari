@@ -11,9 +11,10 @@
   <meta property="og:image" content="https://drive.google.com/thumbnail?id=1avUuzvlAKSWBiaSQ8td4Xgv1fsg4ebuf&sz=w1200">
   <meta property="og:type" content="website">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
-    :root{--dark:#282828;--teal:#15696F;--teal-light:#63BDB5;--muted:#858585;--bg:#EEF2F0;--white:#FFFFFF;--bordeaux:#880D1E;--silver:#E5E9EC}
+    :root{--dark:#282828;--teal:#15696F;--teal-light:#63BDB5;--muted:#858585;--bg:#EEF2F0;--white:#FFFFFF;--bordeaux:#880D1E;--silver:#E5E9EC;--fan-cw:180px}
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{background:var(--bg);color:var(--dark);font-family:'Inter',system-ui,sans-serif;font-weight:400;line-height:1.5;overflow-x:hidden}
 
@@ -45,78 +46,60 @@
     .cart-summary.show{display:flex}
     @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-    .carousel-wrapper{position:relative;padding:16px 0 20px;background:linear-gradient(180deg,#F4F7F5 0%, var(--bg) 100%);border-bottom:1px solid rgba(40,40,40,0.04);display:none;overflow:hidden}
+    /* ============ CARRUSEL FAN ============ */
+    .carousel-wrapper{position:relative;padding:14px 0 16px;background:linear-gradient(180deg,#F4F7F5 0%, var(--bg) 100%);border-bottom:1px solid rgba(40,40,40,0.04);display:none}
     .carousel-wrapper.show{display:block}
-    .carousel-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--dark);padding:0 0 12px 16px;letter-spacing:0.02em}
+    .carousel-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--dark);padding:0 16px 10px;letter-spacing:0.02em;text-align:center}
 
-    .ring-3d-stage{position:relative;width:100%;height:440px;perspective:1400px;perspective-origin:50% 50%;user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;overflow:visible}
-    .ring-3d-stage.dragging{cursor:grabbing}
+    .fan-stage{position:relative;width:100%;height:360px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+    .fan-stage.dragging{cursor:grabbing}
+    .fan-layout{position:relative;width:100%;height:100%}
 
-    .ring-3d{position:relative;width:100%;height:100%;transform-style:preserve-3d;will-change:transform}
-
-    .ring-3d-item{position:absolute;top:50%;left:50%;width:200px;height:360px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 12px 40px rgba(40,40,40,0.18), 0 2px 8px rgba(40,40,40,0.08);border:1px solid rgba(40,40,40,0.06);backface-visibility:hidden;display:flex;flex-direction:column;cursor:pointer;transform-origin:center center}
-    .ring-3d-item.offer{border:2px solid var(--teal-light)}
-
-    .ring-3d-img{position:relative;width:100%;height:190px;overflow:hidden;background:#E8ECE9;flex-shrink:0;cursor:zoom-in}
-    .ring-3d-img img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-
-    .ring-3d-badge{position:absolute;top:8px;left:8px;background:var(--bordeaux);color:#fff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.08em;z-index:2}
-    .ring-3d-stock{position:absolute;bottom:8px;left:8px;background:rgba(40,40,40,0.85);color:#fff;font-size:9px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em;backdrop-filter:blur(4px)}
-    .ring-3d-stock.low{background:var(--bordeaux)}
-
-    .ring-3d-body{padding:10px 12px 12px;display:flex;flex-direction:column;flex:1 1 auto;gap:4px;background:#fff;min-height:0}
-    .ring-3d-type{font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);flex-shrink:0}
-    .ring-3d-name{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;line-height:1.15;color:var(--dark);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px;max-height:36px;flex-shrink:0}
-    .ring-3d-prices{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;flex-shrink:0;margin-top:auto;padding-top:4px}
-    .ring-3d-price{font-size:15px;font-weight:700;color:var(--dark)}
-    .ring-3d-price-old{font-size:11px;color:var(--muted);text-decoration:line-through}
-    .ring-3d-price-offer{font-size:15px;font-weight:700;color:var(--bordeaux)}
-    .ring-3d-add{width:100%;padding:8px;border:0;border-radius:100px;background:var(--dark);color:#fff;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;margin-top:6px;position:relative;z-index:5;flex-shrink:0}
-    .ring-3d-add:hover:not(:disabled){background:var(--teal)}
-    .ring-3d-add:disabled{background:#C5CBC8;cursor:not-allowed}
-
-    .ring-controls{display:flex;justify-content:center;align-items:center;gap:14px;padding:16px 0 0}
-    .ring-btn{width:38px;height:38px;border-radius:50%;background:var(--dark);color:#fff;border:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1;transition:all 0.2s;box-shadow:0 4px 12px rgba(40,40,40,0.15)}
-    .ring-btn:hover{background:var(--teal);transform:scale(1.06)}
-    .ring-btn:active{transform:scale(0.96)}
-    .ring-dots{display:flex;gap:6px;align-items:center}
-    .ring-dot{width:8px;height:8px;border-radius:50%;background:var(--silver);border:0;padding:0;cursor:pointer;transition:all 0.25s}
-    .ring-dot.active{background:var(--teal-light);width:22px;border-radius:4px}
-
-    .ring-3d-stage.flat{height:auto;min-height:0;perspective:none;display:flex;justify-content:center;align-items:center;padding:8px 16px 4px}
-    .ring-3d-stage.flat .ring-3d{transform:none !important;transform-style:flat;display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;height:auto;min-height:0}
-    .ring-3d-stage.flat .ring-3d-item{position:relative;top:auto;left:auto;margin:0;transform:none !important;flex-shrink:0}
-
-    @media (min-width:640px){
-      .ring-3d-stage{height:500px;perspective:1600px}
-      .ring-3d-item{width:220px;height:390px}
-      .ring-3d-img{height:210px}
-      .ring-3d-name{font-size:17px;min-height:40px;max-height:40px}
+    .fan-card{
+      position:absolute;top:0;left:calc(50% - var(--fan-cw) / 2);
+      width:var(--fan-cw);
+      font-size:clamp(12px, calc(var(--fan-cw) * 0.083), 17px);
+      border-radius:12px;overflow:hidden;background:#fff;
+      border:1px solid rgba(40,40,40,0.06);
+      box-shadow:0 10px 26px rgba(40,40,40,0.13),0 2px 6px rgba(40,40,40,0.05);
+      display:flex;flex-direction:column;
+      transform-origin:50% 100%;
+      will-change:transform,opacity;
+      backface-visibility:hidden;
+      cursor:pointer;
     }
-    @media (min-width:1024px){
-      .ring-3d-stage{height:620px;perspective:2000px}
-      .ring-3d-item{width:260px;height:470px}
-      .ring-3d-img{height:260px}
-      .ring-3d-name{font-size:20px;min-height:48px;max-height:48px}
-      .ring-3d-price,.ring-3d-price-offer{font-size:18px}
-      .carousel-title{font-size:28px;padding-left:24px}
-    }
-    @media (min-width:1280px){
-      .ring-3d-stage{height:660px;perspective:2200px}
-      .ring-3d-item{width:280px;height:490px}
-      .ring-3d-img{height:280px}
-      .ring-3d-name{font-size:22px;min-height:52px;max-height:52px}
-    }
-    @media (max-width:480px){
-      .ring-3d-stage{height:420px;perspective:1200px}
-      .ring-3d-item{width:180px;height:340px}
-      .ring-3d-img{height:170px}
-      .ring-3d-name{font-size:14px;min-height:32px;max-height:32px}
-      .ring-3d-price,.ring-3d-price-offer{font-size:13px}
-      .carousel-title{font-size:20px}
-      .ring-btn{width:34px;height:34px;font-size:18px}
-    }
+    .fan-card.offer{border:2px solid var(--teal-light)}
+    .fan-card:focus-visible{outline:2px solid var(--teal-light);outline-offset:2px}
 
+    .fan-card-img{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;background:#E8ECE9;flex-shrink:0}
+    .fan-card-img img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+    .fan-card-badge{position:absolute;top:.5em;left:.5em;background:var(--bordeaux);color:#fff;font-size:.58em;font-weight:700;padding:.22em .75em;border-radius:20px;text-transform:uppercase;letter-spacing:.08em;z-index:2}
+    .fan-card-stock{position:absolute;bottom:.5em;left:.5em;background:rgba(40,40,40,.85);color:#fff;font-size:.58em;font-weight:600;padding:.22em .75em;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;z-index:2;backdrop-filter:blur(4px)}
+    .fan-card-stock.low{background:var(--bordeaux)}
+
+    .fan-card-body{padding:.75em .85em .9em;display:flex;flex-direction:column;gap:.28em;background:#fff}
+    .fan-card-type{font-size:.58em;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+    .fan-card-name{font-family:'Cormorant Garamond',serif;font-size:1.05em;font-weight:500;line-height:1.12;color:var(--dark);height:2.24em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .fan-card-prices{display:flex;align-items:baseline;gap:.35em;flex-wrap:nowrap;overflow:hidden;min-height:1.25em}
+    .fan-card-price{font-size:.95em;font-weight:700;color:var(--dark)}
+    .fan-card-price-old{font-size:.7em;color:var(--muted);text-decoration:line-through}
+    .fan-card-price-offer{font-size:.95em;font-weight:700;color:var(--bordeaux)}
+    .fan-card-add{width:100%;margin-top:.3em;padding:.55em;border:0;border-radius:100px;background:var(--dark);color:#fff;font-size:.6em;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+    .fan-card-add:hover:not(:disabled){background:var(--teal)}
+    .fan-card-add:disabled{background:#C5CBC8;cursor:not-allowed}
+
+    .fan-controls{display:flex;justify-content:center;align-items:center;gap:14px;padding:14px 0 0}
+    .fan-btn{width:38px;height:38px;border-radius:50%;background:var(--dark);color:#fff;border:1.5px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;line-height:1;transition:background .2s,transform .2s;box-shadow:0 4px 16px rgba(40,40,40,.12)}
+    .fan-btn:hover{background:var(--teal);transform:scale(1.06)}
+    .fan-btn:active{transform:scale(.95)}
+    .fan-btn:focus-visible{outline:2px solid var(--teal-light);outline-offset:2px}
+    .fan-dots{display:flex;gap:6px;align-items:center;max-width:58vw;overflow-x:auto;scrollbar-width:none;padding:2px}
+    .fan-dots::-webkit-scrollbar{display:none}
+    .fan-dot{width:7px;height:7px;border-radius:50%;background:var(--silver);border:0;padding:0;cursor:pointer;transition:all .25s;flex-shrink:0}
+    .fan-dot.active{background:var(--teal-light);width:20px;border-radius:4px}
+    .fan-counter{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;white-space:nowrap}
+
+    /* ============ GRID ============ */
     .product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;padding:10px 4px 30px;margin:0}
     @media (min-width:640px){.product-grid{grid-template-columns:repeat(3,1fr);gap:4px;padding:12px 6px 40px}}
     @media (min-width:1024px){.product-grid{grid-template-columns:repeat(3,1fr);gap:12px;padding:24px 12px 50px}}
@@ -240,7 +223,15 @@
     @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
     .bounce{animation:bounce 0.35s cubic-bezier(0.34,1.56,0.64,1)}
     @keyframes bounce{0%,100%{transform:scale(1)}40%{transform:scale(1.15)}}
+
+    @media (min-width:640px){
+      .carousel-title{font-size:24px}
+      .fan-stage{height:420px}
+      .fan-dots{max-width:50vw}
+    }
     @media (min-width:1024px){
+      .carousel-title{font-size:28px;padding:0 24px 12px}
+      .fan-stage{height:480px}
       .header-top{padding:16px 24px 8px}
       .logo-img{height:50px}
       .brand-title{font-size:32px;letter-spacing:0.06em}
@@ -253,12 +244,21 @@
       .cart-summary{margin:0 16px 10px;padding:10px 18px}
     }
     @media (min-width:1280px){
+      .fan-stage{height:520px}
       .header-top{padding:20px 32px 10px}
       .logo-img{height:56px}
       .brand-title{font-size:36px}
       .search-expandable.open{width:320px}
     }
+    @media (min-width:768px){
+      .header-top{padding:14px 20px 6px}
+      .brand-title{font-size:28px}
+      .logo-img{height:44px}
+      .search-expandable.open{width:260px}
+      .lightbox img{max-width:90vw;max-height:85vh}
+    }
     @media (max-width:480px){
+      .carousel-title{font-size:19px;padding:0 12px 8px}
       .header-top{padding:10px 10px 2px}
       .logo-img{height:34px}
       .brand-title{font-size:20px;letter-spacing:0.02em}
@@ -271,16 +271,12 @@
       .card-title{font-size:13px}
       .card-price{font-size:13px}
       .add-btn{font-size:9px;padding:5px}
-    }
-    @media (min-width:768px){
-      .header-top{padding:14px 20px 6px}
-      .brand-title{font-size:28px}
-      .logo-img{height:44px}
-      .search-expandable.open{width:260px}
-      .lightbox img{max-width:90vw;max-height:85vh}
+      .fan-btn{width:34px;height:34px;font-size:16px}
+      .fan-controls{gap:10px;padding-top:10px}
     }
     @media (prefers-reduced-motion: reduce){
-      .ring-3d,.ring-3d-item,.card{transition:none!important;animation:none!important}
+      .card,.fan-card{transition:none!important;animation:none!important}
+      .card-image img{transition:none!important}
     }
   </style>
 </head>
@@ -322,13 +318,17 @@
 <main>
   <div id="carouselWrapper" class="carousel-wrapper">
     <h2 id="carouselTitle" class="carousel-title">Ofertas</h2>
-    <div class="ring-3d-stage" id="ringStage">
-      <div class="ring-3d" id="ring3d"></div>
+    <div class="fan-stage" id="fanStage">
+      <div class="fan-layout" id="fanTrack"></div>
     </div>
-    <div class="ring-controls" id="ringControls">
-      <button class="ring-btn" id="ringPrev" aria-label="Anterior">‹</button>
-      <div class="ring-dots" id="ringDots"></div>
-      <button class="ring-btn" id="ringNext" aria-label="Siguiente">›</button>
+    <div class="fan-controls" id="fanControls">
+      <button class="fan-btn" id="fanPrev" aria-label="Anterior">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="fan-dots" id="fanDots"></div>
+      <button class="fan-btn" id="fanNext" aria-label="Siguiente">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </div>
   <div id="grid" class="product-grid"></div>
@@ -753,98 +753,6 @@
   "Luna que te inspira.",
   "La fuerza de lo natural.",
   "Formas que definen tu estilo.",
-  "Como la luna, brillas en la oscuridad.",
-  "La naturaleza en cada detalle.",
-  "Geometría que enamora.",
-  "Luna llena de estilo.",
-  "La belleza de lo natural.",
-  "Formas que inspiran.",
-  "Como la luna, única en tu especie.",
-  "La naturaleza es mi inspiración.",
-  "Geometría con alma.",
-  "Luna que guía tu camino.",
-  "La esencia de la naturaleza.",
-  "Formas que cuentan historias.",
-  "Como la luna, siempre presente.",
-  "La naturaleza en su máxima expresión.",
-  "Geometría que fluye.",
-  "Luna de plata.",
-  "La belleza de lo orgánico.",
-  "Formas que enamoran.",
-  "Como la luna, llena de misterio.",
-  "La naturaleza es arte.",
-  "Geometría que conecta.",
-  "Luna que ilumina tu esencia.",
-  "La fuerza de la naturaleza.",
-  "Formas que definen.",
-  "Como la luna, en constante cambio.",
-  "La naturaleza en cada pieza.",
-  "Geometría con propósito.",
-  "Luna que te acompaña.",
-  "La sabiduría de la naturaleza.",
-  "Formas que inspiran.",
-  "Como la luna, brillas con luz propia.",
-  "La naturaleza es mi guía.",
-  "Geometría que transforma.",
-  "Luna que te da fuerza.",
-  "La esencia de lo natural.",
-  "Formas que fluyen.",
-  "Como la luna, eres única.",
-  "La naturaleza en su estado más puro.",
-  "Geometría que une.",
-  "Luna que te protege.",
-  "La belleza de lo silvestre.",
-  "Formas que conectan.",
-  "Como la luna, eres libre.",
-  "La naturaleza es mi refugio.",
-  "Geometría con significado.",
-  "Luna que te inspira.",
-  "La fuerza de lo natural.",
-  "Formas que definen tu estilo.",
-  "Como la luna, brillas en la oscuridad.",
-  "La naturaleza en cada detalle.",
-  "Geometría que enamora.",
-  "Luna llena de estilo.",
-  "La belleza de lo natural.",
-  "Formas que inspiran.",
-  "Como la luna, única en tu especie.",
-  "La naturaleza es mi inspiración.",
-  "Geometría con alma.",
-  "Luna que guía tu camino.",
-  "La esencia de la naturaleza.",
-  "Formas que cuentan historias.",
-  "Como la luna, siempre presente.",
-  "La naturaleza en su máxima expresión.",
-  "Geometría que fluye.",
-  "Luna de plata.",
-  "La belleza de lo orgánico.",
-  "Formas que enamoran.",
-  "Como la luna, llena de misterio.",
-  "La naturaleza es arte.",
-  "Geometría que conecta.",
-  "Luna que ilumina tu esencia.",
-  "La fuerza de la naturaleza.",
-  "Formas que definen.",
-  "Como la luna, en constante cambio.",
-  "La naturaleza en cada pieza.",
-  "Geometría con propósito.",
-  "Luna que te acompaña.",
-  "La sabiduría de la naturaleza.",
-  "Formas que inspiran.",
-  "Como la luna, brillas con luz propia.",
-  "La naturaleza es mi guía.",
-  "Geometría que transforma.",
-  "Luna que te da fuerza.",
-  "La esencia de lo natural.",
-  "Formas que fluyen.",
-  "Como la luna, eres única.",
-  "La naturaleza en su estado más puro.",
-  "Geometría que une.",
-  "Luna que te protege.",
-  "La belleza de lo silvestre.",
-  "Formas que conectan.",
-  "Como la luna, eres libre.",
-  "La naturaleza es mi refugio.",
   "La belleza no tiene género.",
   "Joyas para todas las almas.",
   "La elegancia es universal.",
@@ -873,7 +781,6 @@
   "Joyas para cada momento.",
   "La belleza es diversa.",
   "El estilo es personal.",
-  "La plata te queda bien.",
   "Joyas que celebran la individualidad.",
   "El estilo es único.",
   "Brilla con tu esencia.",
@@ -881,47 +788,6 @@
   "Joyas que unen.",
   "La belleza no tiene fronteras.",
   "El estilo es libertad.",
-  "La plata te queda bien.",
-  "Joyas que inspiran.",
-  "El estilo es diverso.",
-  "Brilla sin límites.",
-  "La elegancia es de todos.",
-  "Joyas para cada ser.",
-  "La belleza es infinita.",
-  "El estilo es único.",
-  "La plata te queda bien.",
-  "Joyas que conectan.",
-  "El estilo es universal.",
-  "Brilla con orgullo.",
-  "La elegancia no tiene género.",
-  "Joyas para todas las vidas.",
-  "La belleza está en la diversidad.",
-  "El estilo es de todos.",
-  "La plata brilla para todos.",
-  "Joyas que celebran quién eres.",
-  "El estilo no entiende de géneros.",
-  "Brilla con autenticidad.",
-  "La elegancia es universal.",
-  "Joyas para cada historia.",
-  "La belleza no entiende de etiquetas.",
-  "El estilo es libre.",
-  "La plata te queda bien.",
-  "Joyas que abrazan la diversidad.",
-  "El estilo no tiene dueño.",
-  "Brilla con libertad.",
-  "La elegancia es un derecho de todos.",
-  "Joyas para cada momento.",
-  "La belleza es diversa.",
-  "El estilo es personal.",
-  "La plata te queda bien.",
-  "Joyas que celebran la individualidad.",
-  "El estilo es único.",
-  "Brilla con tu esencia.",
-  "La elegancia es para todas las personas.",
-  "Joyas que unen.",
-  "La belleza no tiene fronteras.",
-  "El estilo es libertad.",
-  "La plata te queda bien.",
   "Joyas que inspiran.",
   "El estilo es diverso.",
   "Brilla sin límites.",
@@ -1186,7 +1052,6 @@
   "Brilla con esencia.",
   "Eres importante.",
   "Brilla con luz propia.",
-  "Eres única.",
   "Brilla con todo.",
   "Eres suficiente.",
   "Brilla con alegría.",
@@ -1239,8 +1104,6 @@
   "Eres tu poder.",
   "Brilla con tu magia.",
   "Eres tu magia.",
-  "Brilla con tu luz.",
-  "Eres tu luz.",
   "Brilla con tu amor.",
   "Eres tu amor.",
   "Brilla con tu pasión.",
@@ -1264,30 +1127,6 @@
   "La plata que te hace única.",
   "Brilla con la magia de la naturaleza.",
   "Eres una obra de arte.",
-  "La plata que te define.",
-  "Brilla con el poder de la geometría.",
-  "Eres un ser de luz.",
-  "La plata que te acompaña.",
-  "Brilla con la energía del universo.",
-  "Eres un regalo para el mundo.",
-  "La plata que te hace brillar.",
-  "Brilla con la armonía de las formas.",
-  "Eres una estrella en la tierra.",
-  "La plata que te da estilo.",
-  "Brilla con la esencia de la vida.",
-  "Eres un ser único.",
-  "La plata que te hace especial.",
-  "Brilla con la belleza de lo simple.",
-  "Eres un tesoro.",
-  "La plata que te hace auténtica.",
-  "Brilla con la fuerza de tu ser.",
-  "Eres una joya.",
-  "La plata que te hace brillar con luz propia.",
-  "Brilla con la elegancia de la naturaleza.",
-  "Eres un sueño.",
-  "La plata que te hace única.",
-  "Brilla con la magia de la luna.",
-  "Eres una obra maestra.",
   "La plata que te define.",
   "Brilla con el poder de la geometría.",
   "Eres un ser de luz.",
@@ -1372,14 +1211,29 @@
   const tagline = $('tagline');
   const carouselWrapper = $('carouselWrapper');
   const carouselTitle = $('carouselTitle');
-  const ringStage = $('ringStage');
-  const ring3d = $('ring3d');
-  const ringPrev = $('ringPrev');
-  const ringNext = $('ringNext');
-  const ringDots = $('ringDots');
-  const ringControls = $('ringControls');
+  const fanStage = $('fanStage');
+  const fanTrack = $('fanTrack');
+  const fanPrev = $('fanPrev');
+  const fanNext = $('fanNext');
+  const fanDots = $('fanDots');
+  const fanControls = $('fanControls');
 
-  // MÁQUINA DE ESCRIBIR
+  /* ---------- GSAP (con fallback sin animación) ---------- */
+  const G = (typeof window.gsap !== 'undefined') ? window.gsap : null;
+  function applyStyles(el, p){
+    const x = p.x || 0, y = p.y || 0, rot = p.rotation || 0;
+    const sc = (p.scale !== undefined) ? p.scale : 1;
+    el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${sc})`;
+    if (p.opacity !== undefined) el.style.opacity = p.opacity;
+  }
+  function gset(el, p){ if (G) G.set(el, p); else applyStyles(el, p); }
+  function gto(el, p){
+    if (G) { G.to(el, p); return; }
+    applyStyles(el, p);
+    if (typeof p.onComplete === 'function') p.onComplete();
+  }
+
+  /* ---------- MÁQUINA DE ESCRIBIR ---------- */
   let typeTimer = null, phraseCycleInterval = null;
   function startPhraseCycle(){ if (phraseCycleInterval) clearTimeout(phraseCycleInterval); setRandomPhrase(true); }
   function setRandomPhrase(cycle = false){
@@ -1413,7 +1267,7 @@
     showToast(`❌ ${message}`, 'error');
   }
 
-  // LIGHTBOX
+  /* ---------- LIGHTBOX ---------- */
   let currentScale = 1, translateX = 0, translateY = 0, isDragging = false;
   let startX, startY, startTranslateX, startTranslateY;
   function openLightbox(src, alt) {
@@ -1461,7 +1315,7 @@
   });
   document.addEventListener('mouseup', () => { isDragging = false; lightboxImg.style.cursor = currentScale > 1 ? 'zoom-in' : 'zoom-out'; });
 
-  // UTILIDADES
+  /* ---------- UTILIDADES ---------- */
   function escapeHtml(str) { const d=document.createElement('div'); d.textContent=str; return d.innerHTML; }
   function sanitize(str) { return str ? escapeHtml(String(str)).trim() : ''; }
   function formatPrice(n) { return '$' + n.toLocaleString('es-CL'); }
@@ -1484,7 +1338,7 @@
   }
   function debounce(fn, delay) { return function(...args) { clearTimeout(searchDebounce); searchDebounce = setTimeout(() => fn.apply(this, args), delay); }; }
 
-  // BÚSQUEDA
+  /* ---------- BÚSQUEDA ---------- */
   function openSearch() { searchExpand.classList.add('open'); searchInput.focus(); }
   function closeSearch() { searchExpand.classList.remove('open'); searchInput.value = ''; searchQuery = ''; renderProducts(); renderCarousel(); }
   searchToggle.addEventListener('click', e => { e.stopPropagation(); if (searchExpand.classList.contains('open')) closeSearch(); else openSearch(); });
@@ -1494,7 +1348,7 @@
   searchInput.addEventListener('input', handleSearch);
   searchInput.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
 
-  // FAVORITOS
+  /* ---------- FAVORITOS ---------- */
   function isFavorite(id) { return favorites.includes(id); }
   function toggleFavorite(pid) {
     const i = favorites.indexOf(pid);
@@ -1504,7 +1358,7 @@
     if (btn) btn.innerHTML = isFavorite(pid) ? '❤️' : '🤍';
   }
 
-  // CATEGORÍAS
+  /* ---------- CATEGORÍAS ---------- */
   function renderCategories() {
     const types = ["TODOS", ...new Set(inventory.map(p => p.type).filter(Boolean))];
     catContainer.innerHTML = types.map(t =>
@@ -1513,7 +1367,7 @@
   }
   function setCategory(cat) { currentCategory = decodeURIComponent(cat); renderCategories(); renderProducts(); renderCarousel(); }
 
-  // CANTIDAD
+  /* ---------- CANTIDAD ---------- */
   function changeQty(pid, delta) {
     const input = document.getElementById('qty-'+pid);
     const p = inventory.find(x => x.id === pid);
@@ -1536,452 +1390,380 @@
     if (btn) btn.disabled = qty > stock || stock <= 0;
   }
 
-  // CARRUSEL 3D
-  const AUTO_SPEED        = 0.06;
-  const SCROLL_MULT       = 0.22;
-  const EASING            = 0.045;
-  const AUTO_RESUME_MS    = 5000;
-  const DRAG_SENSITIVITY  = 0.35;
-  const MOMENTUM_FRICTION = 0.93;
-  const SNAP_THRESHOLD    = 0.05;
-  const INIT_DELAY_MS     = 600;
-  const DRAG_THRESHOLD    = 6;
-  const FRONT_ANGLE_MAX   = 22;
+  /* ==========================================================
+     CARRUSEL FAN (abanico) — adaptado del componente React
+     ========================================================== */
+  let carouselProducts = [];       // productos de oferta
+  let fanCardEls = [];             // nodos .fan-card
+  let fanCenter = 0;               // índice centrado
+  let fanFirst = true;             // primera entrada
+  let fanAnimating = false;
+  let fanNeedsPagination = false;
+  let fanVisible = 7;              // slots visibles
+  let fanHalf = 3;
+  let fanDirection = 'right';
+  let fanPrevVisible = new Set();
+  let fanActiveSlot = null;
+  let fanLeaveTimer = null;
+  let fanResizeTimer = null;
+  let fanLastWidth = window.innerWidth;
+  let fanSwipeBlock = false;
 
-  let carouselProducts = [];
-  let ringRotation = 0;
-  let ringTargetRotation = 0;
-  let ringAutoRotate = false;
-  let ringReady = false;
-  let ringAnimFrame = null;
-  let ringIndex = 0;
-  let autoRotateTimer = null;
-
-  let ringDragging = false;
-  let didDrag = false;
-  let downX = 0, downY = 0;
-  let dragStartPointerX = 0, dragStartPointerY = 0;
-  let ringStartX = 0;
-  let ringStartRotation = 0;
-  let ringLastX = 0;
-  let ringLastTime = 0;
-  let ringVelocity = 0;
-  let ringMomentumFrame = null;
-  let ringIsFlat = false;
-
-  function renderCarousel() {
-    const show = (currentCategory === "TODOS" && searchQuery === '');
-    if (!show) {
-      carouselWrapper.classList.remove('show');
-      stopRing();
-      return;
-    }
-    const offerItems = inventory.filter(p => p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0);
-    if (offerItems.length === 0) {
-      carouselWrapper.classList.remove('show');
-      stopRing();
-      return;
-    }
-
-    carouselWrapper.classList.add('show');
-    carouselTitle.textContent = tituloOferta || "Ofertas";
-    carouselProducts = offerItems;
-
-    ringReady = false;
-    buildRing(offerItems);
-    buildRingDots(offerItems);
-    startRing();
-  }
-
-  function computeRadius(n) {
+  /* Métricas responsivas */
+  function fanMetrics(){
     const w = window.innerWidth;
-    const baseR = w < 480 ? 240 : w < 640 ? 280 : w < 1024 ? 340 : w < 1280 ? 400 : 440;
-    const scale = n <= 4 ? 0.9 : n <= 6 ? 1 : n <= 8 ? 1.1 : 1.2;
-    return baseR * scale;
+    if (w < 480)  return { cw:126, visible:5, angleMax:16, spread:0.50 };
+    if (w < 640)  return { cw:144, visible:5, angleMax:17, spread:0.62 };
+    if (w < 768)  return { cw:158, visible:7, angleMax:18, spread:0.70 };
+    if (w < 1024) return { cw:172, visible:7, angleMax:19, spread:0.82 };
+    if (w < 1280) return { cw:188, visible:7, angleMax:20, spread:1.00 };
+    return            { cw:206, visible:7, angleMax:21, spread:1.15 };
   }
 
-  function buildRing(items) {
-    const n = items.length;
-    const stage = ringStage;
-    const ring = ring3d;
+  /* Configuración de posición por slot (equivalente a FAN_POSITIONS) */
+  function fanSlotCfg(slot){
+    const m = fanMetrics();
+    const total = fanNeedsPagination ? fanVisible : carouselProducts.length;
+    const center = (total - 1) / 2;
+    const d = (total > 1) ? (slot - center) / center : 0;
+    const a = Math.abs(d);
+    return {
+      rot:   d * m.angleMax,
+      scale: 1 - 0.2244 * a * a,
+      x:     d * m.cw * m.spread,
+      y:     a * a * 0.30 * m.cw * 1.8,
+      z:     20 - Math.round(Math.abs(slot - center))
+    };
+  }
 
-    if (n <= 2) {
-      ringIsFlat = true;
-      stage.classList.add('flat');
-      ringControls.style.display = 'none';
-      ring.innerHTML = items.map((p, i) => createRingItemHtml(p, i, 0, 0, false)).join('');
-      attachRingHandlers();
-      return;
+  /* Mapa: índice de producto -> slot visible */
+  function fanVisibleMap(){
+    const map = new Map();
+    const total = carouselProducts.length;
+    if (!fanNeedsPagination){
+      for (let i = 0; i < total; i++) map.set(i, i);
+      return map;
     }
-
-    ringIsFlat = false;
-    stage.classList.remove('flat');
-    ringControls.style.display = 'flex';
-
-    const radius = computeRadius(n);
-    const anglePerItem = 360 / n;
-
-    ring.innerHTML = items.map((p, i) => {
-      const itemAngle = i * anglePerItem;
-      return createRingItemHtml(p, i, itemAngle, radius, true);
-    }).join('');
-
-    attachRingHandlers();
+    for (let slot = 0; slot < fanVisible; slot++){
+      const idx = ((fanCenter + slot - fanHalf) % total + total) % total;
+      map.set(idx, slot);
+    }
+    return map;
   }
 
-  function createRingItemHtml(p, i, itemAngle, radius, use3d) {
+  /* Tamaño del escenario y ancho de carta */
+  function applyFanSize(){
+    const m = fanMetrics();
+    document.documentElement.style.setProperty('--fan-cw', m.cw + 'px');
+    const cardH = fanCardEls[0] ? fanCardEls[0].offsetHeight : Math.round(m.cw * 1.75);
+    const drop = 0.30 * m.cw * 1.8;
+    fanStage.style.height = Math.ceil(cardH + drop + 34) + 'px';
+  }
+
+  /* HTML de cada carta */
+  function fanCardHtml(p, i){
     const imgSrc = fixDriveUrl(p.img, 500);
     const isOffer = p.oferta !== null && p.oferta !== undefined && p.oferta !== '' && !isNaN(p.oferta) && p.oferta > 0;
-    const out = p.stock <= 0, low = p.stock > 0 && p.stock <= 5;
+    const out = p.stock <= 0;
+    const low = p.stock > 0 && p.stock <= 5;
 
     const priceHtml = isOffer
-      ? `<span class="ring-3d-price-old">${formatPrice(p.price)}</span><span class="ring-3d-price-offer">${formatPrice(p.oferta)}</span>`
-      : `<span class="ring-3d-price">${formatPrice(p.price)}</span>`;
-
-    const transform = use3d
-      ? `transform: translate(-50%, -50%) rotateY(${itemAngle}deg) translateZ(${radius}px);`
-      : '';
+      ? `<span class="fan-card-price-old">${formatPrice(p.price)}</span><span class="fan-card-price-offer">${formatPrice(p.oferta)}</span>`
+      : `<span class="fan-card-price">${formatPrice(p.price)}</span>`;
 
     return `
-      <article class="ring-3d-item ${isOffer?'offer':''}"
-               data-index="${i}"
-               style="${transform}">
-        <div class="ring-3d-img">
+      <article class="fan-card ${isOffer?'offer':''}" data-index="${i}">
+        <div class="fan-card-img">
           <img src="${imgSrc}" alt="${sanitize(p.name)}" loading="lazy" decoding="async"
                onerror="this.onerror=null; this.src='${CONFIG.defImg}';">
-          ${isOffer ? '<span class="ring-3d-badge">Oferta</span>' : ''}
-          ${out ? '<span class="ring-3d-stock">Vendido</span>' : low ? `<span class="ring-3d-stock low">Solo ${p.stock}</span>` : ''}
+          ${isOffer ? '<span class="fan-card-badge">Oferta</span>' : ''}
+          ${out ? '<span class="fan-card-stock">Vendido</span>'
+                : low ? `<span class="fan-card-stock low">Solo ${p.stock}</span>` : ''}
         </div>
-        <div class="ring-3d-body">
-          <span class="ring-3d-type">${sanitize(p.type)}</span>
-          <h3 class="ring-3d-name">${sanitize(p.name)}</h3>
-          <div class="ring-3d-prices">${priceHtml}</div>
-          <button type="button" class="ring-3d-add" data-add-index="${i}" ${out?'disabled':''}>
-            ${out?'Vendido':'Añadir 1'}
+        <div class="fan-card-body">
+          <span class="fan-card-type">${sanitize(p.type)}</span>
+          <h3 class="fan-card-name">${sanitize(p.name)}</h3>
+          <div class="fan-card-prices">${priceHtml}</div>
+          <button type="button" class="fan-card-add" data-add-index="${i}" ${out?'disabled':''}>
+            ${out?'Vendido':'Añadir'}
           </button>
         </div>
-      </article>
-    `;
+      </article>`;
   }
 
-  function attachRingHandlers() {
-    // El listener del botón se mantiene para clicks DIRECTOS (cuando el botón
-    // está al frente y el puntero cae directamente sobre él).
-    // Para botones "tapados" por otras tarjetas, se resuelve en handleClickAt.
-    ring3d.querySelectorAll('.ring-3d-add').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        if (didDrag) return;
-        const idx = parseInt(this.dataset.addIndex);
-        addOneFromCarouselByIndex(idx);
-      });
-    });
-  }
+  /* Construir el abanico */
+  function buildFan(items, keepCenter){
+    carouselProducts = items;
+    const total = items.length;
+    const m = fanMetrics();
+    fanVisible = m.visible;
+    fanHalf = Math.floor(fanVisible / 2);
+    fanNeedsPagination = total > fanVisible;
 
-  function buildRingDots(items) {
-    if (items.length <= 2) { ringDots.innerHTML = ''; return; }
-    ringDots.innerHTML = items.map((_, i) =>
-      `<button class="ring-dot ${i===0?'active':''}" data-index="${i}" aria-label="Ir al producto ${i+1}"></button>`
-    ).join('');
-    ringDots.querySelectorAll('.ring-dot').forEach(dot => {
-      dot.addEventListener('click', function() {
-        goToRingIndex(parseInt(this.dataset.index));
-      });
-    });
-  }
-
-  function goToRingIndex(i) {
-    const n = carouselProducts.length;
-    if (!n || ringIsFlat) return;
-    ringIndex = ((i % n) + n) % n;
-    const anglePerItem = 360 / n;
-    ringTargetRotation = -ringIndex * anglePerItem;
-    ringAutoRotate = false;
-    restartAutoRotateTimer();
-    updateRingDots();
-  }
-
-  function updateRingDots() {
-    if (ringIsFlat) return;
-    ringDots.querySelectorAll('.ring-dot').forEach((d, i) => {
-      d.classList.toggle('active', i === ringIndex);
-    });
-  }
-
-  function startRing() {
-    ringRotation = 0;
-    ringTargetRotation = 0;
-    ringIndex = 0;
-    ringAutoRotate = false;
-    ringReady = false;
-    updateRingDots();
-
-    if (ringAnimFrame) cancelAnimationFrame(ringAnimFrame);
-    if (ringMomentumFrame) cancelAnimationFrame(ringMomentumFrame);
-    if (autoRotateTimer) clearTimeout(autoRotateTimer);
-
-    if (ringIsFlat) { ringReady = true; return; }
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function loop() {
-      if (ringReady && !reduced && ringAutoRotate && !ringDragging) {
-        ringTargetRotation -= AUTO_SPEED;
-      }
-      ringRotation += (ringTargetRotation - ringRotation) * EASING;
-      if (ringRotation > 360) { ringRotation -= 360; ringTargetRotation -= 360; }
-      if (ringRotation < 0)   { ringRotation += 360; ringTargetRotation += 360; }
-      ring3d.style.transform = `rotateY(${ringRotation}deg)`;
-
-      const n = carouselProducts.length;
-      if (ringReady && n > 2) {
-        const anglePerItem = 360 / n;
-        let bestI = 0, bestDist = 999;
-        for (let i = 0; i < n; i++) {
-          let a = (i * anglePerItem + ringRotation) % 360;
-          if (a < 0) a += 360;
-          const dist = Math.min(a, 360 - a);
-          if (dist < bestDist) { bestDist = dist; bestI = i; }
-        }
-        if (bestI !== ringIndex) { ringIndex = bestI; updateRingDots(); }
-      }
-      ringAnimFrame = requestAnimationFrame(loop);
-    }
-    loop();
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        ringReady = true;
-        setTimeout(() => { if (!ringDragging) ringAutoRotate = true; }, INIT_DELAY_MS);
-      });
-    });
-  }
-
-  function stopRing() {
-    if (ringAnimFrame) { cancelAnimationFrame(ringAnimFrame); ringAnimFrame = null; }
-    if (ringMomentumFrame) { cancelAnimationFrame(ringMomentumFrame); ringMomentumFrame = null; }
-    if (autoRotateTimer) { clearTimeout(autoRotateTimer); autoRotateTimer = null; }
-    ringReady = false;
-    ringAutoRotate = false;
-  }
-
-  function restartAutoRotateTimer() {
-    if (autoRotateTimer) clearTimeout(autoRotateTimer);
-    autoRotateTimer = setTimeout(() => {
-      if (ringReady && !ringDragging && !ringIsFlat) ringAutoRotate = true;
-    }, AUTO_RESUME_MS);
-  }
-
-  // ===== HIT-TEST MANUAL =====
-  function getCardAngle(i) {
-    const n = carouselProducts.length;
-    if (!n) return 0;
-    const anglePerItem = 360 / n;
-    let a = (i * anglePerItem + ringRotation) % 360;
-    if (a < 0) a += 360;
-    return Math.min(a, 360 - a);
-  }
-
-  function handleClickAt(x, y) {
-    const stack = document.elementsFromPoint(x, y);
-    if (!stack || !stack.length) return;
-
-    // PASO 1: Buscar cualquier botón "Añadir 1" en la pila (aunque esté tapado).
-    // Si lo encontramos, se procesa y se termina. Esto es lo que arregla
-    // que los botones de las tarjetas 2 y 4 (laterales) funcionen.
-    for (const el of stack) {
-      if (!el.classList) continue;
-      if (el.classList.contains('ring-dot')) return;
-      if (el.classList.contains('ring-3d-add')) {
-        if (el.disabled) return;
-        const idx = parseInt(el.dataset.addIndex);
-        if (!isNaN(idx)) addOneFromCarouselByIndex(idx);
-        return;
-      }
-    }
-
-    // PASO 2: No hay botón. Buscar la primera tarjeta y decidir:
-    //   - Si está al frente → abrir lightbox.
-    //   - Si está lateral o atrás → girar hacia ella.
-    for (const el of stack) {
-      if (!el.closest) continue;
-      const card = el.closest('.ring-3d-item');
-      if (card) {
-        const i = parseInt(card.dataset.index);
-        if (isNaN(i)) return;
-        const p = carouselProducts[i];
-        if (!p) return;
-
-        const distToFront = getCardAngle(i);
-
-        if (distToFront < FRONT_ANGLE_MAX) {
-          openLightbox(fixDriveUrl(p.img, 1200), p.name);
-        } else {
-          goToRingIndex(i);
-        }
-        return;
-      }
-    }
-  }
-
-  // ===== DRAG =====
-  function onPointerDown(e) {
-    if (!carouselProducts.length || !ringReady || ringIsFlat) return;
-    if (e.target.closest('button, a, input, select, textarea, .ring-dot')) return;
-
-    const p = e.touches ? e.touches[0] : e;
-    ringDragging = true;
-    didDrag = false;
-    downX = p.clientX;
-    downY = p.clientY;
-    dragStartPointerX = p.clientX;
-    dragStartPointerY = p.clientY;
-    ringStartX = p.clientX;
-    ringStartRotation = ringRotation;
-    ringTargetRotation = ringRotation;
-    ringLastX = ringStartX;
-    ringLastTime = performance.now();
-    ringVelocity = 0;
-    ringStage.classList.add('dragging');
-  }
-
-  function onPointerMove(e) {
-    if (!ringDragging) return;
-    const p = e.touches ? e.touches[0] : e;
-    const x = p.clientX;
-    const y = p.clientY;
-
-    if (!didDrag) {
-      const dx0 = Math.abs(x - dragStartPointerX);
-      const dy0 = Math.abs(y - dragStartPointerY);
-      if (dx0 > DRAG_THRESHOLD || dy0 > DRAG_THRESHOLD) {
-        didDrag = true;
-        ringAutoRotate = false;
-        if (autoRotateTimer) { clearTimeout(autoRotateTimer); autoRotateTimer = null; }
-        if (e.pointerId !== undefined && ringStage.setPointerCapture) {
-          try { ringStage.setPointerCapture(e.pointerId); } catch(_) {}
-        }
-      } else {
-        return;
-      }
-    }
-
-    const dx = x - ringStartX;
-    const newRot = ringStartRotation + dx * DRAG_SENSITIVITY;
-    ringRotation = newRot;
-    ringTargetRotation = newRot;
-    const now = performance.now();
-    const dt = now - ringLastTime || 16;
-    ringVelocity = (x - ringLastX) / dt;
-    ringLastX = x;
-    ringLastTime = now;
-  }
-
-  function onPointerUp(e) {
-    if (!ringDragging) return;
-    const wasDrag = didDrag;
-    ringDragging = false;
-    ringStage.classList.remove('dragging');
-
-    if (wasDrag) {
-      if (Math.abs(ringVelocity) > SNAP_THRESHOLD) {
-        let v = ringVelocity * 10;
-        function momentum() {
-          v *= MOMENTUM_FRICTION;
-          ringRotation += v;
-          ringTargetRotation = ringRotation;
-          if (Math.abs(v) > 0.25) ringMomentumFrame = requestAnimationFrame(momentum);
-          else snapToNearest();
-        }
-        momentum();
-      } else snapToNearest();
-      restartAutoRotateTimer();
-      setTimeout(() => { didDrag = false; }, 0);
+    if (keepCenter !== undefined && keepCenter !== null && fanNeedsPagination){
+      fanCenter = ((keepCenter % total) + total) % total;
     } else {
-      didDrag = false;
-      handleClickAt(downX, downY);
+      fanCenter = fanNeedsPagination ? fanHalf : Math.floor((total - 1) / 2);
+    }
+
+    fanFirst = true;
+    fanPrevVisible = new Set();
+
+    fanTrack.innerHTML = items.map((p, i) => fanCardHtml(p, i)).join('');
+    fanCardEls = Array.from(fanTrack.querySelectorAll('.fan-card'));
+
+    applyFanSize();
+    buildFanDots();
+    fanControls.style.display = (fanNeedsPagination && total > 1) ? 'flex' : 'none';
+
+    attachFanHover();
+    layoutFan();
+  }
+
+  /* Layout / animación de posiciones */
+  function layoutFan(){
+    const total = carouselProducts.length;
+    if (!total || !fanCardEls.length) return;
+
+    const m = fanMetrics();
+    const map = fanVisibleMap();
+    const prev = fanPrevVisible;
+    const dir = fanDirection;
+    const first = fanFirst;
+
+    fanAnimating = true;
+    let pending = 0;
+    const tick = () => { if (--pending <= 0) fanAnimating = false; };
+
+    fanCardEls.forEach((el, idx) => {
+      const slot = map.get(idx);
+      const wasVisible = prev.has(idx);
+
+      if (slot !== undefined){
+        const cfg = fanSlotCfg(slot);
+        el.style.zIndex = cfg.z;
+        el.style.pointerEvents = 'auto';
+        const target = { x: cfg.x, y: cfg.y, rotation: cfg.rot, scale: cfg.scale, opacity: 1 };
+        pending++;
+
+        if (first){
+          gset(el, { x: 0, y: m.cw * 2.2, rotation: 0, scale: 0.5, opacity: 0 });
+          gto(el, Object.assign({}, target, {
+            duration: 1.1, ease: 'elastic.out(1.05,0.78)',
+            delay: 0.12 + slot * 0.05, onComplete: tick
+          }));
+        } else if (!wasVisible){
+          const ex = (dir === 'right') ? m.cw * 1.6 : -m.cw * 1.6;
+          gset(el, { x: ex, y: cfg.y, rotation: dir === 'right' ? 28 : -28, scale: 0.5, opacity: 0 });
+          gto(el, Object.assign({}, target, { duration: 0.6, ease: 'power2.out', onComplete: tick }));
+        } else {
+          gto(el, Object.assign({}, target, { duration: 0.5, ease: 'power2.out', onComplete: tick }));
+        }
+      } else if (wasVisible){
+        const ex = (dir === 'right') ? -m.cw * 1.6 : m.cw * 1.6;
+        el.style.zIndex = 0;
+        gto(el, { x: ex, opacity: 0, scale: 0.5, rotation: dir === 'right' ? -28 : 28, duration: 0.4, ease: 'power2.in' });
+      } else if (first){
+        el.style.zIndex = 0;
+        gset(el, { opacity: 0, scale: 0.3, x: 0, y: 0 });
+      }
+    });
+
+    if (pending === 0) fanAnimating = false;
+    fanPrevVisible = new Set(map.keys());
+    fanFirst = false;
+  }
+
+  /* Dots / contador */
+  function buildFanDots(){
+    const total = carouselProducts.length;
+    if (!fanNeedsPagination || total <= 1){ fanDots.innerHTML = ''; return; }
+
+    if (total <= 12){
+      fanDots.innerHTML = carouselProducts.map((_, i) =>
+        `<button class="fan-dot ${i === fanCenter ? 'active' : ''}" data-index="${i}" aria-label="Producto ${i+1}"></button>`
+      ).join('');
+      fanDots.querySelectorAll('.fan-dot').forEach(d => {
+        d.addEventListener('click', () => fanGoTo(parseInt(d.dataset.index, 10)));
+      });
+    } else {
+      fanDots.innerHTML = `<span class="fan-counter">${fanCenter + 1} / ${total}</span>`;
     }
   }
 
-  function snapToNearest() {
-    const n = carouselProducts.length;
-    if (!n || ringIsFlat) return;
-    const anglePerItem = 360 / n;
-    const snapped = Math.round(ringRotation / anglePerItem) * anglePerItem;
-    ringTargetRotation = snapped;
-    let norm = ((snapped % 360) + 360) % 360;
-    ringIndex = Math.round(norm / anglePerItem) % n;
-    updateRingDots();
+  function updateFanDots(){
+    if (!fanNeedsPagination) return;
+    const total = carouselProducts.length;
+    if (total <= 12){
+      fanDots.querySelectorAll('.fan-dot').forEach((d, i) => d.classList.toggle('active', i === fanCenter));
+      const act = fanDots.querySelector('.fan-dot.active');
+      if (act && act.scrollIntoView) act.scrollIntoView({ block:'nearest', inline:'center', behavior:'smooth' });
+    } else {
+      fanDots.innerHTML = `<span class="fan-counter">${fanCenter + 1} / ${total}</span>`;
+    }
   }
 
-  if (window.PointerEvent) {
-    ringStage.addEventListener('pointerdown', onPointerDown);
-    ringStage.addEventListener('pointermove', onPointerMove);
-    ringStage.addEventListener('pointerup', onPointerUp);
-    ringStage.addEventListener('pointercancel', onPointerUp);
-  } else {
-    ringStage.addEventListener('touchstart', onPointerDown, { passive: true });
-    ringStage.addEventListener('touchmove', onPointerMove, { passive: true });
-    ringStage.addEventListener('touchend', onPointerUp);
-    ringStage.addEventListener('mousedown', onPointerDown);
-    window.addEventListener('mousemove', onPointerMove);
-    window.addEventListener('mouseup', onPointerUp);
+  /* Navegación */
+  function fanCycle(dir){
+    if (!fanNeedsPagination || fanAnimating) return;
+    const total = carouselProducts.length;
+    fanDirection = dir;
+    fanCenter = (dir === 'right')
+      ? (fanCenter + 1) % total
+      : (fanCenter - 1 + total) % total;
+    updateFanDots();
+    layoutFan();
   }
 
-  ringPrev.addEventListener('click', () => {
-    const n = carouselProducts.length;
-    if (!n || !ringReady || ringIsFlat) return;
-    ringAutoRotate = false;
-    const anglePerItem = 360 / n;
-    ringTargetRotation = ringRotation + anglePerItem;
-    restartAutoRotateTimer();
-  });
-  ringNext.addEventListener('click', () => {
-    const n = carouselProducts.length;
-    if (!n || !ringReady || ringIsFlat) return;
-    ringAutoRotate = false;
-    const anglePerItem = 360 / n;
-    ringTargetRotation = ringRotation - anglePerItem;
-    restartAutoRotateTimer();
-  });
+  function fanGoTo(i){
+    if (!fanNeedsPagination || fanAnimating) return;
+    const total = carouselProducts.length;
+    const target = ((i % total) + total) % total;
+    if (target === fanCenter) return;
+    fanDirection = (target > fanCenter) ? 'right' : 'left';
+    fanCenter = target;
+    updateFanDots();
+    layoutFan();
+  }
 
-  let lastScrollY = window.scrollY;
-  let scrollRafPending = false;
-  window.addEventListener('scroll', () => {
-    if (!carouselProducts.length || !ringReady || ringDragging || ringIsFlat) return;
-    if (scrollRafPending) return;
-    scrollRafPending = true;
-    requestAnimationFrame(() => {
-      const dy = window.scrollY - lastScrollY;
-      lastScrollY = window.scrollY;
-      if (Math.abs(dy) > 1) {
-        ringAutoRotate = false;
-        ringTargetRotation -= dy * SCROLL_MULT;
-        restartAutoRotateTimer();
-      }
-      scrollRafPending = false;
+  /* Hover: eleva la carta y empuja las vecinas */
+  function attachFanHover(){
+    fanCardEls.forEach((el, idx) => {
+      el.addEventListener('mouseenter', () => {
+        if (fanAnimating) return;
+        const slot = fanVisibleMap().get(idx);
+        if (slot === undefined) return;
+        if (fanLeaveTimer){ clearTimeout(fanLeaveTimer); fanLeaveTimer = null; }
+        fanActiveSlot = slot;
+        applyFanHover(slot);
+      });
     });
+  }
+
+  function applyFanHover(hoveredSlot){
+    const map = fanVisibleMap();
+    fanCardEls.forEach((el, idx) => {
+      const slot = map.get(idx);
+      if (slot === undefined) return;
+      const cfg = fanSlotCfg(slot);
+      let dx = 0, dy = 0, sc = cfg.scale, rot = cfg.rot, z = cfg.z;
+
+      if (hoveredSlot !== null){
+        const dist = Math.abs(slot - hoveredSlot);
+        if (slot === hoveredSlot){
+          dy = -24; sc = cfg.scale * 1.08; z = 40;
+        } else {
+          const push = Math.max(0, 18 - dist * 6);
+          dx = (slot < hoveredSlot) ? -push : push;
+          rot = cfg.rot + (slot < hoveredSlot ? -2.5 : 2.5);
+        }
+      }
+
+      gto(el, {
+        x: cfg.x + dx, y: cfg.y + dy, scale: sc, rotation: rot,
+        duration: 0.45, ease: 'power2.out'
+      });
+      el.style.zIndex = z;
+    });
+  }
+
+  fanStage.addEventListener('mouseleave', () => {
+    if (fanAnimating) return;
+    if (fanLeaveTimer) clearTimeout(fanLeaveTimer);
+    fanLeaveTimer = setTimeout(() => { fanActiveSlot = null; applyFanHover(null); }, 60);
+  });
+
+  /* Click en cartas / botón añadir */
+  fanTrack.addEventListener('click', e => {
+    if (fanSwipeBlock) return;
+
+    const addBtn = e.target.closest('.fan-card-add');
+    if (addBtn){
+      e.stopPropagation();
+      const idx = parseInt(addBtn.dataset.addIndex, 10);
+      if (!isNaN(idx)) addOneFromCarouselByIndex(idx);
+      return;
+    }
+
+    const card = e.target.closest('.fan-card');
+    if (!card) return;
+    const idx = parseInt(card.dataset.index, 10);
+    if (isNaN(idx)) return;
+    const p = carouselProducts[idx];
+    if (!p) return;
+
+    if (fanNeedsPagination && idx !== fanCenter){
+      fanGoTo(idx);
+    } else {
+      openLightbox(fixDriveUrl(p.img, 1200), p.name);
+    }
+  });
+
+  /* Flechas */
+  fanPrev.addEventListener('click', () => fanCycle('left'));
+  fanNext.addEventListener('click', () => fanCycle('right'));
+
+  /* Swipe táctil */
+  let fanTouchStartX = 0, fanTouchStartY = 0, fanTouchActive = false;
+  fanStage.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    fanTouchStartX = e.touches[0].clientX;
+    fanTouchStartY = e.touches[0].clientY;
+    fanTouchActive = true;
+  }, { passive: true });
+  fanStage.addEventListener('touchend', e => {
+    if (!fanTouchActive) return;
+    fanTouchActive = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - fanTouchStartX;
+    const dy = t.clientY - fanTouchStartY;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4){
+      fanSwipeBlock = true;
+      setTimeout(() => { fanSwipeBlock = false; }, 350);
+      if (fanNeedsPagination) fanCycle(dx < 0 ? 'right' : 'left');
+    }
   }, { passive: true });
 
-  let resizeTimeout;
-  let lastInnerWidth = window.innerWidth;
+  /* Resize */
   window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      if (Math.abs(window.innerWidth - lastInnerWidth) < 5) return;
-      lastInnerWidth = window.innerWidth;
-      if (carouselProducts.length) {
-        const savedRotation = ringRotation;
-        const savedTarget = ringTargetRotation;
-        buildRing(carouselProducts);
-        ringRotation = savedRotation;
-        ringTargetRotation = savedTarget;
+    clearTimeout(fanResizeTimer);
+    fanResizeTimer = setTimeout(() => {
+      if (Math.abs(window.innerWidth - fanLastWidth) < 10) return;
+      fanLastWidth = window.innerWidth;
+      if (!carouselProducts.length) return;
+      const m = fanMetrics();
+      if (m.visible !== fanVisible){
+        buildFan(carouselProducts, fanCenter);
+      } else {
+        applyFanSize();
+        layoutFan();
       }
-    }, 200);
+    }, 220);
   });
 
-  // RENDER PRODUCTOS
+  /* Render del carrusel (punto de entrada) */
+  function renderCarousel(){
+    const show = (currentCategory === "TODOS" && searchQuery === '');
+    if (!show){
+      carouselWrapper.classList.remove('show');
+      carouselProducts = [];
+      return;
+    }
+    const offerItems = inventory.filter(p =>
+      p.oferta !== null && p.oferta !== undefined && p.oferta !== '' &&
+      !isNaN(p.oferta) && p.oferta > 0
+    );
+    if (!offerItems.length){
+      carouselWrapper.classList.remove('show');
+      carouselProducts = [];
+      return;
+    }
+    carouselWrapper.classList.add('show');
+    carouselTitle.textContent = tituloOferta || "Ofertas";
+    buildFan(offerItems);
+  }
+
+  /* ---------- RENDER PRODUCTOS ---------- */
   function renderProducts() {
     let list = currentCategory === "TODOS" ? [...inventory] : inventory.filter(p => p.type === currentCategory);
     if (searchQuery) {
@@ -2059,7 +1841,7 @@
     `;
   }
 
-  // CARRITO
+  /* ---------- CARRITO ---------- */
   function addToCart(pid) {
     const p = inventory.find(x => x.id === pid);
     if (!p || p.stock <= 0) return;
