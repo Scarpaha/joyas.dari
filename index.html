@@ -149,6 +149,8 @@
     @media (hover:hover){.card-image img:hover{transform:scale(1.045)}}
     .fav-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);border:0;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;box-shadow:0 3px 10px rgba(32,36,42,.12);transition:transform .18s,background .18s;z-index:2;backdrop-filter:blur(4px)}
     .fav-btn:hover{transform:scale(1.08)}
+    /* Botón compartir de la tarjeta: misma pastilla que el corazón, en la
+       esquina opuesta para no chocar con el badge de stock (abajo izq.). */
     .share-btn{position:absolute;bottom:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.92);border:0;display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;box-shadow:0 3px 10px rgba(32,36,42,.12);transition:transform .18s,background .18s;z-index:2;backdrop-filter:blur(4px)}
     .share-btn:hover{transform:scale(1.08);background:#fff}
     .share-btn svg{width:13px;height:13px}
@@ -242,6 +244,10 @@
     .whatsapp-btn:active{transform:scale(.99)}
 
     /* ============ COMPARTIR (FLYER) ============ */
+    /* Modal de vista previa. Reutiliza el lenguaje del carrito (fondo oscuro,
+       blur, hoja clara, X) para que se sienta parte del mismo sitio.
+       El canvas se limita a 54vh: así en pantallas bajas (600-700 px) también
+       caben la cabecera, los formatos y los botones, sin scroll interno. */
     .share-modal{display:none;position:fixed;inset:0;background:rgba(24,24,26,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:110;align-items:center;justify-content:center;padding:14px}
     .share-modal.show{display:flex;animation:fadeUp .2s ease both}
     .share-panel{background:#FBFAF7;width:100%;max-width:470px;max-height:94vh;border-radius:22px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px rgba(20,20,22,.32);animation:shareIn .3s cubic-bezier(.22,1,.36,1)}
@@ -434,6 +440,12 @@
   </div>
 </div>
 
+<!-- Modal "Compartir": muestra un flyer ya renderizado en <canvas>.
+     El canvas es el original de 1080 px (solo se escala por CSS), así que lo
+     que se ve es exactamente el PNG que se comparte o descarga.
+     "Compartir" usa la Web Share API (en el celular abre Instagram/WhatsApp);
+     "Descargar" guarda el PNG. El botón nativo se oculta por JS si el
+     navegador no soporta compartir archivos (típico en escritorio). -->
 <div id="shareModal" class="share-modal" onclick="if(event.target===this) Dari.closeShare()">
   <div class="share-panel" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
     <div class="share-head">
@@ -445,6 +457,7 @@
       <div class="share-loading" id="shareLoading">Generando</div>
     </div>
     <div class="share-formats">
+      <!-- 1080x1920 (9:16) para historias; 1080x1350 (4:5) para el feed -->
       <button class="share-fmt active" data-fmt="story" onclick="Dari.setShareFormat('story')">Historia 9:16</button>
       <button class="share-fmt" data-fmt="feed" onclick="Dari.setShareFormat('feed')">Feed 4:5</button>
     </div>
@@ -1262,6 +1275,7 @@
   }
   lightbox.addEventListener('click', e => { if (e.target === lightbox || e.target === lightboxInner || e.target === lightboxImg) closeLightbox(); });
   lightboxClose.addEventListener('click', e => { e.stopPropagation(); closeLightbox(); });
+  // Escape cierra los tres modales; closeShare se sumó para el flyer.
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeCartModal(); closeShare(); } });
   lightboxImg.addEventListener('wheel', e => {
     e.preventDefault();
@@ -1721,6 +1735,9 @@
       </button>` : ''}
       ${out ? '<span class="stock-badge">Vendido</span>' : low ? `<span class="stock-badge low">Solo ${p.stock}</span>` : ''}
     `;
+    /* Nota: el botón de compartir no se genera si la pieza está agotada (out),
+       porque no tiene sentido promocionar algo que no se puede vender.
+       stopPropagation evita que el click abra además el lightbox de la foto. */
 
     const cardClass = `card ${offerClass} card-enter`;
     const delay = Math.min(parseInt(p.id?.slice(-3) || '0'), 15) * 0.04;
@@ -1869,7 +1886,27 @@
 
   /* ==============================================================
      COMPARTIR: FLYER CON LA FOTO DE LA JOYA (HISTORIAS / FEED)
+     --------------------------------------------------------------
+     Objetivo: que la dueña de la tienda pueda publicar una pieza en
+     historias sin diseñar nada. El flyer se dibuja en un <canvas> real
+     de 1080 px de ancho (sin librerías externas, para no volver a cargar
+     CDNs que se quitaron) y se exporta como PNG.
+
+     Flujo:
+       1. Click en el botón de la tarjeta -> openShare(id)
+       2. refreshFlyer(): espera fuentes + carga la foto + dibuja + exporta
+       3. El modal muestra el resultado y permite Compartir o Descargar.
+
+     Las medidas y el recorte de texto están pensados para que un nombre
+     o un detalle largo nunca empujen el precio fuera de cuadro.
      ============================================================== */
+
+  /* Cada formato tiene su propio lienzo y sus propias medidas: no es la misma
+     imagen escalada. Historia (9:16) y feed (4:5) necesitan otros márgenes,
+     tamaños y topes de líneas para que el bloque de texto respire igual.
+       nameMax/nameMin -> rango en el que el nombre se achica hasta caber
+       nameLines/detailLines -> máximo de líneas antes de recortar con "…"
+       bottom -> margen inferior donde se ancla el precio */
   const SHARE_FORMATS = {
     story: { w: 1080, h: 1920, margin: 88, bottom: 112, nameMax: 86, nameMin: 52, nameLines: 3, detailSize: 30, detailLines: 3, priceSize: 96, oldSize: 36 },
     feed:  { w: 1080, h: 1350, margin: 76, bottom: 94,  nameMax: 76, nameMin: 48, nameLines: 2, detailSize: 27, detailLines: 2, priceSize: 84, oldSize: 32 }
@@ -1877,9 +1914,13 @@
   const SERIF = '"Cormorant Garamond", Georgia, serif';
   const SANS = 'Inter, "Segoe UI", Arial, sans-serif';
 
+  // Estado del modal: producto abierto, formato elegido, PNG ya generado y
+  // token para descartar generaciones viejas cuando se cambia de formato.
   let shareProduct = null, shareFormat = 'story', shareBlob = null, shareToken = 0;
   let shareImage = null, shareImageId = null;
 
+  /* Nombre de archivo seguro: sin tildes ni espacios,
+     ej. "joyas-dari-pulsera-eslabones.png". */
   function shareFileName(p) {
     const base = String(p && p.name || 'joya').toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -1887,6 +1928,13 @@
     return 'joyas-dari-' + base + '.png';
   }
 
+  /* La foto se pide a lh3.googleusercontent.com y NO al
+     drive.google.com/thumbnail que usan las tarjetas: solo lh3 responde con
+     cabeceras CORS. Sin CORS el canvas queda "contaminado" y el navegador
+     bloquea toBlob()/toDataURL(), o sea, no se podría exportar el flyer.
+     crossOrigin='anonymous' es obligatorio por el mismo motivo.
+     Si la imagen falla, devuelve null y el flyer se dibuja con fondo oscuro
+     (nunca se queda con un botón que no hace nada). */
   function loadShareImage(id) {
     if (!id) return Promise.resolve(null);
     return new Promise(resolve => {
@@ -1898,6 +1946,9 @@
     });
   }
 
+  /* Cachea la foto ya cargada: al cambiar entre historia y feed se reutiliza
+     en vez de volver a descargarla. Si el producto no tiene foto válida, usa
+     la imagen por defecto del sitio. */
   async function ensureShareImage(p) {
     const id = driveIdFrom(p.img || '');
     const defId = driveIdFrom(CONFIG.defImg);
@@ -1910,6 +1961,8 @@
     return img;
   }
 
+  /* canvas no aplica letter-spacing de forma confiable: para "JOYAS DARI" y
+     el tipo dibujamos letra por letra con el espaciado que queramos. */
   function trackText(ctx, text, x, y, spacing) {
     const chars = Array.from(String(text));
     let cx = x;
@@ -1922,6 +1975,7 @@
     ctx.textAlign = prev;
   }
 
+  /* Rectángulo redondeado a mano (para el badge de descuento). */
   function roundRectPath(ctx, x, y, w, h, r) {
     r = Math.min(r, h / 2, w / 2);
     ctx.beginPath();
@@ -1933,6 +1987,8 @@
     ctx.closePath();
   }
 
+  /* Parte el texto por palabras usando el ancho real medido en el canvas
+     (no un número de caracteres estimado). */
   function wrapText(ctx, text, maxW) {
     const words = String(text || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
     const lines = [];
@@ -1946,6 +2002,8 @@
     return lines;
   }
 
+  /* Si el texto supera las líneas permitidas, recorta la última y le agrega
+     "…". Así el bloque nunca se desborda ni corta una palabra a la mitad. */
   function clampLines(ctx, lines, maxLines, maxW) {
     if (lines.length <= maxLines) return lines.slice();
     const kept = lines.slice(0, maxLines);
@@ -1959,6 +2017,11 @@
     return kept;
   }
 
+  /* Dibuja el flyer completo.
+     Estrategia: el bloque de texto se arma de abajo hacia arriba. El precio se
+     ancla al margen inferior y el resto (detalle, nombre, tipo) crece hacia
+     arriba según cuántas líneas ocupe. Así un nombre de 1, 2 o 3 líneas no
+     empuja el precio fuera de cuadro ni pisa la marca de arriba. */
   function drawFlyer(p, fmt, img) {
     const F = SHARE_FORMATS[fmt] || SHARE_FORMATS.story;
     const W = F.w, H = F.h, M = F.margin, maxW = W - M * 2;
@@ -1969,11 +2032,13 @@
 
     /* --- fondo: foto a sangre completa --- */
     if (img && img.naturalWidth) {
+      // Recorte tipo object-fit: cover, centrado: llena el lienzo sin deformar.
       const ir = img.naturalWidth / img.naturalHeight, cr = W / H;
       let dw, dh;
       if (ir > cr) { dh = H; dw = H * ir; } else { dw = W; dh = W / ir; }
       ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
     } else {
+      // Sin foto: fondo oscuro con un halo teal para que el flyer no salga vacío.
       ctx.fillStyle = '#12181A';
       ctx.fillRect(0, 0, W, H);
       const rg = ctx.createRadialGradient(W * 0.35, H * 0.3, 0, W * 0.35, H * 0.3, H * 0.85);
@@ -1983,18 +2048,13 @@
       ctx.fillRect(0, 0, W, H);
     }
 
-    /* --- degradados para legibilidad --- */
-    let g = ctx.createLinearGradient(0, H * 0.28, 0, H);
-    g.addColorStop(0, 'rgba(10,12,14,0)');
-    g.addColorStop(0.52, 'rgba(10,12,14,.72)');
-    g.addColorStop(1, 'rgba(10,12,14,.97)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-    g = ctx.createLinearGradient(0, 0, 0, H * 0.2);
-    g.addColorStop(0, 'rgba(8,10,12,.5)');
+    /* --- velo superior --- */
+    // Solo separa "JOYAS DARI" del fondo; no oscurece la joya.
+    let g = ctx.createLinearGradient(0, 0, 0, H * 0.18);
+    g.addColorStop(0, 'rgba(8,10,12,.42)');
     g.addColorStop(1, 'rgba(8,10,12,0)');
     ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H * 0.2);
+    ctx.fillRect(0, 0, W, H * 0.18);
 
     ctx.textBaseline = 'alphabetic';
     ctx.textAlign = 'left';
@@ -2012,6 +2072,8 @@
     const oldText = isOffer ? formatPrice(p.price) : '';
     const badge = isOffer ? discountLabel(p) : '';
 
+    // Si el precio es muy largo, baja el tamaño de letra antes que salirse del
+    // ancho. Se reserva espacio a la derecha cuando hay badge de descuento.
     let priceSize = F.priceSize;
     ctx.font = '700 ' + priceSize + 'px ' + SANS;
     const reserve = badge ? 170 : 0;
@@ -2022,12 +2084,15 @@
     const priceBase = H - F.bottom;
 
     /* --- bloque inferior: de abajo hacia arriba --- */
+    // priceTop estima la altura visual del bloque de precio para ubicar la
+    // línea divisoria y, sobre ella, el detalle y el nombre.
     const priceTop = isOffer
       ? priceBase - priceSize * 0.95 - F.oldSize * 0.8
       : priceBase - priceSize * 0.75;
     const ruleY = Math.round(priceTop - 40);
     const oldBase = isOffer ? Math.round(priceBase - priceSize * 0.95) : 0;
 
+    // Detalle: máximo de líneas por formato, recortado con "…" si sobra.
     const detailSize = F.detailSize;
     const detailLh = Math.round(detailSize * 1.5);
     ctx.font = '400 ' + detailSize + 'px ' + SANS;
@@ -2036,8 +2101,12 @@
     let db = ruleY - 34;
     for (let i = detailLines.length - 1; i >= 0; i--) { detailBases[i] = db; db -= detailLh; }
     const detailTop = detailLines.length ? detailBases[0] - detailSize * 0.76 : ruleY - 34;
+    // 36 px de aire entre el nombre y el detalle: con menos se veían pegados
+    // cuando el nombre ocupaba dos líneas.
     const nameBottom = detailLines.length ? detailTop - 36 : ruleY - 46;
 
+    // El nombre prueba tamaños de F.nameMax hacia abajo hasta caber en las
+    // líneas permitidas. Es lo que evita que un nombre largo rompa el flyer.
     let nameSize = F.nameMax;
     let nameLines = [];
     for (;;) {
@@ -2056,7 +2125,27 @@
     const typeSize = Math.round(W * 0.026);
     const typeBase = Math.round(nameTop - 34);
 
+    /* --- velo inferior adaptativo --- */
+    // Clave: se dibuja DESPUÉS de calcular el layout, así sabemos exactamente
+    // dónde empieza el texto. Antes el degradado arrancaba a media foto (28%)
+    // y apagaba la joya sin necesidad. Ahora nace justo sobre el tipo y solo
+    // oscurece la franja que necesita contraste.
+    const scrimTop = Math.max(0, typeBase - typeSize * 6);
+    const gs = ctx.createLinearGradient(0, scrimTop, 0, H);
+    gs.addColorStop(0, 'rgba(10,12,14,0)');
+    gs.addColorStop(0.2, 'rgba(10,12,14,.58)');
+    gs.addColorStop(0.55, 'rgba(10,12,14,.86)');
+    gs.addColorStop(1, 'rgba(10,12,14,.95)');
+    ctx.fillStyle = gs;
+    ctx.fillRect(0, scrimTop, W, H - scrimTop);
+
     /* --- tipo --- */
+    // Sombra suave en el texto: da contraste extra sobre fotos claras sin
+    // seguir oscureciendo la imagen.
+    ctx.shadowColor = 'rgba(0,0,0,.5)';
+    ctx.shadowBlur = 26;
+    ctx.shadowOffsetY = 2;
+    // Champagne sobre el degradado oscuro: se lee sin competir con el blanco.
     ctx.fillStyle = '#E2CBA6';
     ctx.font = '600 ' + typeSize + 'px ' + SANS;
     trackText(ctx, String(p.type || 'JOYA').toUpperCase(), M, typeBase, Math.round(typeSize * 0.22));
@@ -2073,6 +2162,11 @@
       detailLines.forEach((ln, i) => ctx.fillText(ln, M, detailBases[i]));
     }
 
+    // La sombra solo era para el texto: se apaga antes de líneas y badge.
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
     /* --- línea --- */
     ctx.fillStyle = 'rgba(255,255,255,.22)';
     ctx.fillRect(M, ruleY, Math.min(120, maxW), 2);
@@ -2083,6 +2177,8 @@
       ctx.fillStyle = 'rgba(255,255,255,.55)';
       const ow = ctx.measureText(oldText).width;
       ctx.fillText(oldText, M, oldBase);
+      // Canvas no tiene text-decoration: el tachado se dibuja a mano,
+      // centrado sobre la altura de las cifras.
       ctx.fillRect(M - 2, Math.round(oldBase - F.oldSize * 0.33), Math.round(ow + 4), Math.max(2, Math.round(F.oldSize * 0.07)));
     }
 
@@ -2102,6 +2198,8 @@
       const bw = tw + padX * 2;
       const bx = M + pw + 26;
       const by = priceBase - bh + Math.round(bFont * 0.42);
+      // Solo se pinta si cabe a la derecha del precio; si no, se omite
+      // (mejor sin badge que con el badge fuera del lienzo).
       if (bx + bw <= W - M) {
         ctx.fillStyle = '#8E1226';
         roundRectPath(ctx, bx, by, bw, bh, bh / 2);
@@ -2112,6 +2210,8 @@
     }
   }
 
+  /* Mientras el flyer se está dibujando, los botones quedan deshabilitados:
+     si no, se podría descargar un canvas a medio pintar. */
   function setShareBusy(busy) {
     shareLoading.classList.toggle('show', busy);
     const off = busy || !shareBlob;
@@ -2119,6 +2219,8 @@
     if (shareDownloadBtn) shareDownloadBtn.disabled = off;
   }
 
+  /* Espera a Cormorant Garamond e Inter antes de dibujar. Si no se espera,
+     el canvas usa Georgia/Arial y el flyer sale con otra tipografía. */
   async function loadFlyerFonts() {
     if (!document.fonts || !document.fonts.load) return;
     try {
@@ -2132,6 +2234,9 @@
     } catch (e) { /* usa las fuentes de respaldo */ }
   }
 
+  /* Genera (o regenera) el flyer del producto actual.
+     shareToken evita carreras: si la persona cambia de formato mientras se
+     está cargando la foto, el resultado viejo se descarta y no pisa al nuevo. */
   async function refreshFlyer() {
     if (!shareProduct) return;
     const token = ++shareToken;
@@ -2151,6 +2256,10 @@
     if (!blob) showToast('No se pudo generar la imagen');
   }
 
+  /* Abre el modal y arranca la generación.
+     Igual que el carrito: bloquea el scroll de la página de fondo.
+     "Compartir" solo se muestra si el navegador puede compartir archivos
+     (Web Share API); en escritorio queda únicamente "Descargar". */
   async function openShare(pid) {
     const p = inventory.find(x => x.id === pid);
     if (!p) return;
@@ -2164,6 +2273,8 @@
     await refreshFlyer();
   }
 
+  /* shareToken++ invalida cualquier dibujo en curso: al cerrar no queremos que
+     una imagen pendiente termine escribiendo en el canvas del modal. */
   function closeShare() {
     shareModal.classList.remove('show');
     document.body.style.overflow = '';
@@ -2172,6 +2283,8 @@
     shareBlob = null;
   }
 
+  /* Cambiar historia <-> feed vuelve a dibujar el mismo producto sin cerrar
+     el modal. El botón activo se marca con la clase .active. */
   function setShareFormat(fmt) {
     if (!shareProduct || !SHARE_FORMATS[fmt] || fmt === shareFormat) return;
     shareFormat = fmt;
@@ -2179,6 +2292,8 @@
     refreshFlyer();
   }
 
+  /* Descarga el PNG ya generado. Se libera la URL temporal después para no
+     dejar el blob ocupando memoria. */
   function downloadFlyer() {
     if (!shareBlob || !shareProduct) return;
     const url = URL.createObjectURL(shareBlob);
@@ -2192,6 +2307,9 @@
     showToast('Imagen descargada', 'success');
   }
 
+  /* Web Share API con archivo: es lo que hace aparecer Instagram/WhatsApp en
+     el menú del celular. Si el navegador no lo soporta, cae en descarga para
+     que el botón nunca quede sin hacer nada. */
   async function shareFlyer() {
     if (!shareBlob || !shareProduct) return;
     const file = new File([shareBlob], shareFileName(shareProduct), { type: 'image/png' });
@@ -2274,6 +2392,7 @@
     }
   }
 
+  // Funciones expuestas para los onclick inline del HTML (incluye el flyer).
   window.Dari = {
     openLightbox, closeLightbox, toggleFavorite, setCategory,
     changeQty, handleQtyInput, addToCart, addOneFromCarousel,
