@@ -1906,10 +1906,13 @@
      tamaños y topes de líneas para que el bloque de texto respire igual.
        nameMax/nameMin -> rango en el que el nombre se achica hasta caber
        nameLines/detailLines -> máximo de líneas antes de recortar con "…"
+       brandTop -> altura de "JOYAS DARI". En historia va más abajo (250 px)
+                  porque Instagram dibuja ahí el avatar/usuario y tapaba la
+                  marca; en feed no hay ese overlay.
        bottom -> margen inferior donde se ancla el precio */
   const SHARE_FORMATS = {
-    story: { w: 1080, h: 1920, margin: 88, bottom: 112, nameMax: 86, nameMin: 52, nameLines: 3, detailSize: 30, detailLines: 3, priceSize: 96, oldSize: 36 },
-    feed:  { w: 1080, h: 1350, margin: 76, bottom: 94,  nameMax: 76, nameMin: 48, nameLines: 2, detailSize: 27, detailLines: 2, priceSize: 84, oldSize: 32 }
+    story: { w: 1080, h: 1920, margin: 88, brandTop: 250, bottom: 112, nameMax: 86, nameMin: 52, nameLines: 3, detailSize: 30, detailLines: 3, priceSize: 96, oldSize: 36 },
+    feed:  { w: 1080, h: 1350, margin: 76, brandTop: 110, bottom: 94,  nameMax: 76, nameMin: 48, nameLines: 2, detailSize: 27, detailLines: 2, priceSize: 84, oldSize: 32 }
   };
   const SERIF = '"Cormorant Garamond", Georgia, serif';
   const SANS = 'Inter, "Segoe UI", Arial, sans-serif';
@@ -1962,10 +1965,15 @@
   }
 
   /* canvas no aplica letter-spacing de forma confiable: para "JOYAS DARI" y
-     el tipo dibujamos letra por letra con el espaciado que queramos. */
-  function trackText(ctx, text, x, y, spacing) {
+     el tipo dibujamos letra por letra con el espaciado que queramos.
+     align 'center' centra el bloque completo (incluido el tracking) en x. */
+  function trackText(ctx, text, x, y, spacing, align) {
     const chars = Array.from(String(text));
-    let cx = x;
+    let total = 0;
+    for (let i = 0; i < chars.length; i++) {
+      total += ctx.measureText(chars[i]).width + (i < chars.length - 1 ? spacing : 0);
+    }
+    let cx = align === 'center' ? x - total / 2 : x;
     const prev = ctx.textAlign;
     ctx.textAlign = 'left';
     for (let i = 0; i < chars.length; i++) {
@@ -2049,7 +2057,9 @@
     }
 
     /* --- velo superior --- */
-    // Solo separa "JOYAS DARI" del fondo; no oscurece la joya.
+    // Deliberadamente tenue (.42 y no más): solo separa "JOYAS DARI" del fondo.
+    // Antes era más denso y apagaba la parte alta de la foto, justo donde suele
+    // estar la joya.
     let g = ctx.createLinearGradient(0, 0, 0, H * 0.18);
     g.addColorStop(0, 'rgba(8,10,12,.42)');
     g.addColorStop(1, 'rgba(8,10,12,0)');
@@ -2060,11 +2070,22 @@
     ctx.textAlign = 'left';
 
     /* --- marca --- */
+    // Centrada. brandTop (no el margen): en historias Instagram pinta su
+    // usuario/avatar arriba y tapaba "JOYAS DARI". Por eso baja a 250 px en 9:16.
+    const brandTop = F.brandTop;
     ctx.fillStyle = 'rgba(255,255,255,.94)';
     ctx.font = '600 ' + Math.round(W * 0.024) + 'px ' + SANS;
-    trackText(ctx, 'JOYAS DARI', M, M + 10, 8);
+    // Sombra suave: a esta altura el velo superior ya es tenue y la marca
+    // tiene que leerse igual sobre fotos claras.
+    ctx.shadowColor = 'rgba(0,0,0,.45)';
+    ctx.shadowBlur = 18;
+    trackText(ctx, 'JOYAS DARI', W / 2, brandTop, 8, 'center');
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
     ctx.fillStyle = 'rgba(255,255,255,.32)';
-    ctx.fillRect(M, M + 26, 46, 2);
+    // Debajo y con aire: al centrar la marca, una línea pegada al texto
+    // quedaba justo en el espacio entre "JOYAS" y "DARI".
+    ctx.fillRect(W / 2 - 28, brandTop + 32, 56, 2);
 
     /* --- precios --- */
     const isOffer = hasOffer(p);
