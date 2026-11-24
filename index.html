@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+  IMPORTANTE: este archivo se mantiene COMENTADO a propósito.
+  Todo bloque nuevo o modificado debe explicar QUÉ hace y POR QUÉ, igual que
+  el resto del código. No se aceptan funciones o estilos sin comentar.
+-->
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -511,6 +516,8 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <script>
+/* MANTENER EL CÓDIGO COMENTADO: cada función, cálculo o arreglo debe llevar
+   un comentario que diga qué hace y por qué está así (no solo qué es obvio). */
 (function(){
   "use strict";
 
@@ -1402,6 +1409,9 @@
      - Arrastre real con el dedo / mouse
      - Transiciones CSS: se pueden interrumpir y encadenar
      - Sin bloqueos: los clics rápidos nunca se pierden
+     - Gira igual con pocas ofertas que con muchas: los huecos se
+       adaptan a la cantidad de piezas (fanSlots) y cada paso recentra
+       la oferta activa
      ========================================================== */
   let carouselProducts = [];
   let fanEls = [];
@@ -1423,39 +1433,89 @@
     return         { cw:210, visible:7, angle:1.5, spread:.92, drop:.03 };
   }
 
-  function fanHalf(){ return Math.floor(fanMetrics().visible / 2); }
+  /* Huecos que ocupa realmente el abanico: los de la pantalla, pero nunca más
+     que ofertas disponibles. Antes se usaban siempre los huecos de la pantalla;
+     con pocas piezas el grupo quedaba apretado en el centro y, sobre todo, el
+     abanico no giraba porque las posiciones no dependían de la oferta activa
+     (era el bug: con 2-6 ofertas las flechas, los puntos y el arrastre no
+     movían nada). Con esto, 3 ofertas ocupan 3 huecos y también rotan. */
+  function fanSlots(){
+    return Math.max(1, Math.min(fanMetrics().visible, carouselProducts.length));
+  }
 
-  /* Posición relativa al centro (circular cuando hay más piezas que huecos) */
+  /* Posición relativa al hueco central (0 = centro), en unidades de hueco.
+     Siempre circular respecto a fanIndex: con pocas piezas cada una gira sobre
+     el abanico igual que con muchas, así flechas, puntos, teclado y arrastre
+     funcionan en los dos casos.
+     `raw` es la distancia en sentido horario desde la activa; el if la pasa al
+     lado contrario cuando conviene, para quedarnos con el camino más corto
+     (de -total/2 a +total/2) y que el abanico se reparta a los dos lados. */
   function fanOffset(i){
     const total = carouselProducts.length;
-    const m = fanMetrics();
-    if (total <= m.visible) return i - (total - 1) / 2;
-    let d = (i - fanIndex) % total;
-    if (d < 0) d += total;
-    if (d > total / 2) d -= total;
+    if (total <= 1) return 0;
+    let raw = (i - fanIndex) % total;
+    if (raw < 0) raw += total;
+    let d = raw >= Math.ceil(total / 2) ? raw - total : raw;
+    /* Con un número par de piezas y sitio de sobra no hay tarjeta central:
+       se reparten medio hueco a cada lado para que el grupo quede centrado
+       en pantalla (si no, el abanico se vería cargado hacia un lado). */
+    if (total % 2 === 0 && total <= fanSlots()) d += .5;
     return d;
   }
 
+  /* Coloca cada tarjeta: desplazamiento horizontal, caída, giro y escala.
+     Se llama en cada paso (flechas, puntos, teclado, arrastre) y al redimensionar. */
   function layoutFan(){
     const total = carouselProducts.length;
     if (!total) return;
     const m = fanMetrics();
-    const half = Math.max(fanHalf(), 1);
+    const slots = fanSlots();
+    /* Hueco más alejado del centro, según los huecos reales: par -> medio hueco
+       (0.5, 1.5...) e impar -> entero (1, 2...). Es el divisor que normaliza
+       inclinación, caída y escala, de modo que el abanico se vea igual de
+       "abierto" con 3 ofertas que con 7 (antes se dividía por media pantalla,
+       así que con pocas piezas quedaban casi rectas y apiñadas). */
+    const maxPos = Math.max(.5, slots % 2 ? (slots - 1) / 2 : slots / 2 - .5);
+    /* Un hueco más allá del extremo ya no se ve. En vez de quitarla del DOM se
+       deja oculta (opacidad 0) para poder animar su entrada cuando la rotación
+       la traiga de vuelta. */
+    const hideAt = maxPos + .5;
 
     fanEls.forEach(el => {
-      const d = fanOffset(+el.dataset.index);
-      const ad = Math.abs(d);
-      const hidden = ad > half + 0.001;
-      const norm = Math.min(ad / half, 1);
-      const x = d * m.cw * m.spread;
+      const index = +el.dataset.index;
+      const pos = fanOffset(index);
+      const ap = Math.abs(pos);
+      const hidden = ap > hideAt + .001;
+      /* 0 en el centro y 1 en el borde del abanico: sirve para que la caída y el
+         giro crezcan de forma suave hacia los lados (curva cuadrática). */
+      const norm = Math.min(ap / maxPos, 1);
+      const x = pos * m.cw * m.spread;
       const y = norm * norm * m.cw * m.drop;
-      const rot = (d / half) * m.angle;
-      const scale = Math.max(.6, 1 - .08 * ad);
+      const rot = (pos / maxPos) * m.angle;
+      const scale = Math.max(.6, 1 - .08 * ap);
 
       el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
       el.style.opacity = hidden ? '0' : '1';
-      el.style.zIndex = hidden ? '0' : String(40 - Math.round(ad * 6));
+      /* La activa siempre por delante. Antes el z-index dependía solo de la
+         distancia y con un número par de piezas la activa empataba con su
+         vecina de medio hueco, por lo que el orden lo decidía el DOM. */
+      el.style.zIndex = hidden ? '0' : String(index === fanIndex ? 60 : 40 - Math.round(ap * 6));
       el.style.pointerEvents = hidden ? 'none' : 'auto';
+
+      /* Si la tarjeta salta más de un hueco es porque dio la vuelta al abanico
+         (pasa de un extremo al otro). Animar ese salto la haría cruzar por
+         encima de las demás, así que se teletransporta sin transición, se
+         mantiene invisible y entra con un fundido: el cambio se lee como
+         "entra por el otro lado" y no como una tarjeta volando. */
+      const prev = el.dataset.pos === undefined ? null : parseFloat(el.dataset.pos);
+      if (prev !== null && Math.abs(pos - prev) > 1.01){
+        el.style.transition = 'none';
+        el.style.opacity = '0';
+        void el.offsetWidth;              /* fuerza el reflow: aplica el salto sin animación */
+        el.style.transition = '';
+        el.style.opacity = hidden ? '0' : '1';
+      }
+      el.dataset.pos = pos;               /* memoria para detectar el salto siguiente */
     });
   }
 
@@ -1652,7 +1712,12 @@
     const p = carouselProducts[idx];
     if (!p) return;
 
-    if (carouselProducts.length > fanVisibleCount && idx !== fanIndex){ fanGoTo(idx); return; }
+    /* Solo centramos la pieza cuando hay otras ocultas fuera del abanico; si se
+       ven todas (pocas ofertas), el clic abre la ficha como siempre y no obliga
+       a un clic extra. Se compara con fanSlots() y no con fanVisibleCount para
+       que el cálculo coincida exactamente con el nº de huecos que se están
+       usando en pantalla. */
+    if (carouselProducts.length > fanSlots() && idx !== fanIndex){ fanGoTo(idx); return; }
     openLightbox(fixDriveUrl(p.img, 1200), p.name);
   });
 
